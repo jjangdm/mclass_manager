@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+{% load humanize %}
+
+{% block content %}
+<h1>교사별 급여 지급 상황</h1>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: right;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .left-align {
+        text-align: left;
+    }
+</style>
+
+{% for data in salary_data %}
+    <h2>{{ data.teacher.name }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th class="left-align">년월</th>
+                <th>기본급</th>
+                <th>초과 근무 수당</th>
+                <th>보너스</th>
+                <th>공제액</th>
+                <th>총액</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for salary in data.monthly_salaries %}
+            <tr>
+                <td class="left-align">{{ salary.year_month|date:"Y-m" }}</td>
+                <td>{{ salary.base_salary|intcomma }}</td>
+                <td>{{ salary.overtime_pay|intcomma }}</td>
+                <td>{{ salary.bonus|intcomma }}</td>
+                <td>{{ salary.deductions|intcomma }}</td>
+                <td>{{ salary.total_salary|intcomma }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>총 지급액: {{ data.total_salary|intcomma }}</p>
+{% endfor %}
+{% endblock %}
