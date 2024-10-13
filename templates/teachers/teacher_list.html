@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}교사 목록{% endblock %}
+
+{% block content %}
+<h1>교사 목록</h1>
+<div class="mb-3">
+    <a href="{% url 'teachers:teacher_create' %}" class="btn btn-primary">새 교사 등록</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>이름</th>
+            <th>전화번호</th>
+            <th>이메일</th>
+            <th>성별</th>
+            <th>입사일</th>
+            <th>액션</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for teacher in teachers %}
+        <tr>
+            <td>{{ teacher.name }}</td>
+            <td>{{ teacher.phone_number }}</td>
+            <td>{{ teacher.email }}</td>
+            <td>{{ teacher.get_gender_display }}</td>
+            <td>{{ teacher.hire_date|date:"Y-m-d" }}</td>
+            <td>
+                <a href="{% url 'teachers:teacher_detail' teacher.id %}" class="btn btn-sm btn-info">상세</a>
+                <a href="{% url 'teachers:teacher_update' teacher.id %}" class="btn btn-sm btn-warning">수정</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">등록된 교사가 없습니다.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

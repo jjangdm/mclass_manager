@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block title %}급여 테이블 ({{ year }}년){% endblock %}
+
+{% block content %}
+<h1>급여 테이블 ({{ year }}년)</h1>
+
+<form method="get" action="{% url 'teachers:salary_table' %}">
+    <div class="form-group">
+        <label for="year">연도 선택:</label>
+        <select name="year" id="year" class="form-control" onchange="this.form.submit()">
+            {% for y in year_range %}
+                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}년</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>교사명</th>
+                {% for month in months %}
+                <th>{{ month }}월</th>
+                {% endfor %}
+                <th>합계</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in salary_table %}
+            <tr>
+                <td>{{ row.teacher.name }}</td>
+                {% for month in months %}
+                <td>{{ row|get_item:month|default:"0"|intcomma }}원</td>
+                {% endfor %}
+                <td>{{ row.total|intcomma }}원</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<a href="{% url 'teachers:teacher_list' %}" class="btn btn-secondary">목록으로</a>
+{% endblock %}

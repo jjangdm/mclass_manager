@@ -1,99 +1,97 @@
 from django.db import models
-from django.core.validators import RegexValidator
-from django.db.models import Sum
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
-from django.utils.crypto import get_random_string
-from common.models import Bank  # Bank 모델이 실제로 존재하는지 확인하세요
-from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+import datetime
+
+
+def validate_phone_number(value):
+    if not value.isdigit() or len(value) != 11:
+        raise ValidationError(
+            _('%(value)s 는 유효한 전화번호가 아닙니다.'),
+            params={'value': value},
+        )
 
 class Teacher(models.Model):
-    GENDER_CHOICES = [('M', '남'), ('F', '여')]
+    GENDER_CHOICES = [
+        ('M', '남'),
+        ('F', '여'),
+    ]
     
     name = models.CharField(max_length=100, verbose_name='이름')
     phone_number = models.CharField(
-        max_length=15, 
-        verbose_name='전화번호', 
-        null=True, 
+        max_length=11, 
+        validators=[validate_phone_number],
         blank=True,
-        validators=[
-            RegexValidator(
-                regex=r'^\d{3}-\d{3,4}-\d{4}$',
-                message="전화번호는 '000-0000-0000' 형식이어야 합니다."
-            )
-        ]
+        null=True,
+        verbose_name='전화번호'
     )
-    email = models.EmailField(verbose_name='이메일', null=True, blank=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='성별', null=True, blank=True)
-    hire_date = models.DateField(verbose_name='입사일', null=True, blank=True)
-    resignation_date = models.DateField(verbose_name='퇴사일', null=True, blank=True)
-    id_number = models.CharField(max_length=256, verbose_name='주민번호(암호화됨)', null=True, blank=True)
-    bank = models.ForeignKey(Bank, on_delete=models.SET_NULL, verbose_name='거래은행', null=True, blank=True)
-    account_number = models.CharField(max_length=20, verbose_name='급여 계좌', null=True, blank=True)
+    email = models.EmailField(blank=True, null=True, verbose_name='이메일')
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True, verbose_name='성별')
+    hire_date = models.DateField(blank=True, null=True, verbose_name='입사일')
+    resignation_date = models.DateField(blank=True, null=True, verbose_name='퇴사일')
+    bank = models.ForeignKey('common.Bank', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='거래은행')
+    account_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='급여계좌')
+    base_salary = models.IntegerField(blank=True, null=True, verbose_name='급여기준', default=15000)
+    additional_salary = models.IntegerField(blank=True, null=True, verbose_name='추가급여', default=0)
+    other_info = models.TextField(blank=True, null=True, verbose_name='기타')
+    extra_field1 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비1')
+    extra_field2 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비2')
+    extra_field3 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비3')
+    extra_field4 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비4')
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = '교사'
         verbose_name_plural = '교사'
 
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if self.id_number:
-            self.id_number = self.encrypt_id_number(self.id_number)
-        super().save(*args, **kwargs)
-
-    @staticmethod
-    def encrypt_id_number(id_number):
-        # 실제 운영 환경에서는 더 강력한 암호화 방식을 사용해야 합니다
-        return get_random_string(length=256)
-
-    def yearly_salary(self, year=None):
-        if year is None:
-            year = timezone.now().year
-        start_date = timezone.datetime(year, 1, 1)
-        end_date = timezone.datetime(year, 12, 31)
-        salaries = MonthlySalary.objects.filter(
-            teacher=self,
-            year_month__range=(start_date, end_date)
-        )
-        return sum(salary.total_salary() for salary in salaries)
-
-class MonthlySalary(models.Model):
+class Attendance(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='교사')
-    year_month = models.DateField(verbose_name='급여 년월')
-    base_salary = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='기본급', default=0)
-    overtime_pay = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='초과 근무 수당', default=0)
-    bonus = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='보너스', default=0)
-    deductions = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='공제액', default=0)
-    paid_date = models.DateField(verbose_name='지급일', null=True, blank=True)
+    date = models.DateField(verbose_name='날짜')
+    check_in = models.TimeField(default=datetime.time(18, 0), verbose_name='출근 시간')
+    check_out = models.TimeField(default=datetime.time(20, 0), verbose_name='퇴근 시간')
 
     class Meta:
-        verbose_name = '월별 급여'
-        verbose_name_plural = '월별 급여'
-        unique_together = ('teacher', 'year_month')
-
-    def save(self, *args, **kwargs):
-        if self.year_month:
-            self.year_month = self.year_month.replace(day=1)
-        super().save(*args, **kwargs)
-
-    def total_salary(self):
-        return (self.base_salary or 0) + (self.overtime_pay or 0) + (self.bonus or 0) - (self.deductions or 0)
+        verbose_name = '출근기록'
+        verbose_name_plural = '출근기록들'
+        unique_together = ['teacher', 'date']
 
     def __str__(self):
-        if self.year_month:
-            return f"{self.teacher.name} - {self.year_month.strftime('%Y년 %m월')} 급여"
-        return f"{self.teacher.name} - 날짜 미지정 급여"
-    
-    def get_absolute_url(self):
-        return reverse('teachers:monthlysalary_change', args=[str(self.id)])
+        return f"{self.teacher.name} - {self.date}"
 
-    @classmethod
-    def get_next_month(cls, date):
-        return date + relativedelta(months=1)
+class Salary(models.Model):
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='교사')
+    year = models.PositiveIntegerField(
+        validators=[MinValueValidator(2000), MaxValueValidator(2100)],
+        default=timezone.now().year,
+        verbose_name='년도'
+    )
+    month = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(12)],
+        default=timezone.now().month,
+        verbose_name='월'
+    )
+    work_days = models.PositiveIntegerField(verbose_name='근무일수')
+    base_amount = models.PositiveIntegerField(verbose_name='기본급', default=15000)
+    additional_amount = models.PositiveIntegerField(verbose_name='추가급', default=0)
+    total_amount = models.PositiveIntegerField(verbose_name='총액')
 
-    @classmethod
-    def get_previous_month(cls, date):
-        return date - relativedelta(months=1)
+    class Meta:
+        verbose_name = '급여'
+        verbose_name_plural = '급여'
+        unique_together = ['teacher', 'year', 'month']
+
+    def __str__(self):
+        return f"{self.teacher.name} - {self.year}년 {self.month}월"
+
+    def clean(self):
+        super().clean()
+        if self.month < 1 or self.month > 12:
+            raise ValidationError({'month': _('월은 1부터 12 사이의 값이어야 합니다.')})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

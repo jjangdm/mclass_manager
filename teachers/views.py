@@ -1,78 +1,125 @@
 from django.shortcuts import render
-from django.contrib.humanize.templatetags.humanize import intcomma
+from django.views import View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Min, Max
+from django.utils import timezone
+from .models import Teacher, Attendance, Salary
+from .forms import TeacherForm, AttendanceForm
 
-# Create your views here.
-from django.views.generic import TemplateView
-from django.db.models import Sum, DecimalField, CharField, Value
-from django.db.models.functions import Cast, Substr, Concat
-from django.db.models.fields import DateField
-from .models import Teacher, MonthlySalary
-from datetime import datetime
 
-class TeacherSalaryView(TemplateView):
-    template_name = 'teachers/teacher_salary.html'
+class TeacherListView(LoginRequiredMixin, ListView):
+    model = Teacher
+    template_name = 'teachers/teacher_list.html'
+    context_object_name = 'teachers'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+class TeacherDetailView(LoginRequiredMixin, DetailView):
+    model = Teacher
+    template_name = 'teachers/teacher_detail.html'
+
+class TeacherCreateView(LoginRequiredMixin, CreateView):
+    model = Teacher
+    form_class = TeacherForm
+    template_name = 'teachers/teacher_form.html'
+    success_url = reverse_lazy('teachers:teacher_list')
+
+class TeacherUpdateView(LoginRequiredMixin, UpdateView):
+    model = Teacher
+    form_class = TeacherForm
+    template_name = 'teachers/teacher_form.html'
+    success_url = reverse_lazy('teachers:teacher_list')
+
+class AttendanceCreateView(LoginRequiredMixin, CreateView):
+    model = Attendance
+    form_class = AttendanceForm
+    template_name = 'teachers/attendance_form.html'
+    success_url = reverse_lazy('teachers:teacher_list')
+
+class SalaryCalculationView(LoginRequiredMixin, View):
+    def get(self, request):
+        current_year = timezone.now().year
+        current_month = timezone.now().month
+
+        year = int(request.GET.get('year', current_year))
+        month = int(request.GET.get('month', current_month))
+
         teachers = Teacher.objects.all()
         salary_data = []
+
         for teacher in teachers:
-            monthly_salaries = MonthlySalary.objects.filter(teacher=teacher).order_by('year_month')
-            total_salary = monthly_salaries.aggregate(total=Sum('base_salary') + Sum('overtime_pay') + Sum('bonus') - Sum('deductions'))['total']
+            work_days = Attendance.objects.filter(teacher=teacher, date__year=year, date__month=month).count()
+            base_amount = teacher.base_salary * work_days if teacher.base_salary else 0
+            additional_amount = teacher.additional_salary if teacher.additional_salary else 0
+            total_amount = base_amount + additional_amount
+
+            Salary.objects.update_or_create(
+                teacher=teacher,
+                year=year,
+                month=month,
+                defaults={
+                    'work_days': work_days,
+                    'base_amount': base_amount,
+                    'additional_amount': additional_amount,
+                    'total_amount': total_amount
+                }
+            )
+
             salary_data.append({
                 'teacher': teacher,
-                'monthly_salaries': monthly_salaries,
-                'total_salary': total_salary
+                'work_days': work_days,
+                'total_amount': total_amount
             })
-        context['salary_data'] = salary_data
-        return context
 
-class SalaryTotalView(TemplateView):
-    template_name = 'teachers/salary_total.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        teachers = Teacher.objects.all()
-        
-        # year_month를 날짜로 변환
-        date_cast = Cast(
-            Concat(
-                Substr('year_month', 1, 4),  # 년도
-                Value('-'),
-                Substr('year_month', 5, 2),  # 월
-                Value('-01')  # 일 (항상 1일로 설정)
-            ),
-            DateField()
-        )
-
-        # 연도와 월 추출
-        years = MonthlySalary.objects.annotate(
-            date=date_cast
-        ).dates('date', 'year', order='DESC').distinct()
+        # 년도와 월 선택을 위한 옵션 생성
+        years = range(current_year - 5, current_year + 1)  # 현재 년도부터 5년 전까지
         months = range(1, 13)
 
-        salary_data = {}
-        for year in years:
-            salary_data[year.year] = {}
+        context = {
+            'year': year,
+            'month': month,
+            'salary_data': salary_data,
+            'years': years,
+            'months': months,
+            'current_year': current_year,
+            'current_month': current_month
+        }
+        return render(request, 'teachers/salary_calculation.html', context)
+    
+
+class SalaryTableView(LoginRequiredMixin, View):
+    def get(self, request, year=None):
+        if year is None:
+            year = request.GET.get('year')
+        
+        if year is None:
+            year = timezone.now().year
+        else:
+            year = int(year)
+        
+        teachers = Teacher.objects.all()
+        months = range(1, 13)
+
+        salary_table = []
+        for teacher in teachers:
+            teacher_data = {'teacher': teacher}
+            total = 0
             for month in months:
-                salary_data[year.year][month] = {teacher.name: 0 for teacher in teachers}
-                salary_data[year.year][month]['total'] = 0
+                salary = Salary.objects.filter(teacher=teacher, year=year, month=month).first()
+                amount = salary.total_amount if salary else 0
+                teacher_data[month] = amount
+                total += amount
+            teacher_data['total'] = total
+            salary_table.append(teacher_data)
 
-        salaries = MonthlySalary.objects.annotate(date=date_cast)
-        for salary in salaries:
-            if salary.date:
-                year = salary.date.year
-                month = salary.date.month
-                total = salary.base_salary + salary.overtime_pay + salary.bonus - salary.deductions
-                salary_data[year][month][salary.teacher.name] = total
-                salary_data[year][month]['total'] += total
-            else:
-                print(f"Warning: Invalid date for salary id {salary.id}")
+        min_year = Salary.objects.aggregate(Min('year'))['year__min'] or timezone.now().year
+        max_year = Salary.objects.aggregate(Max('year'))['year__max'] or timezone.now().year
+        year_range = range(min_year, max_year + 1)
 
-        context['salary_data'] = salary_data
-        context['teachers'] = teachers
-        context['years'] = years
-        context['months'] = months
-        # context['intcomma'] = intcomma  # 이 줄을 제거하거나 주석 처리
-        return context
+        context = {
+            'year': year,
+            'months': months,
+            'salary_table': salary_table,
+            'year_range': year_range,
+        }
+        return render(request, 'teachers/salary_table.html', context)

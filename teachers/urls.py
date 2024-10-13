@@ -1,14 +1,15 @@
 from django.urls import path
-from django.contrib import admin
-from .admin import MonthlySalaryAdmin, TeacherAdmin
+from . import views
 
 app_name = 'teachers'
 
 urlpatterns = [
-    path('monthlysalary/', MonthlySalaryAdmin.changelist_view, name='monthlysalary_changelist'),
-    path('monthlysalary/add/', MonthlySalaryAdmin.add_view, name='monthlysalary_add'),
-    path('monthlysalary/<path:object_id>/change/', MonthlySalaryAdmin.change_view, name='monthlysalary_change'),
-    path('teacher/', TeacherAdmin.changelist_view, name='teacher_changelist'),
-    path('teacher/add/', TeacherAdmin.add_view, name='teacher_add'),
-    path('teacher/<path:object_id>/change/', TeacherAdmin.change_view, name='teacher_change'),
+    path('', views.TeacherListView.as_view(), name='teacher_list'),
+    path('<int:pk>/', views.TeacherDetailView.as_view(), name='teacher_detail'),
+    path('create/', views.TeacherCreateView.as_view(), name='teacher_create'),
+    path('<int:pk>/update/', views.TeacherUpdateView.as_view(), name='teacher_update'),
+    path('attendance/create/', views.AttendanceCreateView.as_view(), name='attendance_create'),
+    path('salary/calculate/', views.SalaryCalculationView.as_view(), name='salary_calculation'),
+    path('salary/table/', views.SalaryTableView.as_view(), name='salary_table'),
+    path('salary/table/<int:year>/', views.SalaryTableView.as_view(), name='salary_table_year'),
 ]
