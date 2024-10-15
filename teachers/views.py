@@ -114,7 +114,7 @@ class SalaryCalculationView(LoginRequiredMixin, View):
 
         for teacher in teachers:
             work_days = Attendance.objects.filter(teacher=teacher, date__year=year, date__month=month).count()
-            base_amount = teacher.base_salary * work_days if teacher.base_salary else 0
+            base_amount = teacher.base_salary * work_days * 2 if teacher.base_salary else 0
             additional_amount = teacher.additional_salary if teacher.additional_salary else 0
             total_amount = base_amount + additional_amount
 
