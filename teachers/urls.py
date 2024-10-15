@@ -12,4 +12,5 @@ urlpatterns = [
     path('salary/calculate/', views.SalaryCalculationView.as_view(), name='salary_calculation'),
     path('salary/table/', views.SalaryTableView.as_view(), name='salary_table'),
     path('salary/table/<int:year>/', views.SalaryTableView.as_view(), name='salary_table_year'),
+    path('teacher/<int:teacher_id>/pdf/', views.TeacherPDFReportView.as_view(), name='teacher_pdf_report'),
 ]

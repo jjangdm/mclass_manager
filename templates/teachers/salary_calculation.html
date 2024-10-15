@@ -1,52 +1,75 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-{% block title %}급여 계산 결과 ({{ year }}년 {{ month }}월){% endblock %}
+{% block extra_head %}
+<style>
+    .form-group {
+        margin-right: 15px;
+    }
+    .amount-column {
+        text-align: right;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<h4>급여 계산 결과 ({{ year }}년 {{ month }}월)</h4>
+<h2 class="mb-4">급여 계산</h2>
 
-<form method="get" action="{% url 'teachers:salary_calculation' %}">
-    <div class="form-group">
-        <label for="year">연도:</label>
-        <select name="year" id="year" class="form-control">
-            {% for y in years %}
-                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}년</option>
-            {% endfor %}
-        </select>
+<form method="get" class="mb-4">
+    <div class="d-flex align-items-end">
+        <div class="form-group">
+            <label for="year" class="mr-2">연도:</label>
+            <select name="year" id="year" class="form-control">
+                {% for y in years %}
+                    <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}년</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="month" class="mr-2">월:</label>
+            <select name="month" id="month" class="form-control">
+                {% for m in months %}
+                    <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ m }}월</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">조회</button>
     </div>
-    <div class="form-group">
-        <label for="month">월:</label>
-        <select name="month" id="month" class="form-control">
-            {% for m in months %}
-                <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ m }}월</option>
-            {% endfor %}
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">조회</button>
 </form>
 
-<table class="table table-striped mt-4">
-    <thead>
-        <tr>
-            <th align="center">교사명</th>
-            <th align="center">근무일수</th>
-            <th align="center">급여</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for data in salary_data %}
-        <tr>
-            <td align="center">{{ data.teacher.name }}</td>
-            <td align="center">{{ data.work_days }}일</td>
-            <td align="right">{{ data.total_amount|intcomma }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="3">급여 정보가 없습니다.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'teachers:teacher_list' %}" class="btn btn-secondary">목록으로</a>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="text-center">교사명</th>
+                <th class="text-center">은행명</th>
+                <th class="text-center">계좌번호</th>
+                <th class="text-center">근무일수</th>
+                <th class="text-center">근무시간</th>
+                <th class="amount-column">급여</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in salary_data %}
+            <tr>
+                <td class="text-center"><a href="{% url 'teachers:teacher_detail' data.teacher.id %}">{{ data.teacher.name }}</a></td>
+                <td class="text-center">{{ data.bank_name }}</td>
+                <td class="text-center">{{ data.account_number }}</td>
+                <td class="text-center">{{ data.work_days|intcomma }}</td>
+                <td class="text-center">{{ data.work_hours|intcomma }}</td>
+                <td class="amount-column">{{ data.total_amount|intcomma }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="text-right"><strong>합계</strong></td>
+                <td class="amount-column"><strong>{{ total_salary|intcomma }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
 {% endblock %}

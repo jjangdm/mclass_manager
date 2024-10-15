@@ -29,14 +29,14 @@ class Teacher(models.Model):
     )
     email = models.EmailField(blank=True, null=True, verbose_name='이메일')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True, verbose_name='성별')
-    hire_date = models.DateField(blank=True, null=True, verbose_name='입사일')
-    resignation_date = models.DateField(blank=True, null=True, verbose_name='퇴사일')
+    hire_date = models.DateField(blank=True, null=True, verbose_name='입사��')
+    resignation_date = models.DateField(null=True, blank=True, verbose_name='퇴사일')
     bank = models.ForeignKey('common.Bank', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='거래은행')
     account_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='급여계좌')
     base_salary = models.IntegerField(blank=True, null=True, verbose_name='급여기준', default=15000)
     additional_salary = models.IntegerField(blank=True, null=True, verbose_name='추가급여', default=0)
     other_info = models.TextField(blank=True, null=True, verbose_name='기타')
-    is_active = models.BooleanField(default=True, verbose_name='재직중')
+    is_active = models.BooleanField(default=True, verbose_name="재직 중")
     extra_field1 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비1')
     extra_field2 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비2')
     extra_field3 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비3')
@@ -48,6 +48,16 @@ class Teacher(models.Model):
     class Meta:
         verbose_name = '교사'
         verbose_name_plural = '교사'
+
+    def save(self, *args, **kwargs):
+        if self.resignation_date and self.resignation_date <= timezone.now().date():
+            self.is_active = False
+        super().save(*args, **kwargs)
+
+    def update_active_status(self):
+        if self.resignation_date and self.resignation_date <= timezone.now().date():
+            self.is_active = False
+            self.save()
 
 class Attendance(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='교사')

@@ -5,12 +5,17 @@ from .models import Teacher, Attendance
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['name', 'phone_number', 'email', 'gender', 'hire_date', 'resignation_date',
-                  'bank', 'account_number', 'base_salary', 'additional_salary', 'other_info', 'is_active']
-        widgets = {
-            'hire_date': forms.DateInput(attrs={'type': 'date'}),
-            'resignation_date': forms.DateInput(attrs={'type': 'date'}),
-        }
+        fields = ['name', 'email', 'phone_number', 'base_salary', 'additional_salary', 'is_active', 'resignation_date']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        resignation_date = cleaned_data.get('resignation_date')
+        is_active = cleaned_data.get('is_active')
+
+        if resignation_date and resignation_date <= timezone.now().date():
+            cleaned_data['is_active'] = False
+        
+        return cleaned_data
 
 class AttendanceRecordForm(forms.Form):
     is_present = forms.BooleanField(required=False, initial=True, label='출근')

@@ -1,17 +1,12 @@
-
 {% extends 'base.html' %}
 {% load custom_filters %}
 {% load humanize %}
 
-{% block title %}급여 테이블 ({{ year }}년){% endblock %}
+{% block title %}급여 내역 ({{ year }}년){% endblock %}
 
 {% block extra_head %}
 <style>
-    .table th {
-        text-align: center;
-        vertical-align: middle;
-    }
-    .table td {
+    .table th, .table td {
         text-align: center;
         vertical-align: middle;
     }
@@ -22,7 +17,7 @@
 {% endblock %}
 
 {% block content %}
-<h4 class="mb-4">급여 테이블 ({{ year }}년)</h4>
+<h1 class="mb-4">급여 내역 ({{ year }}년)</h1>
 
 <form method="get" action="{% url 'teachers:salary_table' %}" class="mb-4">
     <div class="form-group">
@@ -57,6 +52,19 @@
             </tr>
             {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+                <td><strong>총 합계</strong></td>
+                {% for month in months %}
+                <td class="amount">
+                    <strong>
+                        {{ salary_table|sum_column:month|floatformat:0|intcomma }}
+                    </strong>
+                </td>
+                {% endfor %}
+                <td class="amount"><strong>{{ grand_total|floatformat:0|intcomma }}</strong></td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 <a href="{% url 'teachers:teacher_list' %}" class="btn btn-secondary">목록으로</a>
