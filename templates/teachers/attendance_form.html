@@ -4,11 +4,90 @@
 {% block title %}출근 기록{% endblock %}
 
 {% block content %}
-<h1>출근 기록</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">기록</button>
-    <a href="{% url 'teachers:teacher_list' %}" class="btn btn-secondary">취소</a>
-</form>
+<div class="card mb-4">
+    <div class="card-body">
+        <h2 class="card-title mb-4">출근 기록</h2>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {{ form.date|as_crispy_field }}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>교사</th>
+                        <th>출근</th>
+                        <th>시작 시간</th>
+                        <th>종료 시간</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for field in form %}
+                        {% if field.name != 'date' %}
+                            {% if 'is_present' in field.name %}
+                                <tr>
+                                    <td>{{ field.label }}</td>
+                                    <td>{{ field }}</td>
+                            {% elif 'start_time' in field.name %}
+                                    <td>{{ field }}</td>
+                            {% elif 'end_time' in field.name %}
+                                    <td>{{ field }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">저장</button>
+        </form>
+    </div>
+</div>
+
+<h5 class="mb-4">{{ current_month }} 출근 기록</h5>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for teacher, data in teacher_records.items %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ teacher.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">총 근무 시간: {{ data.total_hours|floatformat:2 }} 시간</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>날짜</th>
+                                    <th>시작 시간</th>
+                                    <th>종료 시간</th>
+                                    <th>근무 시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in data.records %}
+                                    <tr>
+                                        <td>{{ record.date|date:"Y-m-d" }}</td>
+                                        <td>{{ record.start_time|time:"H:i" }}</td>
+                                        <td>{{ record.end_time|time:"H:i" }}</td>
+                                        <td>
+                                            {% if record.work_hours is not None %}
+                                                {{ record.work_hours|floatformat:2 }} 시간
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">이번 달 출근 기록이 없습니다.</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}

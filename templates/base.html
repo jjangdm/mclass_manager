@@ -42,7 +42,11 @@
         h1, h2, h3, h4, h5, h6 {
             color: #FF8C2A;
         }
+        .container {
+            max-width: 960px;
+        }
     </style>
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
@@ -74,6 +78,17 @@
     </nav>
 
     <div class="container mt-4">
+        {% if request.session.message %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ request.session.message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% comment %}메시지를 표시한 후 세션에서 제거{% endcomment %}
+            {% with request.session.message as message %}
+                {% with None as request.session.message %}{% endwith %}
+            {% endwith %}
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </div>

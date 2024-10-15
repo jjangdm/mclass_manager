@@ -36,6 +36,7 @@ class Teacher(models.Model):
     base_salary = models.IntegerField(blank=True, null=True, verbose_name='급여기준', default=15000)
     additional_salary = models.IntegerField(blank=True, null=True, verbose_name='추가급여', default=0)
     other_info = models.TextField(blank=True, null=True, verbose_name='기타')
+    is_active = models.BooleanField(default=True, verbose_name='재직중')
     extra_field1 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비1')
     extra_field2 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비2')
     extra_field3 = models.CharField(max_length=100, blank=True, null=True, verbose_name='예비3')
@@ -50,14 +51,15 @@ class Teacher(models.Model):
 
 class Attendance(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='교사')
-    date = models.DateField(verbose_name='날짜')
-    check_in = models.TimeField(default=datetime.time(18, 0), verbose_name='출근 시간')
-    check_out = models.TimeField(default=datetime.time(20, 0), verbose_name='퇴근 시간')
+    date = models.DateField(default=timezone.now, verbose_name='날짜')
+    is_present = models.BooleanField(default=True, verbose_name='출근')
+    start_time = models.TimeField(null=True, blank=True, verbose_name='근무 시작 시간')
+    end_time = models.TimeField(null=True, blank=True, verbose_name='근무 종료 시간')
 
     class Meta:
+        unique_together = ['teacher', 'date']
         verbose_name = '출근기록'
         verbose_name_plural = '출근기록들'
-        unique_together = ['teacher', 'date']
 
     def __str__(self):
         return f"{self.teacher.name} - {self.date}"

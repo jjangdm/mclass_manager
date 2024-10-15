@@ -4,7 +4,7 @@
 {% block title %}급여 계산 결과 ({{ year }}년 {{ month }}월){% endblock %}
 
 {% block content %}
-<h1>급여 계산 결과 ({{ year }}년 {{ month }}월)</h1>
+<h4>급여 계산 결과 ({{ year }}년 {{ month }}월)</h4>
 
 <form method="get" action="{% url 'teachers:salary_calculation' %}">
     <div class="form-group">
@@ -31,7 +31,7 @@
         <tr>
             <th>교사명</th>
             <th>근무일수</th>
-            <th>총 급여</th>
+            <th>급여총액</th>
         </tr>
     </thead>
     <tbody>

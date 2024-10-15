@@ -4,7 +4,7 @@
 {% block title %}{{ teacher.name }} 상세 정보{% endblock %}
 
 {% block content %}
-<h1>{{ teacher.name }} 상세 정보</h1>
+<h4>{{ teacher.name }} 상세 정보</h4>
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">기본 정보</h5>
@@ -15,10 +15,10 @@
         <p><strong>입사일:</strong> {{ teacher.hire_date|date:"Y-m-d" }}</p>
         <p><strong>퇴사일:</strong> {{ teacher.resignation_date|date:"Y-m-d"|default:"해당 없음" }}</p>
         <p><strong>거래은행:</strong> {{ teacher.bank.name|default:"미등록" }}</p>
-        <p><strong>급여 계좌 번호:</strong> {{ teacher.account_number|default:"미등록" }}</p>
-        <p><strong>급여 기준:</strong> {{ teacher.base_salary|default:"0"|intcomma }}원</p>
-        <p><strong>추가 급여:</strong> {{ teacher.additional_salary|default:"0"|intcomma }}원</p>
-        <p><strong>기타 정보:</strong> {{ teacher.other_info|linebreaks|default:"없음" }}</p>
+        <p><strong>급여계좌:</strong> {{ teacher.account_number|default:"미등록" }}</p>
+        <p><strong>급여기준:</strong> {{ teacher.base_salary|default:"0"|intcomma }}원</p>
+        <p><strong>추가급여:</strong> {{ teacher.additional_salary|default:"0"|intcomma }}원</p>
+        <p><strong>기타:</strong> {{ teacher.other_info|linebreaks|default:"없음" }}</p>
     </div>
 </div>
 <div class="mt-3">
