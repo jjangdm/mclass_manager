@@ -1,23 +1,11 @@
 {% extends 'base.html' %}
-{% load custom_filters %}
 {% load humanize %}
+{% load custom_filters %}
 
 {% block title %}급여 내역 ({{ year }}년){% endblock %}
 
-{% block extra_head %}
-<style>
-    .table th, .table td {
-        text-align: center;
-        vertical-align: middle;
-    }
-    .table td.amount {
-        text-align: right;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<h4 class="mb-4">급여 내역 ({{ year }}년)</h4>
+<h1 class="mb-4">급여 내역 ({{ year }}년)</h1>
 
 <form method="get" action="{% url 'teachers:salary_table' %}" class="mb-4">
     <div class="form-group">
@@ -36,9 +24,9 @@
             <tr>
                 <th>교사명</th>
                 {% for month in months %}
-                <th>{{ month }}월</th>
+                <th class="text-right">{{ month }}월</th>
                 {% endfor %}
-                <th>합계</th>
+                <th class="text-right">합계</th>
             </tr>
         </thead>
         <tbody>
@@ -46,9 +34,9 @@
             <tr>
                 <td>{{ row.teacher.name }}</td>
                 {% for month in months %}
-                <td class="amount">{{ row|get_item:month|floatformat:0|intcomma }}</td>
+                <td class="text-right">{{ row|get_item:month|floatformat:0|intcomma }}</td>
                 {% endfor %}
-                <td class="amount">{{ row.total|floatformat:0|intcomma }}</td>
+                <td class="text-right">{{ row.total|floatformat:0|intcomma }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -56,16 +44,25 @@
             <tr>
                 <td><strong>총 합계</strong></td>
                 {% for month in months %}
-                <td class="amount">
+                <td class="text-right">
                     <strong>
                         {{ salary_table|sum_column:month|floatformat:0|intcomma }}
                     </strong>
                 </td>
                 {% endfor %}
-                <td class="amount"><strong>{{ grand_total|floatformat:0|intcomma }}</strong></td>
+                <td class="text-right"><strong>{{ grand_total|floatformat:0|intcomma }}</strong></td>
             </tr>
         </tfoot>
     </table>
 </div>
 <a href="{% url 'teachers:teacher_list' %}" class="btn btn-secondary">목록으로</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table th.text-right,
+    .table td.text-right {
+        text-align: right !important;
+    }
+</style>
 {% endblock %}

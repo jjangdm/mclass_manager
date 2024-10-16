@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime, time
 from io import BytesIO
 from pyexpat.errors import messages
 from django.http import HttpResponse
@@ -12,7 +12,6 @@ from .models import Teacher, Attendance, Salary
 from .forms import BulkAttendanceForm, TeacherForm
 from django.contrib import messages
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -23,7 +22,11 @@ import base64
 from django.views import View
 from django.db.models import Min, Max
 from django.conf import settings
-
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.platypus.frames import Frame
+from reportlab.platypus.doctemplate import PageTemplate
+import urllib.parse
 
 
 # 폰트 등록
@@ -145,41 +148,43 @@ class SalaryCalculationView(LoginRequiredMixin, View):
         year = int(request.GET.get('year', current_year))
         month = int(request.GET.get('month', current_month))
 
+        start_date = datetime(year, month, 1)
+        end_date = (start_date + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+
         teachers = Teacher.objects.filter(is_active=True)
         salary_data = []
 
         for teacher in teachers:
-            start_date = timezone.datetime(year, month, 1)
-            end_date = (start_date + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            attendances = Attendance.objects.filter(
+                teacher=teacher,
+                date__range=[start_date, end_date]
+            )
 
-            if teacher.resignation_date and start_date <= teacher.resignation_date <= end_date:
-                work_days = Attendance.objects.filter(
-                    teacher=teacher, 
-                    date__year=year, 
-                    date__month=month,
-                    date__lte=teacher.resignation_date
-                ).count()
-            else:
-                work_days = Attendance.objects.filter(
-                    teacher=teacher, 
-                    date__year=year, 
-                    date__month=month
-                ).count()
+            total_work_hours = 0
+            for attendance in attendances:
+                if attendance.start_time and attendance.end_time:
+                    start_datetime = datetime.combine(attendance.date, attendance.start_time)
+                    end_datetime = datetime.combine(attendance.date, attendance.end_time)
+                    if end_datetime < start_datetime:  # 자정을 넘긴 경우
+                        end_datetime += timedelta(days=1)
+                    work_hours = (end_datetime - start_datetime).total_seconds() / 3600
+                    total_work_hours += work_hours
 
-            base_amount = teacher.base_salary * work_days * 2 if teacher.base_salary else 0
-            additional_amount = teacher.additional_salary if teacher.additional_salary else 0
+            total_work_hours = round(total_work_hours, 2)
+            base_amount = int(teacher.base_salary * total_work_hours) if teacher.base_salary else 0
+            additional_amount = int(teacher.additional_salary) if teacher.additional_salary else 0
             total_amount = base_amount + additional_amount
 
             salary_data.append({
                 'teacher': teacher,
-                'work_days': work_days,
+                'work_days': attendances.count(),
+                'work_hours': total_work_hours,
                 'total_amount': total_amount,
-                'bank_name': teacher.bank.name if teacher.bank else '',  # 은행명 추가
-                'account_number': teacher.account_number,  # 계좌번호 추가
-                'work_hours': work_days * 8  # 근무시간 추가 (1일 8시간 근무 가정)
+                'bank_name': teacher.bank.name if teacher.bank else '',
+                'account_number': teacher.account_number,
             })
 
-        total_salary = sum(data['total_amount'] for data in salary_data)  # 급여 합계 계산
+        total_salary = sum(data['total_amount'] for data in salary_data)
 
         years = range(current_year - 5, current_year + 1)
         months = range(1, 13)
@@ -257,25 +262,40 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         teacher = get_object_or_404(Teacher, id=teacher_id)
         
         buffer = BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+        
+        def footer(canvas, doc):
+            canvas.saveState()
+            footer_text = "엠클래스수학과학전문학원"
+            canvas.setFont('NanumGothic', 10)
+            canvas.drawCentredString(A4[0]/2, 20*mm, footer_text)
+            canvas.restoreState()
+        
+        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=20*mm, leftMargin=20*mm, topMargin=20*mm, bottomMargin=30*mm)
+        
+        frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height - 10*mm, id='normal')
+        template = PageTemplate(id='test', frames=frame, onPage=footer)
+        doc.addPageTemplates([template])
 
         elements = []
 
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='Korean', fontName='NanumGothic', fontSize=10, leading=14, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='KoreanTitle', fontName='NanumGothic', fontSize=16, leading=20, alignment=1, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='KoreanSubtitle', fontName='NanumGothic', fontSize=12, leading=16, encoding='utf-8'))
 
         # 제목
-        elements.append(Paragraph(f"{teacher.name} 교사 보고서", styles['Korean']))
-        elements.append(Spacer(1, 12))
+        elements.append(Paragraph(f"{teacher.name} 선생님 근무 내역", styles['KoreanTitle']))
+        elements.append(Spacer(1, 10*mm))
 
-        # 교사 정보
+        # 기본 정보
         data = [
             ["이름:", teacher.name],
             ["전화번호:", teacher.phone_number],
             ["이메일:", teacher.email],
             ["입사일:", teacher.hire_date.strftime("%Y-%m-%d")],
+            ["퇴사일:", teacher.resignation_date.strftime("%Y-%m-%d") if teacher.resignation_date else "재직 중"]
         ]
-        t = Table(data, colWidths=[100, 300])
+        t = Table(data, colWidths=[50*mm, 120*mm])
         t.setStyle(TableStyle([
             ('FONT', (0,0), (-1,-1), 'NanumGothic'),
             ('FONTSIZE', (0,0), (-1,-1), 10),
@@ -286,104 +306,84 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
             ('BOX', (0,0), (-1,-1), 0.25, colors.black),
         ]))
         elements.append(t)
-        elements.append(Spacer(1, 12))
+        elements.append(Spacer(1, 10*mm))
 
         # 출근 기록
-        elements.append(Paragraph("출근 기록 (최근 30일)", styles['Korean']))
-        elements.append(Spacer(1, 6))
+        elements.append(Paragraph("근무 기록", styles['KoreanSubtitle']))
+        elements.append(Spacer(1, 5*mm))
 
-        current_date = timezone.now().date()
-        start_date = current_date - timedelta(days=30)
-        attendances = Attendance.objects.filter(teacher=teacher, date__range=[start_date, current_date]).order_by('-date')
+        attendances = Attendance.objects.filter(teacher=teacher).order_by('date')
         
         if attendances:
-            attendance_data = [["날짜", "출근 시간", "퇴근 시간"]]
+            monthly_data = {}
             for attendance in attendances:
-                attendance_data.append([
-                    attendance.date.strftime("%Y-%m-%d"),
-                    attendance.start_time.strftime("%H:%M") if attendance.start_time else "-",
-                    attendance.end_time.strftime("%H:%M") if attendance.end_time else "-"
-                ])
-            t = Table(attendance_data, colWidths=[100, 100, 100])
+                year_month = attendance.date.strftime("%Y-%m")
+                if year_month not in monthly_data:
+                    monthly_data[year_month] = {'hours': 0, 'amount': 0}
+                
+                if attendance.start_time and attendance.end_time:
+                    start_datetime = datetime.combine(attendance.date, attendance.start_time)
+                    end_datetime = datetime.combine(attendance.date, attendance.end_time)
+                    if end_datetime < start_datetime:  # 자정을 넘긴 경우
+                        end_datetime += timedelta(days=1)
+                    work_hours = (end_datetime - start_datetime).total_seconds() / 3600
+                    monthly_data[year_month]['hours'] += work_hours
+                    monthly_data[year_month]['amount'] += work_hours * teacher.base_salary
+
+            attendance_data = [["년월", "근무 시간", "급여"]]
+            total_hours = 0
+            total_amount = 0
+            for year_month, data in monthly_data.items():
+                year, month = year_month.split('-')
+                hours = round(data['hours'], 2)
+                amount = round(data['amount'])
+                attendance_data.append([f"{year}년 {month}월", f"{hours}시간", f"{amount:,}원"])
+                total_hours += hours
+                total_amount += amount
+            
+            attendance_data.append(["총계", f"{total_hours:.2f}시간", f"{total_amount:,}원"])
+
+            t = Table(attendance_data, colWidths=[60*mm, 50*mm, 60*mm])
             t.setStyle(TableStyle([
                 ('FONT', (0,0), (-1,-1), 'NanumGothic'),
                 ('FONTSIZE', (0,0), (-1,-1), 10),
-                ('BACKGROUND', (0,0), (-1,0), colors.grey),
-                ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
+                ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                ('TEXTCOLOR', (0,0), (-1,0), colors.black),
                 ('ALIGN', (0,0), (-1,-1), 'CENTER'),
                 ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
                 ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
                 ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                ('BACKGROUND', (0,-1), (-1,-1), colors.lightgrey),
             ]))
             elements.append(t)
         else:
-            elements.append(Paragraph("출근 기록이 없습니다.", styles['Korean']))
+            elements.append(Paragraph("근무 기록이 없습니다.", styles['Korean']))
 
-        elements.append(Spacer(1, 12))
-
-        # 급여 정보
-        elements.append(Paragraph("급여 정보 (최근 3개월)", styles['Korean']))
-        elements.append(Spacer(1, 6))
-
-        current_month = timezone.now().month
-        current_year = timezone.now().year
-        salaries = Salary.objects.filter(teacher=teacher, year=current_year, month__in=[current_month-2, current_month-1, current_month]).order_by('-month')
-        
-        if salaries:
-            salary_data = [["년월", "급여"]]
-            for salary in salaries:
-                salary_data.append([f"{salary.year}년 {salary.month}월", f"{salary.total_amount:,}원"])
-            t = Table(salary_data, colWidths=[100, 200])
-            t.setStyle(TableStyle([
-                ('FONT', (0,0), (-1,-1), 'NanumGothic'),
-                ('FONTSIZE', (0,0), (-1,-1), 10),
-                ('BACKGROUND', (0,0), (-1,0), colors.grey),
-                ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
-                ('ALIGN', (0,0), (-1,-1), 'CENTER'),
-                ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-            ]))
-            elements.append(t)
-        else:
-            elements.append(Paragraph("급여 정보가 없습니다.", styles['Korean']))
-
-        # PDF 생성
         doc.build(elements)
 
         pdf = buffer.getvalue()
         buffer.close()
         
-        if request.GET.get('download') == 'true':
-            response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="{teacher.name}_report.pdf"'
-            response.write(pdf)
-            return response
-        else:
-            # PDF를 임시 파일로 저장
-            pdf_dir = os.path.join(settings.MEDIA_ROOT, 'temp_pdfs')
-            os.makedirs(pdf_dir, exist_ok=True)
-            pdf_filename = f'teacher_{teacher.id}_report.pdf'
-            pdf_path = os.path.join(pdf_dir, pdf_filename)
-            
-            with open(pdf_path, 'wb') as f:
-                f.write(pdf)
-            
-            response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
-            response['Content-Disposition'] = f'inline; filename="{pdf_filename}"'
-            return response
-
-
-class TeacherPDFViewerView(LoginRequiredMixin, View):
-    def get(self, request, teacher_id):
-        teacher = get_object_or_404(Teacher, id=teacher_id)
-        pdf_filename = f'teacher_{teacher.id}_report.pdf'
-        pdf_path = os.path.join(settings.MEDIA_ROOT, 'temp_pdfs', pdf_filename)
+        # PDF 파일 이름 설정
+        filename = f"{teacher.name} 선생님 근무 내역.pdf"
+        encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
         
-        if not os.path.exists(pdf_path):
-            # PDF가 없으면 생성
-            pdf_report_view = TeacherPDFReportView()
-            return pdf_report_view.get(request, teacher_id)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="{encoded_filename}"'
+        response.write(pdf)
         
-        pdf_url = settings.MEDIA_URL + f'temp_pdfs/{pdf_filename}'
-        return render(request, 'teachers/pdf_viewer.html', {'teacher': teacher, 'pdf_url': pdf_url})
+        return response
+
+# class TeacherPDFViewerView(LoginRequiredMixin, View):
+#     def get(self, request, teacher_id):
+#         teacher = get_object_or_404(Teacher, id=teacher_id)
+#         pdf_filename = f'teacher_{teacher.id}_report.pdf'
+#         pdf_path = os.path.join(settings.MEDIA_ROOT, 'temp_pdfs', pdf_filename)
+        
+#         if not os.path.exists(pdf_path):
+#             # PDF가 없으면 생성
+#             pdf_report_view = TeacherPDFReportView()
+#             return pdf_report_view.get(request, teacher_id)
+        
+#         pdf_url = settings.MEDIA_URL + f'temp_pdfs/{pdf_filename}'
+#         return render(request, 'teachers/pdf_viewer.html', {'teacher': teacher, 'pdf_url': pdf_url})

@@ -30,7 +30,7 @@
             <td>
                 <a href="{% url 'teachers:teacher_detail' teacher.id %}" class="btn btn-sm btn-info">상세</a>
                 <a href="{% url 'teachers:teacher_update' teacher.id %}" class="btn btn-sm btn-warning">수정</a>
-                <a href="{% url 'teachers:teacher_pdf_viewer' teacher.id %}" class="btn btn-sm btn-secondary">PDF 보고서</a>
+                <a href="{% url 'teachers:teacher_pdf_report' teacher.id %}" class="btn btn-sm btn-secondary" target="_blank">PDF 보고서</a>
             </td>
         </tr>
         {% empty %}
