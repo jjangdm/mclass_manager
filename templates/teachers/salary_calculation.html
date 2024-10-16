@@ -2,12 +2,12 @@
 {% load humanize %}
 
 {% block content %}
-<h2 class="mb-4">급여 계산</h2>
+<h3 class="mb-4">급여</h3>
 
 <form method="get" class="mb-4">
     <div class="row align-items-end">
         <div class="col-auto">
-            <label for="year" class="form-label">년도</label>
+            <!-- <label for="year" class="form-label">년도</label> -->
             <select name="year" id="year" class="form-select">
                 {% for y in years %}
                     <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}년</option>
@@ -15,7 +15,7 @@
             </select>
         </div>
         <div class="col-auto">
-            <label for="month" class="form-label">월</label>
+            <!-- <label for="month" class="form-label">월</label> -->
             <select name="month" id="month" class="form-select">
                 {% for m in months %}
                     <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ m }}월</option>
@@ -31,11 +31,11 @@
 <table class="table">
     <thead>
         <tr>
-            <th class="text-center">교사명</th>
-            <th class="text-center">은행명</th>
-            <th class="text-center">계좌번호</th>
-            <th class="text-center">근무일수</th>
-            <th class="text-center">근무시간</th>
+            <th class="text-center">선생님</th>
+            <th class="text-center">은행</th>
+            <th class="text-left">계좌</th>
+            <th class="text-right">근무일수</th>
+            <th class="text-right">근무시간</th>
             <th class="text-right">급여</th>
         </tr>
     </thead>
@@ -44,9 +44,9 @@
         <tr>
             <td class="text-center"><a href="{% url 'teachers:teacher_detail' data.teacher.id %}">{{ data.teacher.name }}</a></td>
             <td class="text-center">{{ data.bank_name }}</td>
-            <td class="text-center">{{ data.account_number }}</td>
-            <td class="text-center">{{ data.work_days }}</td>
-            <td class="text-center">{{ data.work_hours|floatformat:2 }}</td>
+            <td class="text-left">{{ data.account_number }}</td>
+            <td class="text-right">{{ data.work_days }}</td>
+            <td class="text-right">{{ data.work_hours|floatformat:1 }}</td>
             <td class="text-right">{{ data.total_amount|intcomma }}</td>
         </tr>
         {% endfor %}

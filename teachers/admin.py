@@ -21,13 +21,13 @@ class SalaryAdmin(admin.ModelAdmin):
     search_fields = ('teacher__name',)
 
     def formatted_base_amount(self, obj):
-        return format_html('{:,}원', obj.base_amount)
+        return format_html('{}원', '{:,}'.format(obj.base_amount))
     formatted_base_amount.short_description = '기본급'
 
     def formatted_additional_amount(self, obj):
-        return format_html('{:,}원', obj.additional_amount)
+        return format_html('{}원', '{:,}'.format(obj.additional_amount))
     formatted_additional_amount.short_description = '추가급'
 
     def formatted_total_amount(self, obj):
-        return format_html('{:,}원', obj.total_amount)
+        return format_html('{}원', '{:,}'.format(obj.total_amount))
     formatted_total_amount.short_description = '총액'
