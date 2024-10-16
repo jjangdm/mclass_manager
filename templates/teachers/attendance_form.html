@@ -6,7 +6,7 @@
 {% block content %}
 <div class="card mb-4">
     <div class="card-body">
-        <h2 class="card-title mb-4">출근 기록</h2>
+        <h4 class="card-title mb-4">출근 기록</h4>
         <form method="post" class="needs-validation" novalidate>
             {% csrf_token %}
             {{ form.date|as_crispy_field }}

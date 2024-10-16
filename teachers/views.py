@@ -2,19 +2,40 @@ from datetime import timedelta
 from io import BytesIO
 from pyexpat.errors import messages
 from django.http import HttpResponse
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Min, Max
 from django.utils import timezone
 from .models import Teacher, Attendance, Salary
 from .forms import BulkAttendanceForm, TeacherForm
 from django.contrib import messages
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+import os
+import base64
+from django.views import View
+from django.db.models import Min, Max
+from django.conf import settings
+
+
+
+# 폰트 등록
+font_path = settings.FONT_PATH
+if os.path.exists(font_path):
+    pdfmetrics.registerFont(TTFont('NanumGothic', font_path))
+    print(f"Font registered successfully: {font_path}")
+else:
+    print(f"Error: Font file not found at {font_path}")
+    # 폰트 파일이 없을 경우 대체 폰트 사용 (예: Helvetica)
+    pdfmetrics.registerFont(TTFont('NanumGothic', 'Helvetica'))
+
 
 
 class TeacherListView(LoginRequiredMixin, ListView):
@@ -85,7 +106,24 @@ class AttendanceCreateView(LoginRequiredMixin, View):
         teachers = Teacher.objects.filter(is_active=True)
         form = BulkAttendanceForm(request.POST, teachers=teachers)
         if form.is_valid():
-            form.save()
+            date = form.cleaned_data['date']
+            for teacher in teachers:
+                is_present = form.cleaned_data.get(f'is_present_{teacher.id}', False)
+                start_time = form.cleaned_data.get(f'start_time_{teacher.id}')
+                end_time = form.cleaned_data.get(f'end_time_{teacher.id}')
+                
+                if is_present:
+                    Attendance.objects.update_or_create(
+                        teacher=teacher,
+                        date=date,
+                        defaults={
+                            'start_time': start_time,
+                            'end_time': end_time
+                        }
+                    )
+                else:
+                    Attendance.objects.filter(teacher=teacher, date=date).delete()
+            
             messages.success(request, '출근 기록이 성공적으로 저장되었습니다.')
             return redirect('teachers:attendance_create')
         
@@ -218,58 +256,134 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
     def get(self, request, teacher_id):
         teacher = get_object_or_404(Teacher, id=teacher_id)
         
-        # Create a file-like buffer to receive PDF data
         buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
 
-        # Create the PDF object, using the buffer as its "file."
-        p = canvas.Canvas(buffer, pagesize=letter)
+        elements = []
 
-        # Draw things on the PDF. Here's where the PDF generation happens.
-        self.draw_pdf(p, teacher)
+        styles = getSampleStyleSheet()
+        styles.add(ParagraphStyle(name='Korean', fontName='NanumGothic', fontSize=10, leading=14, encoding='utf-8'))
 
-        # Close the PDF object cleanly, and we're done.
-        p.showPage()
-        p.save()
+        # 제목
+        elements.append(Paragraph(f"{teacher.name} 교사 보고서", styles['Korean']))
+        elements.append(Spacer(1, 12))
 
-        # FileResponse sets the Content-Disposition header so that browsers
-        # present the option to save the file.
-        buffer.seek(0)
-        return HttpResponse(buffer, content_type='application/pdf')
+        # 교사 정보
+        data = [
+            ["이름:", teacher.name],
+            ["전화번호:", teacher.phone_number],
+            ["이메일:", teacher.email],
+            ["입사일:", teacher.hire_date.strftime("%Y-%m-%d")],
+        ]
+        t = Table(data, colWidths=[100, 300])
+        t.setStyle(TableStyle([
+            ('FONT', (0,0), (-1,-1), 'NanumGothic'),
+            ('FONTSIZE', (0,0), (-1,-1), 10),
+            ('TEXTCOLOR', (0,0), (0,-1), colors.grey),
+            ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+        ]))
+        elements.append(t)
+        elements.append(Spacer(1, 12))
 
-    def draw_pdf(self, p, teacher):
-        # Draw the teacher's information
-        p.setFont("Helvetica-Bold", 16)
-        p.drawString(1*inch, 10*inch, f"{teacher.name} 교사 보고서")
-        
-        p.setFont("Helvetica", 12)
-        p.drawString(1*inch, 9.5*inch, f"전화번호: {teacher.phone_number}")
-        p.drawString(1*inch, 9.25*inch, f"이메일: {teacher.email}")
-        p.drawString(1*inch, 9*inch, f"입사일: {teacher.hire_date}")
+        # 출근 기록
+        elements.append(Paragraph("출근 기록 (최근 30일)", styles['Korean']))
+        elements.append(Spacer(1, 6))
 
-        # Draw attendance information
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(1*inch, 8*inch, "출근 기록 (최근 30일)")
-        
         current_date = timezone.now().date()
         start_date = current_date - timedelta(days=30)
         attendances = Attendance.objects.filter(teacher=teacher, date__range=[start_date, current_date]).order_by('-date')
         
-        y = 7.5*inch
-        for attendance in attendances:
-            p.setFont("Helvetica", 12)
-            p.drawString(1*inch, y, f"{attendance.date}: {attendance.start_time} - {attendance.end_time}")
-            y -= 0.25*inch
+        if attendances:
+            attendance_data = [["날짜", "출근 시간", "퇴근 시간"]]
+            for attendance in attendances:
+                attendance_data.append([
+                    attendance.date.strftime("%Y-%m-%d"),
+                    attendance.start_time.strftime("%H:%M") if attendance.start_time else "-",
+                    attendance.end_time.strftime("%H:%M") if attendance.end_time else "-"
+                ])
+            t = Table(attendance_data, colWidths=[100, 100, 100])
+            t.setStyle(TableStyle([
+                ('FONT', (0,0), (-1,-1), 'NanumGothic'),
+                ('FONTSIZE', (0,0), (-1,-1), 10),
+                ('BACKGROUND', (0,0), (-1,0), colors.grey),
+                ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
+                ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+                ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+            ]))
+            elements.append(t)
+        else:
+            elements.append(Paragraph("출근 기록이 없습니다.", styles['Korean']))
 
-        # Draw salary information
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(1*inch, 3*inch, "급여 정보 (최근 3개월)")
-        
+        elements.append(Spacer(1, 12))
+
+        # 급여 정보
+        elements.append(Paragraph("급여 정보 (최근 3개월)", styles['Korean']))
+        elements.append(Spacer(1, 6))
+
         current_month = timezone.now().month
         current_year = timezone.now().year
         salaries = Salary.objects.filter(teacher=teacher, year=current_year, month__in=[current_month-2, current_month-1, current_month]).order_by('-month')
         
-        y = 2.5*inch
-        for salary in salaries:
-            p.setFont("Helvetica", 12)
-            p.drawString(1*inch, y, f"{salary.year}년 {salary.month}월: {salary.total_amount:,}원")
-            y -= 0.25*inch
+        if salaries:
+            salary_data = [["년월", "급여"]]
+            for salary in salaries:
+                salary_data.append([f"{salary.year}년 {salary.month}월", f"{salary.total_amount:,}원"])
+            t = Table(salary_data, colWidths=[100, 200])
+            t.setStyle(TableStyle([
+                ('FONT', (0,0), (-1,-1), 'NanumGothic'),
+                ('FONTSIZE', (0,0), (-1,-1), 10),
+                ('BACKGROUND', (0,0), (-1,0), colors.grey),
+                ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
+                ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+                ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+            ]))
+            elements.append(t)
+        else:
+            elements.append(Paragraph("급여 정보가 없습니다.", styles['Korean']))
+
+        # PDF 생성
+        doc.build(elements)
+
+        pdf = buffer.getvalue()
+        buffer.close()
+        
+        if request.GET.get('download') == 'true':
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{teacher.name}_report.pdf"'
+            response.write(pdf)
+            return response
+        else:
+            # PDF를 임시 파일로 저장
+            pdf_dir = os.path.join(settings.MEDIA_ROOT, 'temp_pdfs')
+            os.makedirs(pdf_dir, exist_ok=True)
+            pdf_filename = f'teacher_{teacher.id}_report.pdf'
+            pdf_path = os.path.join(pdf_dir, pdf_filename)
+            
+            with open(pdf_path, 'wb') as f:
+                f.write(pdf)
+            
+            response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+            response['Content-Disposition'] = f'inline; filename="{pdf_filename}"'
+            return response
+
+
+class TeacherPDFViewerView(LoginRequiredMixin, View):
+    def get(self, request, teacher_id):
+        teacher = get_object_or_404(Teacher, id=teacher_id)
+        pdf_filename = f'teacher_{teacher.id}_report.pdf'
+        pdf_path = os.path.join(settings.MEDIA_ROOT, 'temp_pdfs', pdf_filename)
+        
+        if not os.path.exists(pdf_path):
+            # PDF가 없으면 생성
+            pdf_report_view = TeacherPDFReportView()
+            return pdf_report_view.get(request, teacher_id)
+        
+        pdf_url = settings.MEDIA_URL + f'temp_pdfs/{pdf_filename}'
+        return render(request, 'teachers/pdf_viewer.html', {'teacher': teacher, 'pdf_url': pdf_url})
