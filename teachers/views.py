@@ -1,24 +1,21 @@
-from datetime import timedelta, datetime, time
+from datetime import timedelta, datetime
 from io import BytesIO
 from pyexpat.errors import messages
 from django.http import HttpResponse
-from django.http import FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from .models import Teacher, Attendance, Salary
+from .models import Teacher, Attendance
 from .forms import BulkAttendanceForm, TeacherForm
 from django.contrib import messages
-from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import os
-import base64
 from django.views import View
 from django.db.models import Min, Max
 from django.conf import settings
@@ -45,6 +42,19 @@ class TeacherListView(LoginRequiredMixin, ListView):
     model = Teacher
     template_name = 'teachers/teacher_list.html'
     context_object_name = 'teachers'
+
+    def get_queryset(self):
+        queryset = Teacher.objects.all()
+        show_inactive = self.request.GET.get('show_inactive') == 'on'
+        if not show_inactive:
+            queryset = queryset.filter(is_active=True)
+        return queryset.order_by('-hire_date')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_inactive'] = self.request.GET.get('show_inactive') == 'on'
+        return context
+
 
 class TeacherDetailView(LoginRequiredMixin, DetailView):
     model = Teacher

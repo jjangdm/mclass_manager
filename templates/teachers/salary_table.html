@@ -9,7 +9,6 @@
 
 <form method="get" action="{% url 'teachers:salary_table' %}" class="mb-4">
     <div class="form-group">
-        <!-- <label for="year">연도 선택:</label> -->
         <select name="year" id="year" class="form-control" onchange="this.form.submit()">
             {% for y in year_range %}
                 <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}년</option>
@@ -41,7 +40,7 @@
             {% endfor %}
         </tbody>
         <tfoot>
-            <tr>
+            <tr class="total-row">
                 <td class="text-center"><strong>합계</strong></td>
                 {% for month in months %}
                 <td class="text-right">
@@ -50,7 +49,9 @@
                     </strong>
                 </td>
                 {% endfor %}
-                <td class="text-right"><strong>{{ grand_total|floatformat:0|intcomma }}</strong></td>
+                <td class="text-right">
+                    <strong>{{ grand_total|floatformat:0|intcomma }}</strong>
+                </td>
             </tr>
         </tfoot>
     </table>
@@ -67,6 +68,13 @@
     .table th.text-center,
     .table td.text-center {
         text-align: center !important;
+    }
+    .total-row {
+        background-color: #f0f0f0;
+        border-top: 2px solid #dee2e6;
+    }
+    .total-row td {
+        padding: 10px 8px;
     }
 </style>
 {% endblock %}
