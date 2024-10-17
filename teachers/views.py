@@ -300,9 +300,9 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         # 기본 정보
         data = [
             ["이름:", teacher.name],
-            ["전화번호:", teacher.phone_number],
-            ["이메일:", teacher.email],
-            ["입사일:", teacher.hire_date.strftime("%Y-%m-%d")],
+            ["전화번호:", teacher.phone_number or ""],
+            ["이메일:", teacher.email or ""],
+            ["입사일:", teacher.hire_date.strftime("%Y-%m-%d") if teacher.hire_date else "정보 없음"],
             ["퇴사일:", teacher.resignation_date.strftime("%Y-%m-%d") if teacher.resignation_date else "재직 중"]
         ]
         t = Table(data, colWidths=[50*mm, 120*mm])
