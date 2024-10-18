@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'classes',
     'grades',
     'tuition',
+    'enrollments',
 ]
 
 

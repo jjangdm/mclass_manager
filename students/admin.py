@@ -3,20 +3,29 @@ from .models import Student
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'student_id', 'school', 'grade', 'interview_date', 'first_class_date')
+    list_filter = ('school', 'grade', 'gender')
+    search_fields = ('name', 'student_id', 'email')
     readonly_fields = ('student_id',)
-    fields = ('student_id', 'name', 'school', 'grade', 'phone', 'email', 'gender', 'parent_phone', 
-              'cash_receipt_number', 'interview_date', 'first_class_date', 'last_class_date', 
-              'interview_score', 'base_class')
-    list_display = ('student_id', 'name', 'school', 'grade', 'first_class_date')
-    search_fields = ('name', 'student_id', 'school__name')
-    list_filter = ('grade', 'school')
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj:  # 이미 생성된 객체인 경우
-            return self.readonly_fields + ('student_id',)
-        return self.readonly_fields
+    fieldsets = (
+        ('기본 정보', {
+            'fields': ('name', 'student_id', 'school', 'grade', 'gender', 'email')
+        }),
+        ('연락처 정보', {
+            'fields': ('phone_number', 'parent_phone', 'receipt_number')
+        }),
+        ('인터뷰 정보', {
+            'fields': ('interview_date', 'interview_score', 'interview_info')
+        }),
+        ('수업 정보', {
+            'fields': ('first_class_date', 'quit_date')
+        }),
+        ('추가 정보', {
+            'fields': ('personal_file', 'etc', 'extra1', 'extra2', 'extra3', 'extra4', 'extra5')
+        }),
+    )
 
     def save_model(self, request, obj, form, change):
-        if not obj.pk:  # 새로운 객체를 생성하는 경우
+        if not obj.student_id:
             obj.student_id = obj.generate_student_id()
         super().save_model(request, obj, form, change)
