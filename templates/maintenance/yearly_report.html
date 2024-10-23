@@ -1,0 +1,34 @@
+{% extends "maintenance/base.html" %}
+{% block title %}연간 관리비 현황{% endblock %}
+{% block content %}
+
+{% load humanize %}
+
+<h3>연간 관리비 현황</h3>
+<div class="summary">
+    <h3>{{ year }}년</h3>
+    <p>총 부과금액: {{ total_charge|intcomma }}원</p>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>호실</th>
+            {% for month in months %}
+            <th>{{ month }}월</th>
+            {% endfor %}
+            <th>합계</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for room_data in yearly_data %}
+        <tr>
+            <td>{{ room_data.room }}호</td>
+            {% for charge in room_data.monthly_charges %}
+            <td>{{ charge|intcomma }}원</td>
+            {% endfor %}
+            <td>{{ room_data.total|intcomma }}원</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

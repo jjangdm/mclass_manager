@@ -1,0 +1,29 @@
+{% extends "maintenance/base.html" %}
+{% block title %}관리비 등록{% endblock %}
+{% block content %}
+<h3>관리비 등록</h3>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="room">호실:</label>
+        {{ form.room }}
+    </div>
+    <div class="form-group">
+        <label for="date">부과년월:</label>
+        {{ form.date }}
+    </div>
+    <div class="form-group">
+        <label for="charge">부과금액:</label>
+        {{ form.charge }}
+    </div>
+    <div class="form-group">
+        <label for="date_paid">납부일자:</label>
+        {{ form.date_paid }}
+    </div>
+    <div class="form-group">
+        <label for="memo">메모:</label>
+        {{ form.memo }}
+    </div>
+    <button type="submit" class="btn">저장</button>
+</form>
+{% endblock %}
