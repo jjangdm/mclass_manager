@@ -29,7 +29,7 @@ class Teacher(models.Model):
     )
     email = models.EmailField(blank=True, null=True, verbose_name='이메일')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True, verbose_name='성별')
-    hire_date = models.DateField(blank=True, null=True, verbose_name='입사��')
+    hire_date = models.DateField(blank=True, null=True, verbose_name='입사일')
     resignation_date = models.DateField(null=True, blank=True, verbose_name='퇴사일')
     bank = models.ForeignKey('common.Bank', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='거래은행')
     account_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='급여계좌')
@@ -69,7 +69,7 @@ class Attendance(models.Model):
     class Meta:
         unique_together = ['teacher', 'date']
         verbose_name = '출근기록'
-        verbose_name_plural = '출근기록들'
+        verbose_name_plural = '출근기록'
 
     def __str__(self):
         return f"{self.teacher.name} - {self.date}"

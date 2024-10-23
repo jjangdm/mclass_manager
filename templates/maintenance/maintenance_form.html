@@ -1,29 +1,154 @@
 {% extends "maintenance/base.html" %}
 {% block title %}관리비 등록{% endblock %}
 {% block content %}
-<h3>관리비 등록</h3>
-<form method="post">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="room">호실:</label>
-        {{ form.room }}
-    </div>
-    <div class="form-group">
-        <label for="date">부과년월:</label>
-        {{ form.date }}
-    </div>
-    <div class="form-group">
-        <label for="charge">부과금액:</label>
-        {{ form.charge }}
-    </div>
-    <div class="form-group">
-        <label for="date_paid">납부일자:</label>
-        {{ form.date_paid }}
-    </div>
-    <div class="form-group">
-        <label for="memo">메모:</label>
-        {{ form.memo }}
-    </div>
-    <button type="submit" class="btn">저장</button>
-</form>
+<div class="container mt-4">
+    <h3 class="mb-4">관리비 등록</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="id_room" class="form-label">호실:</label>
+            {{ form.room }}
+            {% if form.room.errors %}
+                <div class="alert alert-danger mt-2">
+                    {{ form.room.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group mb-3">
+            <label for="id_date" class="form-label">부과년월:</label>
+            {{ form.date }}
+            {% if form.date.errors %}
+                <div class="alert alert-danger mt-2">
+                    {{ form.date.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group mb-3">
+            <label for="id_charge" class="form-label">부과금액:</label>
+            {{ form.charge }}
+            {% if form.charge.errors %}
+                <div class="alert alert-danger mt-2">
+                    {{ form.charge.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group mb-3">
+            <label for="id_date_paid" class="form-label">납부일자:</label>
+            {{ form.date_paid }}
+            {% if form.date_paid.errors %}
+                <div class="alert alert-danger mt-2">
+                    {{ form.date_paid.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group mb-3">
+            <label for="id_memo" class="form-label">메모:</label>
+            {{ form.memo }}
+            {% if form.memo.errors %}
+                <div class="alert alert-danger mt-2">
+                    {{ form.memo.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">저장</button>
+    </form>
+</div>
+
+<style>
+    /* 폼 그룹 스타일 */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    /* 라벨 스타일 */
+    .form-label {
+        font-weight: 500;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #212529;
+    }
+
+    /* 드롭다운(select) 스타일 */
+    select.form-control {
+        height: calc(2.5rem + 2px) !important;
+        padding: 0.5rem 1rem !important;
+        font-size: 1.1rem !important;
+        line-height: 1.5;
+        width: 100%;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        appearance: auto;
+        background-color: #fff;
+    }
+
+    /* 일반 입력 필드 스타일 */
+    .form-control {
+        height: calc(1.8rem + 2px);
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        width: 100%;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    /* 입력 필드 포커스 효과 */
+    .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* 메모 텍스트영역 스타일 */
+    textarea.form-control {
+        height: auto;
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* 에러 메시지 스타일 */
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    /* 저장 버튼 스타일 */
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 0.5rem 2rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out, 
+                  background-color 0.15s ease-in-out,
+                  border-color 0.15s ease-in-out;
+    }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+    /* 모바일 반응형 */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .btn-primary {
+            width: 100%;
+        }
+        
+        select.form-control,
+        .form-control {
+            font-size: 16px !important;
+        }
+    }
+</style>
 {% endblock %}
