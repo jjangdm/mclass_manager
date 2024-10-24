@@ -1,4 +1,4 @@
-from django.views.generic import CreateView, ListView
+from django.views.generic import ListView, FormView
 from django.views.generic.base import TemplateView
 from django.db.models import Sum
 from django.urls import reverse_lazy
@@ -6,22 +6,42 @@ from django.contrib.messages import add_message, SUCCESS
 from maintenance.forms import MaintenanceForm
 from .models import Maintenance, Room
 from django.utils import timezone
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 
-class MaintenanceCreateView(CreateView):
-    model = Maintenance
-    form_class = MaintenanceForm
+class MaintenanceCreateView(FormView):
     template_name = 'maintenance/maintenance_form.html'
+    form_class = MaintenanceForm
     success_url = reverse_lazy('maintenance:create')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rooms'] = Room.objects.all().order_by('number')
+        return context
+
     def form_valid(self, form):
-        self.object = form.save()  # 폼 저장
-        add_message(              # 메시지 한 번만 추가
+        date = form.cleaned_data['date']
+        created_count = 0
+        
+        for room in Room.objects.all().order_by('number'):
+            charge = form.cleaned_data.get(f'charge_{room.id}')
+            if charge:  # 금액이 입력된 경우에만 생성
+                Maintenance.objects.create(
+                    room=room,
+                    date=date,
+                    charge=charge,
+                    date_paid=form.cleaned_data.get(f'date_paid_{room.id}'),
+                    memo=form.cleaned_data.get(f'memo_{room.id}', '')
+                )
+                created_count += 1
+        
+        add_message(
             self.request,
             SUCCESS,
-            '성공적으로 등록되었습니다.'
+            f'{created_count}개의 관리비가 성공적으로 등록되었습니다.'
         )
-        return super(CreateView, self).form_valid(form)  # CreateView의 form_valid 직접 호출
+        return super().form_valid(form)
     
 
 class MonthlyReportView(ListView):
@@ -39,9 +59,14 @@ class MonthlyReportView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        current_year = timezone.now().year
         
-        year_range = range(current_year - 5, current_year + 6)
+        # 데이터가 있는 년도만 가져오기
+        available_years = [d.year for d in Maintenance.objects
+                         .dates('date', 'year', order='DESC')
+                         .distinct()]
+        
+        # 데이터가 있는 경우 가장 최근 년도를, 없으면 현재 년도를 기본값으로
+        current_year = available_years[0] if available_years else timezone.now().year
         selected_year = int(self.request.GET.get('year', current_year))
         selected_month = int(self.request.GET.get('month', timezone.now().month))
         
@@ -50,7 +75,7 @@ class MonthlyReportView(ListView):
         queryset = self.get_queryset()
         
         context.update({
-            'year_range': year_range,
+            'available_years': available_years,  # year_range 대신 available_years 사용
             'months': months,
             'selected_year': selected_year,
             'selected_month': selected_month,
@@ -78,7 +103,7 @@ class YearlyReportView(TemplateView):
 
         yearly_data = []
         total_charge = 0
-        monthly_totals = [0] * 12  # 월별 합계를 저장할 리스트
+        monthly_totals = [0] * 12
 
         for room in active_rooms:
             monthly_charges = []
@@ -93,7 +118,7 @@ class YearlyReportView(TemplateView):
                 
                 monthly_charges.append(charge)
                 room_total += charge
-                monthly_totals[month-1] += charge  # 월별 합계 누적
+                monthly_totals[month-1] += charge
             
             yearly_data.append({
                 'room': room.number,
@@ -102,13 +127,17 @@ class YearlyReportView(TemplateView):
             })
             total_charge += room_total
 
+        # JSON 직렬화를 위한 데이터 준비
+        yearly_data_json = json.dumps(yearly_data, cls=DjangoJSONEncoder)
+
         context.update({
             'year': selected_year,
             'available_years': available_years,
             'months': range(1, 13),
             'yearly_data': yearly_data,
-            'monthly_totals': monthly_totals,  # 월별 합계 추가
+            'yearly_data_json': yearly_data_json,  # JSON 형식의 데이터 추가
+            'monthly_totals': monthly_totals,
             'total_charge': total_charge,
-            'grand_total': total_charge  # 총계
+            'grand_total': total_charge
         })
         return context

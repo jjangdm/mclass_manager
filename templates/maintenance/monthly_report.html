@@ -12,8 +12,8 @@
             <h3>월별 관리비 현황</h3>
         </div>
         <form method="get" class="year-select-form">
-            <select name="year" class="form-select me-2">
-                {% for year in year_range %}
+            <select name="year" class="form-select">
+                {% for year in available_years %}
                     <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
                         {{ year }}년
                     </option>
@@ -42,8 +42,8 @@
             <thead>
                 <tr>
                     <th class="text-center">호실</th>
-                    <th class="text-center">납부일자</th>
                     <th class="text-end">금액</th>
+                    <th class="text-center">납부일자</th>                    
                     <th class="text-center">납부상태</th>
                     <th class="text-center">메모</th>
                 </tr>
@@ -52,8 +52,8 @@
                 {% for item in maintenance_list %}
                 <tr>
                     <td class="text-center">{{ item.room }}</td>
-                    <td class="text-center">{{ item.date_paid|default:"-" }}</td>
                     <td class="text-end">{{ item.charge|intcomma }}</td>
+                    <td class="text-center">{{ item.date_paid|default:"-" }}</td>                    
                     <td class="text-center">{{ item.date_paid|yesno:"납부완료,미납" }}</td>
                     <td class="text-center">{{ item.memo|default:"-" }}</td>
                 </tr>

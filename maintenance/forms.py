@@ -1,6 +1,6 @@
 from django import forms
 from .models import Maintenance, Room
-import datetime
+from datetime import datetime
 
 
 class MonthYearWidget(forms.widgets.Widget):
@@ -13,47 +13,6 @@ class MonthYearWidget(forms.widgets.Widget):
                 value = value.strftime('%Y-%m')
             context['widget']['value'] = value
         return context
-
-
-
-# class MaintenanceForm(forms.ModelForm):
-#     class Meta:
-#         model = Maintenance
-#         fields = ['room', 'date', 'charge', 'date_paid', 'memo']
-#         widgets = {
-#             'room': forms.NumberInput(attrs={
-#                 'min': '1',
-#                 'class': 'form-control'
-#             }),
-#             'date': forms.DateInput(attrs={
-#                 'type': 'month',
-#                 'class': 'form-control'
-#             }),
-#             'charge': forms.NumberInput(attrs={
-#                 'min': '0',
-#                 'class': 'form-control'
-#             }),
-#             'date_paid': forms.DateInput(attrs={
-#                 'type': 'date',
-#                 'class': 'form-control'
-#             }),
-#             'memo': forms.Textarea(attrs={
-#                 'class': 'form-control',
-#                 'rows': 3
-#             }),
-#         }
-
-#     def clean_date(self):
-#         date = self.cleaned_data['date']
-#         if isinstance(date, str):
-#             try:
-#                 year, month = map(int, date.split('-'))
-#                 date = datetime.date(year, month, 1)
-#             except ValueError:
-#                 raise forms.ValidationError('올바른 년월 형식이 아닙니다.')
-#         return date.replace(day=1)
-
-
 
 
 class RoomForm(forms.ModelForm):
@@ -76,64 +35,52 @@ class RoomForm(forms.ModelForm):
         }
 
 
-class MaintenanceForm(forms.ModelForm):
-    room = forms.ModelChoiceField(
-        queryset=None,  # __init__에서 설정
-        label='호실',
-        widget=forms.Select(attrs={
-            'class': 'form-control'
+class MaintenanceForm(forms.Form):
+    date = forms.CharField(
+        label='부과년월',
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'month',
+            'style': 'width: 150px;'
         })
     )
-
-    date = forms.DateField(
-        label='부과년월',
-        widget=forms.DateInput(
-            attrs={
-                'type': 'month',
-                'class': 'form-control'
-            }
-        ),
-        input_formats=['%Y-%m'],
-    )
-
-    class Meta:
-        model = Maintenance
-        fields = ['room', 'date', 'charge', 'date_paid', 'memo']
-        widgets = {
-            'charge': forms.NumberInput(attrs={
-                'min': '0',
-                'step': '1',
-                'class': 'form-control'
-            }),
-            'date_paid': forms.DateInput(attrs={
-                'type': 'date',
-                'class': 'form-control'
-            }),
-            'memo': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3
-            }),
-        }
+    
+    def clean_date(self):
+        date_str = self.cleaned_data.get('date')
+        try:
+            return datetime.strptime(date_str + '-01', '%Y-%m-%d').date()
+            # 또는 별칭을 사용한 경우: return dt.strptime(date_str + '-01', '%Y-%m-%d').date()
+        except ValueError:
+            raise forms.ValidationError('올바른 년월을 입력해주세요.')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # 활성화된 호실만 가져오기
-        active_rooms = Room.objects.filter(is_active=True).order_by('number')
-        self.fields['room'].queryset = active_rooms
-        self.fields['room'].empty_label = None  # "-------" 제거
-
-    def clean_date(self):
-        date = self.cleaned_data['date']
-        if isinstance(date, str):
-            try:
-                year, month = map(int, date.split('-'))
-                date = datetime.date(year, month, 1)
-            except ValueError:
-                raise forms.ValidationError('올바른 년월 형식이 아닙니다.')
-        return date.replace(day=1)
-
-    def clean_charge(self):
-        charge = self.cleaned_data['charge']
-        if charge < 0:
-            raise forms.ValidationError('금액은 0 이상이어야 합니다.')
-        return charge
+        rooms = Room.objects.all().order_by('number')
+        
+        for room in rooms:
+            self.fields[f'charge_{room.id}'] = forms.DecimalField(
+                label=f'{room.number}호 부과금액',
+                required=False,
+                min_value=0,
+                widget=forms.NumberInput(attrs={
+                    'class': 'form-control charge-input',
+                    'style': 'width: 100%;'
+                })
+            )
+            self.fields[f'date_paid_{room.id}'] = forms.DateField(
+                label=f'{room.number}호 납부일자',
+                required=False,
+                widget=forms.DateInput(attrs={
+                    'class': 'form-control',
+                    'type': 'date',
+                    'style': 'width: 100%;'
+                })
+            )
+            self.fields[f'memo_{room.id}'] = forms.CharField(
+                label=f'{room.number}호 메모',
+                required=False,
+                widget=forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'style': 'width: 100%;'
+                })
+            )
