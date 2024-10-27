@@ -1,138 +1,147 @@
-{% extends "base.html" %}
-{% block title %}연간 관리비 현황{% endblock %}
-{% block content %}
-
+{% extends 'maintenance/base_maintenance.html' %}
 {% load humanize %}
 
-<div class="container mt-4">
-    <div class="page-header">
-        <div class="header-title">
-            <h3>연간 관리비 현황</h3>
+{% block title %}연도별 관리비 현황 - MClass Manager{% endblock %}
+
+{% block maintenance_content %}
+<div class="space-y-6">
+    <!-- 조회 및 데이터 테이블 -->
+    <div class="content-card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-semibold text-gray-900">연도별 관리비 현황</h1>
+                <form method="get" class="flex items-center space-x-2">
+                    <select name="year" class="form-input py-1 min-w-[100px]" onchange="this.form.submit()">
+                        {% for y in available_years %}
+                            <option value="{{ y }}" {% if y == year %}selected{% endif %}>
+                                {{ y }}년
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
         </div>
-        <form method="get" class="year-select-form">
-            <select name="year" class="form-select">
-                {% for y in available_years %}
-                    <option value="{{ y }}" {% if y == year %}selected{% endif %}>
-                        {{ y }}년
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-primary">조회</button>
-        </form>
+
+        <div class="card-body">
+            <div class="overflow-x-auto">
+                <table class="content-table min-w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-center">호실</th>
+                            {% for month in months %}
+                                <th class="text-center">{{ month }}월</th>
+                            {% endfor %}
+                            <th class="text-center bg-gray-50">합계</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in yearly_data %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="text-center font-medium">{{ row.room }}</td>
+                            {% for charge in row.monthly_charges %}
+                                <td class="text-right">{{ charge|intcomma }}</td>
+                            {% endfor %}
+                            <td class="text-right font-medium bg-gray-50">{{ row.total|intcomma }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-indigo-50 font-semibold">
+                            <td class="text-center">월별 합계</td>
+                            {% for total in monthly_totals %}
+                                <td class="text-right">{{ total|intcomma }}</td>
+                            {% endfor %}
+                            <td class="text-right bg-indigo-100">{{ grand_total|intcomma }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <div class="summary mb-4">
-        <h3 class="text-center">{{ year }}년</h3>
-        <p class="mb-0">total: <span class="amount">{{ total_charge|intcomma }}</span></p>
+    <!-- 그래프 -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2 class="text-lg font-semibold text-gray-900">월별 관리비 추이</h2>
+        </div>
+        <div class="card-body">
+            <div class="aspect-[16/9] w-full">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </div>
     </div>
-
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr class="table-header">
-                    <th class="text-center"></th>
-                    {% for month in months %}
-                        <th class="month-header">{{ month }}월</th>
-                    {% endfor %}
-                    <th class="text-center">합계</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for data in yearly_data %}
-                <tr>
-                    <td class="text-center">{{ data.room }}</td>
-                    {% for charge in data.monthly_charges %}
-                        <td class="amount">{{ charge|intcomma }}</td>
-                    {% endfor %}
-                    <td class="amount">{{ data.total|intcomma }}</td>
-                </tr>
-                {% endfor %}
-                <tr class="total-row">
-                    <td class="text-center">계</td>
-                    {% for total in monthly_totals %}
-                        <td class="amount">{{ total|intcomma }}</td>
-                    {% endfor %}
-                    <td class="amount">{{ grand_total|intcomma }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
 </div>
 
- <!-- 차트 컨테이너 -->
- <div id="maintenance-chart" style="height: 400px; margin-top: 2rem;"></div>
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    const data = {{ yearly_data_json|safe }};
+    
+    // 데이터 준비
+    const monthLabels = Array.from({length: 12}, (_, i) => `${i + 1}월`);
+    const datasets = data.map(function(row) {
+        const randomColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+        return {
+            label: `${row.room}호`,
+            data: row.monthly_charges,
+            borderColor: randomColor,
+            backgroundColor: randomColor,
+            borderWidth: 2,
+            fill: false,
+            tension: 0.1
+        };
+    });
 
- <!-- 스크립트 순서 중요: prop-types 추가 및 순서 변경 -->
- <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.7.2/Recharts.js"></script>
-
- <!-- 데이터 주입 -->
- <script>
-     window._yearlyData = JSON.parse('{{ yearly_data_json|safe }}');
-     window._months = Array.from({length: 12}, (_, i) => i + 1);
- </script>
-
- <!-- 차트 스크립트 -->
- {% load static %}
- <script src="{% static 'maintenance/js/maintenanceChart.js' %}"></script>
-
-
-<style>
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.year-select-form {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.form-select {
-    width: auto;
-}
-
-.amount {
-    text-align: right;
-    padding-right: 1rem;
-}
-
-.table-header {
-    background-color: #e9ecef;
-    color: #212529;
-}
-
-.month-header {
-    text-align: center;
-    color: #ffffff;
-}
-
-.total-row {
-    font-weight: bold;
-    background-color: #f8f9fa;
-}
-
-.summary .amount {
-    display: inline-block;
-    min-width: 100px;
-}
-
-.table {
-    border: 1px solid #dee2e6;
-}
-
-.table th,
-.table td {
-    border: 1px solid #dee2e6;
-    padding: 0.75rem;
-}
-
-</style>
-
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('ko-KR').format(context.parsed.y) + '원';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return new Intl.NumberFormat('ko-KR').format(value) + '원';
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
 {% endblock %}

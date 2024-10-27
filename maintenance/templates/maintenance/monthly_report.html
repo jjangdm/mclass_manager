@@ -1,122 +1,79 @@
-{% extends "base.html" %}
-{% block title %}월별 관리비 현황{% endblock %}
-{% block content %}
-
+{% extends 'maintenance/base_maintenance.html' %}
 {% load humanize %}
 
-<div class="container mt-4">
-    <!-- 헤더 영역 -->
-    <div class="page-header">
-        <div class="header-title">
-            <h3>월별 관리비 현황</h3>
+{% block title %}월별 관리비 현황 - MClass Manager{% endblock %}
+
+{% block maintenance_content %}
+<div class="space-y-6">
+    <div class="content-card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-semibold text-gray-900">
+                    월별 관리비 현황
+                </h1>
+                <form method="get" class="flex items-center space-x-2">
+                    <select name="year" class="form-input py-1 min-w-[100px]">
+                        {% for year in available_years %}
+                            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                                {{ year }}년
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <select name="month" class="form-input py-1 min-w-[90px]">
+                        {% for month_num, month_name in months %}
+                            <option value="{{ month_num }}" {% if month_num == selected_month %}selected{% endif %}>
+                                {{ month_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="form-button py-1 min-w-[80px]">  <!-- 수정된 부분 -->
+                        조회
+                    </button>
+                </form>
+            </div>
         </div>
-        <form method="get" class="year-select-form">
-            <select name="year" class="form-select">
-                {% for year in available_years %}
-                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
-                        {{ year }}년
-                    </option>
-                {% endfor %}
-            </select>
-            <select name="month" class="form-select me-2">
-                {% for month_num, month_name in months %}
-                    <option value="{{ month_num }}" {% if month_num == selected_month %}selected{% endif %}>
-                        {{ month_name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-primary">조회</button>
-        </form>
-    </div>
 
-    <!-- 요약 정보 -->
-    <div class="summary mb-4">
-        <h3>{{ selected_year }}년 {{ selected_month }}월</h3>
-        <p class="mb-0">총 부과금액: <span class="text-end">{{ total_charge|intcomma }}</span></p>
-    </div>
+        <div class="card-body">
+            <!-- 요약 정보 -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-2">
+                    {{ selected_year }}년 {{ selected_month }}월
+                </h2>
+                <p class="text-gray-600">
+                    총 부과금액: <span class="font-semibold text-gray-900">{{ total_charge|intcomma }}</span>
+                </p>
+            </div>
 
-    <!-- 관리비 목록 테이블 -->
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th class="text-center">호실</th>
-                    <th class="text-end">금액</th>
-                    <th class="text-center">납부일자</th>                    
-                    <th class="text-center">납부상태</th>
-                    <th class="text-center">메모</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in maintenance_list %}
-                <tr>
-                    <td class="text-center">{{ item.room }}</td>
-                    <td class="text-end">{{ item.charge|intcomma }}</td>
-                    <td class="text-center">{{ item.date_paid|default:"-" }}</td>                    
-                    <td class="text-center">{{ item.date_paid|yesno:"납부완료,미납" }}</td>
-                    <td class="text-center">{{ item.memo|default:"-" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <!-- 관리비 목록 -->
+            <div class="overflow-x-auto">
+                <table class="content-table min-w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-center">호실</th>
+                            <th class="text-center">금액</th>
+                            <th class="text-center">납부일자</th>
+                            <th class="text-center">납부상태</th>
+                            <th class="text-center">메모</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in maintenance_list %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="text-center">{{ item.room }}</td>
+                            <td class="text-right">{{ item.charge|intcomma }}</td>
+                            <td class="text-center">{{ item.date_paid|default:"-" }}</td>
+                            <td class="text-center">
+                                <span class="status-badge {% if item.date_paid %}status-badge-success{% else %}status-badge-error{% endif %}">
+                                    {{ item.date_paid|yesno:"납부완료,미납" }}
+                                </span>
+                            </td>
+                            <td class="text-center">{{ item.memo|default:"-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-
-<style>
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.year-select-form {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.form-select {
-    width: auto;
-}
-</style>
-
-<style>
-    /* 드롭다운 스타일 */
-    select.form-control {
-        height: calc(2.5rem + 2px);
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-        min-width: 120px;
-    }
-
-    /* 테이블 스타일 */
-    .table th {
-        background-color: #418fa7;
-        vertical-align: middle;
-    }
-    
-    .table td {
-        vertical-align: middle;
-    }
-
-    /* 요약 정보 스타일 */
-    .summary {
-        background-color: #f8f9fa;
-        padding: 1rem;
-        border-radius: 0.25rem;
-    }
-</style>
 {% endblock %}
-
-<!-- templates/maintenance/maintenance_form.html의 일부 -->
-{% if messages %}
-<div class="messages">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
