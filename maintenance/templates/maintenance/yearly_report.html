@@ -7,24 +7,10 @@
 <div class="space-y-6">
     <!-- 조회 및 데이터 테이블 -->
     <div class="content-card">
-        <div class="card-header">
-            <div class="flex justify-between items-center">
-                <h1 class="text-xl font-semibold text-gray-900">연도별 관리비 현황</h1>
-                <form method="get" class="flex items-center space-x-2">
-                    <select name="year" class="form-input py-1 min-w-[100px]" onchange="this.form.submit()">
-                        {% for y in available_years %}
-                            <option value="{{ y }}" {% if y == year %}selected{% endif %}>
-                                {{ y }}년
-                            </option>
-                        {% endfor %}
-                    </select>
-                </form>
-            </div>
-        </div>
-
+        <!-- ... (기존 코드) -->
         <div class="card-body">
-            <div class="overflow-x-auto">
-                <table class="content-table min-w-full">
+            <div class="overflow-x-auto" style="width: 100%;">  <!-- width: 100% 추가 -->
+                <table class="content-table w-full">  <!-- min-w-full 대신 w-full 사용 -->
                     <thead>
                         <tr>
                             <th class="text-center">호실</th>
@@ -39,17 +25,17 @@
                         <tr class="hover:bg-gray-50">
                             <td class="text-center font-medium">{{ row.room }}</td>
                             {% for charge in row.monthly_charges %}
-                                <td class="text-right">{{ charge|intcomma }}</td>
+                                <td class="text-right">{{ charge|intcomma }}</td> 
                             {% endfor %}
-                            <td class="text-right font-medium bg-gray-50">{{ row.total|intcomma }}</td>
+                            <td class="text-right font-medium bg-gray-50">{{ row.total|intcomma }}</td> 
                         </tr>
                         {% endfor %}
                     </tbody>
                     <tfoot>
                         <tr class="bg-indigo-50 font-semibold">
-                            <td class="text-center">월별 합계</td>
+                            <td class="text-center">월별</td>
                             {% for total in monthly_totals %}
-                                <td class="text-right">{{ total|intcomma }}</td>
+                                <td class="text-right">{{ total|intcomma }}</td> 
                             {% endfor %}
                             <td class="text-right bg-indigo-100">{{ grand_total|intcomma }}</td>
                         </tr>
@@ -61,36 +47,29 @@
 
     <!-- 그래프 -->
     <div class="content-card">
-        <div class="card-header">
-            <h2 class="text-lg font-semibold text-gray-900">월별 관리비 추이</h2>
-        </div>
+        <!-- ... (기존 코드) -->
         <div class="card-body">
-            <div class="aspect-[16/9] w-full">
-                <canvas id="monthlyChart"></canvas>
+            <div style="width: 100%; aspect-ratio: 16 / 9;"> <canvas id="monthlyChart"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-{% block extra_js %}
+<!-- {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('monthlyChart').getContext('2d');
-    const data = {{ yearly_data_json|safe }};
+    var ctx = document.getElementById('monthlyChart').getContext('2d');
+    var data = {{ yearly_data_json|safe }};
     
     // 데이터 준비
-    const monthLabels = Array.from({length: 12}, (_, i) => `${i + 1}월`);
-    const datasets = data.map(function(row) {
-        const randomColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+    var monthLabels = Array.from({length: 12}, (_, i) => (i + 1) + '월');
+    var datasets = data.map(function(row) {
         return {
-            label: `${row.room}호`,
+            label: row.room + '호',
             data: row.monthly_charges,
-            borderColor: randomColor,
-            backgroundColor: randomColor,
             borderWidth: 2,
-            fill: false,
-            tension: 0.1
+            fill: false
         };
     });
 
@@ -103,30 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            },
             plugins: {
                 legend: {
                     position: 'top',
-                    labels: {
-                        padding: 20
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('ko-KR').format(context.parsed.y) + '원';
-                            }
-                            return label;
-                        }
-                    }
                 }
             },
             scales: {
@@ -134,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return new Intl.NumberFormat('ko-KR').format(value) + '원';
+                            return value.toLocaleString() + '원';
                         }
                     }
                 }
@@ -143,5 +101,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-{% endblock %}
+{% endblock %} -->
 {% endblock %}
