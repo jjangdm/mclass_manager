@@ -52,11 +52,11 @@ INSTALLED_APPS = [
     'common',
     'teachers',
     'students',
-    'textbooks',
-    'classes',
-    'grades',
-    'tuition',
-    'enrollments',
+    # 'textbooks',
+    # 'classes',
+    # 'grades',
+    # 'tuition',
+    # 'enrollments',
     'maintenance',
 ]
 
