@@ -13,5 +13,4 @@ urlpatterns = [
     path('salary/table/', views.SalaryTableView.as_view(), name='salary_table'),
     path('salary/table/<int:year>/', views.SalaryTableView.as_view(), name='salary_table_year'),
     path('teacher/<int:teacher_id>/pdf/', views.TeacherPDFReportView.as_view(), name='teacher_pdf_report'),
-    # path('teacher/<int:teacher_id>/pdf-viewer/', views.TeacherPDFViewerView.as_view(), name='teacher_pdf_viewer'),
-]
+ ]

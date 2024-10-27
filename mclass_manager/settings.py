@@ -47,16 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'crispy_forms',
-    'crispy_bootstrap4',
     'common',
     'teachers',
     'students',
-    # 'textbooks',
-    # 'classes',
-    # 'grades',
-    # 'tuition',
-    # 'enrollments',
     'maintenance',
 ]
 
@@ -144,10 +137,20 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Login URL settings
+LOGIN_REDIRECT_URL = '/'  # 로그인 성공 후 홈페이지로 리다이렉트
+LOGOUT_REDIRECT_URL = '/'  # 로그아웃 후 홈페이지로 리다이렉트
+LOGIN_URL = '/login/'      # 로그인 페이지 URL

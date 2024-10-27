@@ -1,9 +1,9 @@
-{% extends 'teachers/base.html' %}
+{% extends 'teachers/base_teachers.html' %}
 {% load humanize %}
 
 {% block title %}{{ teacher.name }} 상세 정보{% endblock %}
 
-{% block content %}
+{% block teacher_content %}
 <h4>{{ teacher.name }} 상세 정보</h4>
 <div class="card">
     <div class="card-body">

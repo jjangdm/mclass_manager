@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MClass Manager{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-gothic.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    {% if user.is_authenticated %}
+    <nav class="bg-gray-800 text-white">
+        <div class="container">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'index' %}" class="font-medium text-xl">
+                        MClass Manager
+                    </a>
+                    <div class="hidden md:block ml-10">
+                        <a href="{% url 'students:student_list' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">학생 관리</a>
+                        <a href="{% url 'teachers:teacher_list' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">선생님 관리</a>
+                        <a href="{% url 'maintenance:create' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">관리비</a>
+                    </div>
+                </div>
+                <div>
+                    <a href="{% url 'logout' %}" class="text-gray-300 hover:text-white text-sm font-medium">로그아웃</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="{% url 'students:student_list' %}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">학생 관리</a>
+                <a href="{% url 'teachers:teacher_list' %}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">선생님 관리</a>
+                <a href="{% url 'maintenance:create' %}" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">관리비</a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="py-6">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
