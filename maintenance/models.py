@@ -5,45 +5,6 @@ from django.forms import DateField, ValidationError
 import datetime
 
 
-
-# class Maintenance(models.Model):
-#     room = models.IntegerField(
-#         validators=[MinValueValidator(1, message='호실 번호는 양수여야 합니다.')],
-#         verbose_name='호실',
-#         help_text='양수만 입력 가능합니다.'
-#     )
-#     date = models.DateField(
-#         verbose_name='부과년월',
-#         help_text='년월을 선택해주세요 (예: 2024년 10월)'
-#     )
-#     charge = models.IntegerField(
-#         validators=[MinValueValidator(0, message='금액은 0 이상이어야 합니다.')],
-#         verbose_name='부과금액',
-#         help_text='0 이상의 금액을 입력해주세요.'
-#     )
-#     date_paid = models.DateField(
-#         null=True,
-#         blank=True,
-#         verbose_name='납부일자'
-#     )
-#     memo = models.TextField(
-#         blank=True,
-#         verbose_name='메모'
-#     )
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     class Meta:
-#         verbose_name = '관리비'
-#         verbose_name_plural = '관리비 목록'
-#         ordering = ['-date', 'room']
-
-#     def save(self, *args, **kwargs):
-#         if self.date:
-#             self.date = self.date.replace(day=1)
-#         super().save(*args, **kwargs)
-
-
 class Room(models.Model):
     number = models.IntegerField(
         validators=[MinValueValidator(1)],

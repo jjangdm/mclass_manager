@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block title %}{{ book.name }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow rounded-lg p-6">
+    <!-- 상단 헤더 -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">교재 상세 정보</h1>
+        <div class="space-x-2">
+            <a href="{% url 'books:book_update' book.pk %}" 
+               class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm">
+                수정
+            </a>
+            <a href="{% url 'books:book_list' %}" 
+               class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm">
+                목록으로
+            </a>
+        </div>
+    </div>
+
+    <!-- 교재 정보 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 기본 정보 -->
+        <div class="space-y-4">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">기본 정보</h2>
+                <dl class="space-y-2">
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">교재명</dt>
+                        <dd class="text-sm text-gray-900">{{ book.name }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">과목</dt>
+                        <dd class="text-sm text-gray-900">{{ book.subject|default:'-' }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">ISBN</dt>
+                        <dd class="text-sm text-gray-900">{{ book.isbn|default:'-' }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">출판사</dt>
+                        <dd class="text-sm text-gray-900">{{ book.publisher|default:'-' }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">난이도</dt>
+                        <dd class="text-sm">
+                            {% if book.difficulty_level %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                           {% if book.difficulty_level <= 3 %}bg-green-100 text-green-800
+                                           {% elif book.difficulty_level <= 7 %}bg-yellow-100 text-yellow-800
+                                           {% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ book.difficulty_level }}
+                                </span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- 가격 정보 -->
+        <div class="space-y-4">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">가격 정보</h2>
+                <dl class="space-y-2">
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">원가</dt>
+                        <dd class="text-sm text-gray-900">
+                            {% if book.original_price %}
+                                {{ book.original_price|intcomma }}원
+                            {% else %}
+                                -
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">입고가</dt>
+                        <dd class="text-sm text-gray-900">
+                            {% if book.purchase_price %}
+                                {{ book.purchase_price|intcomma }}원
+                            {% else %}
+                                -
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">판매가</dt>
+                        <dd class="text-sm text-gray-900">
+                            {% if book.selling_price %}
+                                {{ book.selling_price|intcomma }}원
+                            {% else %}
+                                -
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- 구매 정보 -->
+        <div class="space-y-4">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">구매 정보</h2>
+                <dl class="space-y-2">
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">구입처</dt>
+                        <dd class="text-sm text-gray-900">{{ book.purchase_location|default:'-' }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">입고일</dt>
+                        <dd class="text-sm text-gray-900">
+                            {% if book.entry_date %}
+                                {{ book.entry_date|date:"Y년 m월 d일" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- 메모 -->
+        <div class="space-y-4">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">메모</h2>
+                <div class="text-sm text-gray-900 whitespace-pre-line">
+                    {{ book.memo|default:'-' }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

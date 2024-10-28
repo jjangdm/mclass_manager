@@ -150,68 +150,6 @@ class AttendanceCreateView(LoginRequiredMixin, View):
         return render(request, 'teachers/attendance_form.html', context)
 
 
-# class SalaryCalculationView(LoginRequiredMixin, View):
-#     def get(self, request):
-#         current_year = timezone.now().year
-#         current_month = timezone.now().month
-
-#         year = int(request.GET.get('year', current_year))
-#         month = int(request.GET.get('month', current_month))
-
-#         start_date = datetime(year, month, 1)
-#         end_date = (start_date + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-
-#         teachers = Teacher.objects.filter(is_active=True)
-#         salary_data = []
-
-#         for teacher in teachers:
-#             attendances = Attendance.objects.filter(
-#                 teacher=teacher,
-#                 date__range=[start_date, end_date]
-#             )
-
-#             total_work_hours = 0
-#             for attendance in attendances:
-#                 if attendance.start_time and attendance.end_time:
-#                     start_datetime = datetime.combine(attendance.date, attendance.start_time)
-#                     end_datetime = datetime.combine(attendance.date, attendance.end_time)
-#                     if end_datetime < start_datetime:  # 자정을 넘긴 경우
-#                         end_datetime += timedelta(days=1)
-#                     work_hours = (end_datetime - start_datetime).total_seconds() / 3600
-#                     total_work_hours += work_hours
-
-#             total_work_hours = round(total_work_hours, 2)
-#             base_amount = int(teacher.base_salary * total_work_hours) if teacher.base_salary else 0
-#             additional_amount = int(teacher.additional_salary) if teacher.additional_salary else 0
-#             total_amount = base_amount + additional_amount
-
-#             salary_data.append({
-#                 'teacher': teacher,
-#                 'work_days': attendances.count(),
-#                 'work_hours': total_work_hours,
-#                 'total_amount': total_amount,
-#                 'bank_name': teacher.bank.name if teacher.bank else '',
-#                 'account_number': teacher.account_number,
-#             })
-
-#         total_salary = sum(data['total_amount'] for data in salary_data)
-
-#         years = range(current_year - 5, current_year + 1)
-#         months = range(1, 13)
-
-#         context = {
-#             'year': year,
-#             'month': month,
-#             'salary_data': salary_data,
-#             'years': years,
-#             'months': months,
-#             'current_year': current_year,
-#             'current_month': current_month,
-#             'total_salary': total_salary,
-#         }
-#         return render(request, 'teachers/salary_calculation.html', context)
-
-
 class SalaryCalculationView(LoginRequiredMixin, View):
     def get(self, request):
         current_year = timezone.now().year
