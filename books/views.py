@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib import messages
 
 from common.models import Publisher, PurchaseLocation, Subject
@@ -84,20 +84,34 @@ class BookUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
     
 
+# class BookDetailView(LoginRequiredMixin, DetailView):
+#     model = Book
+#     template_name = 'books/book_detail.html'
+#     context_object_name = 'book'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         book = self.get_object()
+        
+#         # QR 코드와 바코드 URL이 있는지 확인
+#         context['has_qr_code'] = bool(book.qr_code)
+#         context['has_barcode'] = bool(book.barcode)
+        
+#         return context
+
 class BookDetailView(LoginRequiredMixin, DetailView):
     model = Book
     template_name = 'books/book_detail.html'
     context_object_name = 'book'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        book = self.get_object()
-        
-        # QR 코드와 바코드 URL이 있는지 확인
-        context['has_qr_code'] = bool(book.qr_code)
-        context['has_barcode'] = bool(book.barcode)
-        
-        return context
+
+class BookDeleteView(LoginRequiredMixin, DeleteView):
+    model = Book
+    success_url = reverse_lazy('books:book_list')
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "교재가 성공적으로 삭제되었습니다.")
+        return super().delete(request, *args, **kwargs)
 
 
 

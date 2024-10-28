@@ -6,6 +6,7 @@
 
 {% block content %}
 <div class="bg-white shadow rounded-lg p-6">
+    
     <!-- 상단 헤더 -->
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold text-gray-900">교재 상세 정보</h1>
@@ -14,6 +15,10 @@
                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm">
                 수정
             </a>
+            <button onclick="confirmDelete()" 
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">
+                삭제
+            </button>
             <a href="{% url 'books:book_list' %}" 
                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm">
                 목록으로
@@ -164,4 +169,46 @@
         </div>
     </div>
 </div>
+
+
+<!-- 삭제 확인 모달 -->
+<div id="deleteModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">교재 삭제</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    정말로 이 교재를 삭제하시겠습니까?<br>
+                    이 작업은 되돌릴 수 없습니다.
+                </p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <form action="{% url 'books:book_delete' book.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        삭제
+                    </button>
+                    <button type="button" 
+                            onclick="closeDeleteModal()" 
+                            class="ml-2 px-4 py-2 bg-gray-100 text-gray-700 text-base font-medium rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        취소
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+function confirmDelete() {
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+    
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+}
+</script>
+
 {% endblock %}
