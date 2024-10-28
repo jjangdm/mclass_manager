@@ -8,9 +8,10 @@ from .models import Maintenance, Room
 from django.utils import timezone
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class MaintenanceCreateView(FormView):
+class MaintenanceCreateView(LoginRequiredMixin, FormView):
     template_name = 'maintenance/maintenance_form.html'
     form_class = MaintenanceForm
     success_url = reverse_lazy('maintenance:create')
@@ -44,7 +45,7 @@ class MaintenanceCreateView(FormView):
         return super().form_valid(form)
     
 
-class MonthlyReportView(ListView):
+class MonthlyReportView(LoginRequiredMixin, ListView):
     model = Maintenance
     template_name = 'maintenance/monthly_report.html'
     context_object_name = 'maintenance_list'
@@ -84,7 +85,7 @@ class MonthlyReportView(ListView):
         return context
     
 
-class YearlyReportView(TemplateView):
+class YearlyReportView(LoginRequiredMixin, TemplateView):
     template_name = 'maintenance/yearly_report.html'
 
     def get_context_data(self, **kwargs):

@@ -3,8 +3,10 @@
 # Create your views here.
 from django.views.generic import ListView
 from .models import Student
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class StudentListView(ListView):
+
+class StudentListView(LoginRequiredMixin, ListView):
     model = Student
     template_name = 'students/student_list.html'
     context_object_name = 'students'

@@ -35,7 +35,12 @@
                     </div>
                 </div>
                 <div>
-                    <a href="{% url 'logout' %}" class="text-gray-300 hover:text-white text-sm font-medium">로그아웃</a>
+                    <form method="post" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="text-gray-300 hover:text-white text-sm font-medium">
+                            로그아웃
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

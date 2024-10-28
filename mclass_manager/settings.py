@@ -150,7 +150,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Login URL settings
-LOGIN_REDIRECT_URL = '/'  # 로그인 성공 후 홈페이지로 리다이렉트
-LOGOUT_REDIRECT_URL = '/'  # 로그아웃 후 홈페이지로 리다이렉트
-LOGIN_URL = '/login/'      # 로그인 페이지 URL
+# 로그아웃 후 리다이렉트할 URL
+LOGOUT_REDIRECT_URL = 'login'
+
+# 로그인 URL (로그인이 필요한 페이지 접근 시 리다이렉트)
+LOGIN_URL = 'login'
+
+# 로그인 후 리다이렉트할 URL
+LOGIN_REDIRECT_URL = 'index'
