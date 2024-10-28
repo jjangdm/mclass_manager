@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Book
 
+
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = [
@@ -11,9 +12,12 @@ class BookAdmin(admin.ModelAdmin):
         'original_price',
         'purchase_price', 
         'selling_price',
-        'difficulty_level'
+        'difficulty_level',
+        'isbn', 
+        'unique_code',
     ]
     list_filter = ['subject', 'publisher', 'purchase_location', 'difficulty_level']
+    readonly_fields = ['barcode', 'qr_code', 'unique_code']
     search_fields = ['name', 'isbn', 'memo']
     fieldsets = [
         ('기본 정보', {

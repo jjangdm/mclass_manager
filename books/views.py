@@ -89,6 +89,16 @@ class BookDetailView(LoginRequiredMixin, DetailView):
     template_name = 'books/book_detail.html'
     context_object_name = 'book'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book = self.get_object()
+        
+        # QR 코드와 바코드 URL이 있는지 확인
+        context['has_qr_code'] = bool(book.qr_code)
+        context['has_barcode'] = bool(book.barcode)
+        
+        return context
+
 
 
 class BookExportView(LoginRequiredMixin, View):

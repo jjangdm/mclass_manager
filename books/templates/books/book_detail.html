@@ -35,11 +35,7 @@
                     <div class="flex justify-between">
                         <dt class="text-sm font-medium text-gray-500">과목</dt>
                         <dd class="text-sm text-gray-900">{{ book.subject|default:'-' }}</dd>
-                    </div>
-                    <div class="flex justify-between">
-                        <dt class="text-sm font-medium text-gray-500">ISBN</dt>
-                        <dd class="text-sm text-gray-900">{{ book.isbn|default:'-' }}</dd>
-                    </div>
+                    </div>                    
                     <div class="flex justify-between">
                         <dt class="text-sm font-medium text-gray-500">출판사</dt>
                         <dd class="text-sm text-gray-900">{{ book.publisher|default:'-' }}</dd>
@@ -58,6 +54,10 @@
                                 -
                             {% endif %}
                         </dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-sm font-medium text-gray-500">ISBN</dt>
+                        <dd class="text-sm text-gray-900">{{ book.isbn|default:'-' }}</dd>
                     </div>
                 </dl>
             </div>
@@ -131,6 +131,34 @@
                 <h2 class="text-lg font-medium text-gray-900 mb-4">메모</h2>
                 <div class="text-sm text-gray-900 whitespace-pre-line">
                     {{ book.memo|default:'-' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 바코드 및 QR 코드 -->
+        <div class="space-y-4 md:col-span-2">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">바코드 / QR 코드</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% if book.barcode %}
+                    <div class="text-center">
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">바코드</h3>
+                        <img src="{{ book.barcode.url }}" alt="바코드" class="mx-auto max-h-32">
+                        {% if book.isbn %}
+                        <p class="text-sm text-gray-500 mt-2">ISBN: {{ book.isbn }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if book.qr_code %}
+                    <div class="text-center">
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">QR 코드</h3>
+                        <img src="{{ book.qr_code.url }}" alt="QR 코드" class="mx-auto max-h-32">
+                        {% if book.unique_code %}
+                        <p class="text-sm text-gray-500 mt-2">고유 코드: {{ book.unique_code }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

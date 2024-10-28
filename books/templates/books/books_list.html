@@ -76,13 +76,14 @@
                 <tr>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">교재명</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">과목</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN</th>
+                    
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">출판사</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">입고일</th>
                     <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">원가</th>
                     <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">입고가</th>
                     <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">판매가</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">구입처</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN</th>
                     <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">난이도</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">메모</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
@@ -98,7 +99,7 @@
                         </a>
                     </td>
                     <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.subject|default:'-' }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.isbn|default:'-' }}</td>
+                    
                     <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.publisher|default:'-' }}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-gray-600">
                         {% if book.entry_date %}
@@ -129,6 +130,7 @@
                         {% endif %}
                     </td>
                     <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.purchase_location|default:'-' }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.isbn|default:'-' }}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-center">
                         {% if book.difficulty_level %}
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
