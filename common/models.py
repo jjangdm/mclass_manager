@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class School(models.Model):
     name = models.CharField(max_length=100, verbose_name='교명')
     phone = models.CharField(max_length=15, verbose_name='전화번호', blank=True, null=True)
@@ -12,6 +13,7 @@ class School(models.Model):
     def __str__(self):
         return self.name
 
+
 class Subject(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name='과목명')
 
@@ -21,6 +23,7 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Publisher(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name='출판사명')
@@ -32,6 +35,7 @@ class Publisher(models.Model):
     def __str__(self):
         return self.name
 
+
 class Bank(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name='은행명')
 
@@ -41,6 +45,7 @@ class Bank(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class PurchaseLocation(models.Model):
     name = models.CharField(max_length=100, verbose_name='구입처명')
