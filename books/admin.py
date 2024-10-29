@@ -5,29 +5,19 @@ from .models import Book
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = [
+        'isbn',
         'name', 
         'subject', 
         'publisher', 
-        'entry_date', 
-        'original_price',
-        'purchase_price', 
-        'selling_price',
         'difficulty_level',
-        'isbn', 
         'unique_code',
     ]
-    list_filter = ['subject', 'publisher', 'purchase_location', 'difficulty_level']
+    list_filter = ['subject', 'publisher', 'difficulty_level']
     readonly_fields = ['barcode', 'qr_code', 'unique_code']
-    search_fields = ['name', 'isbn', 'memo']
+    search_fields = ['name', 'isbn']
     fieldsets = [
         ('기본 정보', {
             'fields': ['name', 'subject', 'isbn', 'publisher']
-        }),
-        ('가격 정보', {
-            'fields': ['original_price', 'purchase_price', 'selling_price']
-        }),
-        ('구매 정보', {
-            'fields': ['entry_date', 'purchase_location']
         }),
         ('추가 정보', {
             'fields': ['difficulty_level', 'memo']

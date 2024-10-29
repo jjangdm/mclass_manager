@@ -74,16 +74,10 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">교재명</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">과목</th>
-                    
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">출판사</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">입고일</th>
-                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">원가</th>
-                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">입고가</th>
-                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">판매가</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">구입처</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">교재명</th>                    
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">과목</th>                    
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">출판사</th>
                     <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">난이도</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">메모</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
@@ -92,45 +86,15 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 {% for book in books %}
                 <tr class="hover:bg-gray-50 text-sm">
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.isbn|default:'-' }}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-gray-900">
                         <a href="{% url 'books:book_detail' book.pk %}" 
                            class="hover:text-indigo-600">
                             {{ book.name }}
                         </a>
-                    </td>
-                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.subject|default:'-' }}</td>
-                    
+                    </td>                    
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.subject|default:'-' }}</td>                    
                     <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.publisher|default:'-' }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">
-                        {% if book.entry_date %}
-                            {{ book.entry_date|date:"Y-m-d" }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="px-4 py-2 whitespace-nowrap text-right text-gray-600">
-                        {% if book.original_price %}
-                            {{ book.original_price|stringformat:"d"|intcomma }}원
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="px-4 py-2 whitespace-nowrap text-right text-gray-600">
-                        {% if book.purchase_price %}
-                            {{ book.purchase_price|stringformat:"d"|intcomma }}원
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="px-4 py-2 whitespace-nowrap text-right text-gray-600">
-                        {% if book.selling_price %}
-                            {{ book.selling_price|stringformat:"d"|intcomma }}원
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.purchase_location|default:'-' }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ book.isbn|default:'-' }}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-center">
                         {% if book.difficulty_level %}
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 

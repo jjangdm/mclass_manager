@@ -1,21 +1,17 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from common.models import Subject, Publisher, PurchaseLocation
+from common.models import Subject, Publisher
 from django.utils.translation import gettext_lazy as _
-
-import qrcode
 from barcode import EAN13
 from io import BytesIO
 from django.core.files import File
-# from PIL import Image, ImageDraw
-# import barcode
 from barcode.writer import ImageWriter
-import uuid
-
 from django.db import models, transaction
 from django.core.files.storage import default_storage
 import logging
 import os
+import qrcode
+import uuid
 
 
 logger = logging.getLogger(__name__)
@@ -45,33 +41,6 @@ class Book(models.Model):
         null=True, 
         blank=True, 
         verbose_name='출판사'
-    )
-    entry_date = models.DateField(
-        null=True, 
-        blank=True, 
-        verbose_name='입고일'
-    )
-    original_price = models.PositiveIntegerField(
-        null=True, 
-        blank=True, 
-        verbose_name='원가'
-    )
-    purchase_price = models.PositiveIntegerField(
-        null=True, 
-        blank=True, 
-        verbose_name='입고 가격'
-    )
-    selling_price = models.PositiveIntegerField(
-        null=True, 
-        blank=True, 
-        verbose_name='판매 가격'
-    )
-    purchase_location = models.ForeignKey(
-        PurchaseLocation, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
-        verbose_name='구입처'
     )
     difficulty_level = models.PositiveIntegerField(
         validators=[

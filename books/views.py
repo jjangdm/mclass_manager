@@ -4,19 +4,16 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib import messages
-
-from common.models import Publisher, PurchaseLocation, Subject
+from common.models import Publisher, Subject
 from .models import Book
 from .forms import BookForm
-
-from django.db.models import Q
-
-import pandas as pd
 from django.http import HttpResponse
 from django.contrib import messages
 from django.views.generic import FormView
 from django.shortcuts import redirect
 import logging
+import numpy as np
+import pandas as pd
 
 
 logger = logging.getLogger(__name__)
@@ -26,7 +23,7 @@ class BookListView(LoginRequiredMixin, ListView):
     model = Book
     template_name = 'books/books_list.html'
     context_object_name = 'books'
-    ordering = ['-entry_date', 'name']
+    ordering = ['name']
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -108,10 +105,7 @@ class BookExportView(LoginRequiredMixin, View):
         try:
             # 교재 데이터 조회
             books = Book.objects.all().values(
-                'name', 'subject__name', 'isbn', 'publisher__name',
-                'entry_date', 'original_price', 'purchase_price',
-                'selling_price', 'purchase_location__name',
-                'difficulty_level', 'memo'
+                'name', 'subject__name', 'isbn', 'publisher__name', 'difficulty_level', 'memo',
             )
             
             # 데이터가 없는 경우 처리
@@ -123,17 +117,11 @@ class BookExportView(LoginRequiredMixin, View):
             # DataFrame 생성 및 컬럼명 설정
             df = pd.DataFrame(list(books))
             df.columns = [
-                '교재명', '과목', 'ISBN', '출판사', '입고일',
-                '원가', '입고가', '판매가', '구입처',
-                '난이도', '메모'
+                '교재명', '과목', 'ISBN', '출판사', '난이도', '메모',
             ]
             
             # null 값 처리
             df = df.fillna('')  # null 값을 빈 문자열로 변환
-            
-            # 날짜 형식 처리
-            if '입고일' in df.columns and not df['입고일'].empty:
-                df['입고일'] = pd.to_datetime(df['입고일']).dt.strftime('%Y-%m-%d')
             
             # 엑셀 파일 생성
             response = HttpResponse(
@@ -167,6 +155,7 @@ class BookImportForm(forms.Form):
         help_text='*.xlsx 또는 *.csv 파일을 선택해주세요.'
     )
 
+
 class BookImportView(LoginRequiredMixin, FormView):
     template_name = 'books/book_import.html'
     form_class = BookImportForm
@@ -176,13 +165,30 @@ class BookImportView(LoginRequiredMixin, FormView):
         file = form.cleaned_data['file']
         
         try:
-            # 파일 확장자 확인
+            # 파일 확장자 확인 및 데이터 읽기
             if file.name.endswith('.xlsx'):
-                df = pd.read_excel(file)
+                df = pd.read_excel(file, dtype={
+                    '교재명': str,
+                    '과목': str,
+                    '출판사': str,
+                    'ISBN': str,
+                    '난이도': str,
+                    '메모': str
+                })
             elif file.name.endswith('.csv'):
-                df = pd.read_csv(file)
+                df = pd.read_csv(file, dtype={
+                    '교재명': str,
+                    '과목': str,
+                    '출판사': str,
+                    'ISBN': str,
+                    '난이도': str,
+                    '메모': str,
+                })
             else:
                 raise ValueError('지원하지 않는 파일 형식입니다.')
+            
+            # NaN 값을 None으로 변환
+            df = df.replace({np.nan: None})
             
             # 필수 컬럼 확인
             required_columns = ['교재명']
@@ -192,25 +198,25 @@ class BookImportView(LoginRequiredMixin, FormView):
             
             # 데이터 저장
             for _, row in df.iterrows():
-                # 관련 객체 조회 또는 생성
-                subject = Subject.objects.filter(name=row.get('과목')).first()
-                publisher = Publisher.objects.filter(name=row.get('출판사')).first()
-                purchase_location = PurchaseLocation.objects.filter(name=row.get('구입처')).first()
                 
+                # 관련 객체 조회 또는 생성
+                subject = None
+                if pd.notna(row.get('과목')):
+                    subject = Subject.objects.filter(name=str(row.get('과목'))).first()
+                
+                publisher = None
+                if pd.notna(row.get('출판사')):
+                    publisher = Publisher.objects.filter(name=str(row.get('출판사'))).first()
+                                
                 # 교재 생성 또는 업데이트
                 book, created = Book.objects.update_or_create(
-                    name=row['교재명'],
+                    name=str(row['교재명']),
                     defaults={
                         'subject': subject,
-                        'isbn': row.get('ISBN'),
+                        'isbn': str(row.get('ISBN')) if pd.notna(row.get('ISBN')) else None,
                         'publisher': publisher,
-                        'entry_date': pd.to_datetime(row.get('입고일')).date() if pd.notna(row.get('입고일')) else None,
-                        'original_price': row.get('원가'),
-                        'purchase_price': row.get('입고가'),
-                        'selling_price': row.get('판매가'),
-                        'purchase_location': purchase_location,
-                        'difficulty_level': row.get('난이도'),
-                        'memo': row.get('메모')
+                        'difficulty_level': str(row.get('난이도')) if pd.notna(row.get('난이도')) else None,
+                        'memo': str(row.get('메모')) if pd.notna(row.get('메모')) else None
                     }
                 )
             

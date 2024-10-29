@@ -1,6 +1,7 @@
 from django import forms
 from .models import Book
 
+
 class BookForm(forms.ModelForm):
     difficulty_level = forms.IntegerField(
         label='교재 난이도',
@@ -11,22 +12,16 @@ class BookForm(forms.ModelForm):
             'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50',
             'placeholder': '1-10 사이의 값을 입력하세요'
         }),
-        help_text='1(쉬움) ~ 10(어려움) 사이의 값을 입력해주세요'
+        help_text='1(쉬움) ~ 10(어려움)'
     )
 
     class Meta:
         model = Book
         exclude = ['spare1', 'spare2', 'spare3']
         widgets = {
-            'entry_date': forms.DateInput(
-                attrs={
-                    'type': 'date',
-                    'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-                }
-            ),
             'memo': forms.Textarea(
                 attrs={
-                    'rows': 4,
+                    'rows': 3,
                     'class': 'form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
                 }
             ),
