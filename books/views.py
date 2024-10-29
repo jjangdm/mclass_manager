@@ -16,6 +16,10 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.views.generic import FormView
 from django.shortcuts import redirect
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class BookListView(LoginRequiredMixin, ListView):
@@ -84,21 +88,6 @@ class BookUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
     
 
-# class BookDetailView(LoginRequiredMixin, DetailView):
-#     model = Book
-#     template_name = 'books/book_detail.html'
-#     context_object_name = 'book'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         book = self.get_object()
-        
-#         # QR 코드와 바코드 URL이 있는지 확인
-#         context['has_qr_code'] = bool(book.qr_code)
-#         context['has_barcode'] = bool(book.barcode)
-        
-#         return context
-
 class BookDetailView(LoginRequiredMixin, DetailView):
     model = Book
     template_name = 'books/book_detail.html'
@@ -114,31 +103,63 @@ class BookDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-
 class BookExportView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        # 교재 데이터를 DataFrame으로 변환
-        books = Book.objects.all().values(
-            'name', 'subject__name', 'isbn', 'publisher__name',
-            'entry_date', 'original_price', 'purchase_price',
-            'selling_price', 'purchase_location__name',
-            'difficulty_level', 'memo'
-        )
+        try:
+            # 교재 데이터 조회
+            books = Book.objects.all().values(
+                'name', 'subject__name', 'isbn', 'publisher__name',
+                'entry_date', 'original_price', 'purchase_price',
+                'selling_price', 'purchase_location__name',
+                'difficulty_level', 'memo'
+            )
+            
+            # 데이터가 없는 경우 처리
+            if not books.exists():
+                messages.warning(request, '내보낼 교재 데이터가 없습니다.')
+                logger.info('Export attempted with no book data available')
+                return redirect('books:book_list')
+            
+            # DataFrame 생성 및 컬럼명 설정
+            df = pd.DataFrame(list(books))
+            df.columns = [
+                '교재명', '과목', 'ISBN', '출판사', '입고일',
+                '원가', '입고가', '판매가', '구입처',
+                '난이도', '메모'
+            ]
+            
+            # null 값 처리
+            df = df.fillna('')  # null 값을 빈 문자열로 변환
+            
+            # 날짜 형식 처리
+            if '입고일' in df.columns and not df['입고일'].empty:
+                df['입고일'] = pd.to_datetime(df['입고일']).dt.strftime('%Y-%m-%d')
+            
+            # 엑셀 파일 생성
+            response = HttpResponse(
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename="books_export.xlsx"'
+            
+            # 엑셀 파일로 변환
+            df.to_excel(
+                response,
+                index=False,
+                engine='openpyxl',
+                sheet_name='교재 목록'
+            )
+            
+            logger.info(f'Successfully exported {len(df)} books to Excel')
+            return response
+            
+        except Exception as e:
+            logger.error(f'Error during book export: {str(e)}')
+            messages.error(
+                request,
+                '교재 데이터 내보내기 중 오류가 발생했습니다. 나중에 다시 시도해 주세요.'
+            )
+            return redirect('books:book_list')
         
-        df = pd.DataFrame(books)
-        # 컬럼명 한글로 변경
-        df.columns = [
-            '교재명', '과목', 'ISBN', '출판사', '입고일',
-            '원가', '입고가', '판매가', '구입처',
-            '난이도', '메모'
-        ]
-        
-        # 엑셀 파일 생성
-        response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="books_export.xlsx"'
-        
-        df.to_excel(response, index=False, engine='openpyxl')
-        return response
 
 class BookImportForm(forms.Form):
     file = forms.FileField(

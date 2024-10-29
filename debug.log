@@ -1,0 +1,45 @@
+Watching for file changes with StatReloader
+Successfully deleted barcode image for book: test (ID: 7)
+Successfully deleted QR code image for book: test (ID: 7)
+Successfully deleted book: test (ID: None)
+Successfully deleted barcode image for book: 임시 (ID: 8)
+Successfully deleted QR code image for book: 임시 (ID: 8)
+Successfully deleted book: 임시 (ID: None)
+C:\Users\JANGDONGMIN\django_project\mclass_manager\books\models.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /books/export/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\books\views.py", line 130, in get
+    df.columns = [
+    ^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\generic.py", line 6313, in __setattr__
+    return object.__setattr__(self, name, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "properties.pyx", line 69, in pandas._libs.properties.AxisProperty.__set__
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\generic.py", line 814, in _set_axis
+    self._mgr.set_axis(axis, labels)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\internals\managers.py", line 238, in set_axis
+    self._validate_set_axis(axis, new_labels)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\internals\base.py", line 98, in _validate_set_axis
+    raise ValueError(
+ValueError: Length mismatch: Expected axis has 0 elements, new values have 11 elements
+C:\Users\JANGDONGMIN\django_project\mclass_manager\books\views.py changed, reloading.
+Watching for file changes with StatReloader
+Export attempted with no book data available
+C:\Users\JANGDONGMIN\django_project\mclass_manager\books\views.py changed, reloading.
+Watching for file changes with StatReloader

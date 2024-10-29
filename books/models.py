@@ -7,10 +7,18 @@ import qrcode
 from barcode import EAN13
 from io import BytesIO
 from django.core.files import File
-from PIL import Image, ImageDraw
-import barcode
+# from PIL import Image, ImageDraw
+# import barcode
 from barcode.writer import ImageWriter
 import uuid
+
+from django.db import models, transaction
+from django.core.files.storage import default_storage
+import logging
+import os
+
+
+logger = logging.getLogger(__name__)
 
 
 class Book(models.Model):
@@ -138,7 +146,7 @@ class Book(models.Model):
                     save=False
                 )
 
-        # QR 코드 생성
+        # ISBN이 있는 경우 QR 코드 생성
         if not self.qr_code:
             qr = qrcode.QRCode(
                 version=1,
@@ -166,9 +174,42 @@ class Book(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        # 이미지 파일 삭제
-        if self.barcode:
-            self.barcode.delete()
-        if self.qr_code:
-            self.qr_code.delete()
-        super().delete(*args, **kwargs)
+        try:
+            with transaction.atomic():
+                # 바코드 이미지 삭제
+                if self.barcode:
+                    try:
+                        # 실제 파일 경로 가져오기
+                        barcode_path = self.barcode.path
+                        # ImageField의 delete() 메서드 호출
+                        self.barcode.delete(save=False)
+                        # 실제 파일이 여전히 존재하는지 확인하고 삭제
+                        if os.path.exists(barcode_path):
+                            default_storage.delete(barcode_path)
+                        logger.info(f"Successfully deleted barcode image for book: {self.name} (ID: {self.id})")
+                    except Exception as e:
+                        logger.error(f"Error deleting barcode image for book {self.name} (ID: {self.id}): {str(e)}")
+                        raise
+
+                # QR 코드 이미지 삭제
+                if self.qr_code:
+                    try:
+                        # 실제 파일 경로 가져오기
+                        qr_path = self.qr_code.path
+                        # ImageField의 delete() 메서드 호출
+                        self.qr_code.delete(save=False)
+                        # 실제 파일이 여전히 존재하는지 확인하고 삭제
+                        if os.path.exists(qr_path):
+                            default_storage.delete(qr_path)
+                        logger.info(f"Successfully deleted QR code image for book: {self.name} (ID: {self.id})")
+                    except Exception as e:
+                        logger.error(f"Error deleting QR code image for book {self.name} (ID: {self.id}): {str(e)}")
+                        raise
+
+                # 상위 클래스의 delete 메서드 호출
+                super().delete(*args, **kwargs)
+                logger.info(f"Successfully deleted book: {self.name} (ID: {self.id})")
+
+        except Exception as e:
+            logger.error(f"Failed to delete book {self.name} (ID: {self.id}): {str(e)}")
+            raise

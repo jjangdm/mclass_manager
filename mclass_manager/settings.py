@@ -159,3 +159,27 @@ LOGIN_URL = 'login'
 
 # 로그인 후 리다이렉트할 URL
 LOGIN_REDIRECT_URL = 'index'
+
+
+
+# data logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        '': {  # 루트 로거
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+
