@@ -1,0 +1,179 @@
+{# templates/books_inventory/stock_form.html #}
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}교재 정보 수정{% else %}교재 입고 등록{% endif %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">
+                {% if form.instance.pk %}교재 정보 수정{% else %}교재 입고 등록{% endif %}
+            </h1>
+            <p class="mt-2 text-sm text-gray-700">
+                {% if form.instance.pk %}기존 교재의 정보를 수정합니다.{% else %}새로운 교재를 입고 등록합니다.{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <form method="post" class="mt-8 space-y-8">
+        {% csrf_token %}
+        
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <div>
+                        <label for="{{ form.subject.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.subject.label }}
+                        </label>
+                        {{ form.subject }}
+                        {% if form.subject.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.subject.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.book.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.book.label }}
+                        </label>
+                        {{ form.book }}
+                        {% if form.book.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.book.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.purchase_location.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.purchase_location.label }}
+                        </label>
+                        {{ form.purchase_location }}
+                        {% if form.purchase_location.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.purchase_location.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.quantity_received.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.quantity_received.label }}
+                        </label>
+                        {{ form.quantity_received }}
+                        {% if form.quantity_received.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.quantity_received.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.received_date.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.received_date.label }}
+                        </label>
+                        {{ form.received_date }}
+                        {% if form.received_date.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.received_date.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">가격 정보</h3>
+                    <div class="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                        <div>
+                            <label for="{{ form.list_price.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                {{ form.list_price.label }}
+                            </label>
+                            {{ form.list_price }}
+                            {% if form.list_price.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.list_price.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.unit_price.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                {{ form.unit_price.label }}
+                            </label>
+                            {{ form.unit_price }}
+                            {% if form.unit_price.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.unit_price.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.selling_price.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                {{ form.selling_price.label }}
+                            </label>
+                            {{ form.selling_price }}
+                            {% if form.selling_price.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.selling_price.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">재고 관리</h3>
+                    <div class="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                        <div>
+                            <label for="{{ form.reorder_point.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                {{ form.reorder_point.label }}
+                            </label>
+                            {{ form.reorder_point }}
+                            {% if form.reorder_point.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.reorder_point.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.notes.label }}
+                    </label>
+                    <div class="mt-1">
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.notes.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 space-x-3">
+                <a href="{% url 'books_inventory:stock_list' %}" 
+                   class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    취소
+                </a>
+                <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                    {% if form.instance.pk %}수정{% else %}등록{% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const subjectSelect = document.getElementById('{{ form.subject.id_for_label }}');
+    const bookSelect = document.getElementById('{{ form.book.id_for_label }}');
+
+    subjectSelect.addEventListener('change', function() {
+        const subjectId = this.value;
+        if (subjectId) {
+            fetch(`/books-inventory/api/books-by-subject/?subject_id=${subjectId}`)
+                .then(response => response.json())
+                .then(data => {
+                    bookSelect.innerHTML = '<option value="">---------</option>';
+                    data.forEach(book => {
+                        const option = document.createElement('option');
+                        option.value = book.id;
+                        option.textContent = book.name;
+                        bookSelect.appendChild(option);
+                    });
+                });
+        } else {
+            bookSelect.innerHTML = '<option value="">---------</option>';
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,88 @@
+{# templates/books_inventory/distribute.html #}
+{% extends 'base.html' %}
+
+{% block title %}교재 지급{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">교재 지급</h1>
+            <p class="mt-2 text-sm text-gray-700">학생에게 교재를 지급합니다.</p>
+        </div>
+    </div>
+
+    <form method="post" class="mt-8">
+        {% csrf_token %}
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <div>
+                        <label for="{{ form.book_stock.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.book_stock.label }}
+                        </label>
+                        {{ form.book_stock }}
+                        {% if form.book_stock.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.book_stock.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.student.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.student.label }}
+                        </label>
+                        {{ form.student }}
+                        {% if form.student.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.student.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.distribution_date.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.distribution_date.label }}
+                        </label>
+                        {{ form.distribution_date }}
+                        {% if form.distribution_date.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.distribution_date.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.quantity.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.quantity.label }}
+                        </label>
+                        {{ form.quantity }}
+                        {% if form.quantity.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.quantity.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.notes.label }}
+                        </label>
+                        <div class="mt-1">
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.notes.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 space-x-3">
+                <a href="{% url 'books_inventory:stock_list' %}" 
+                   class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    취소
+                </a>
+                <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                    지급하기
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+

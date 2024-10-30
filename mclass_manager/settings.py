@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'books',
+    'books_inventory',
     'common',
     'teachers',
     'students',
