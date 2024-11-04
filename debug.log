@@ -5126,3 +5126,32 @@ Not Found: /books-inventory/api/books-by-subject/
 Not Found: /books-inventory/api/books-by-subject/
 Watching for file changes with StatReloader
 Not Found: /favicon.ico
+Watching for file changes with StatReloader
+Successfully deleted barcode image for book: 15개정 최고득점수학 3-1 (ID: 11)
+Successfully deleted QR code image for book: 15개정 최고득점수학 3-1 (ID: 11)
+Successfully deleted book: 15개정 최고득점수학 3-1 (ID: None)
+Successfully deleted barcode image for book: 이투스 고쟁이 유형심화 중등 2-2 수학 (ID: 13)
+Successfully deleted QR code image for book: 이투스 고쟁이 유형심화 중등 2-2 수학 (ID: 13)
+Successfully deleted book: 이투스 고쟁이 유형심화 중등 2-2 수학 (ID: None)
+Successfully deleted barcode image for book: 이투스 신 수학의 바이블 중등 유형 2-2 (ID: 12)
+Successfully deleted QR code image for book: 이투스 신 수학의 바이블 중등 유형 2-2 (ID: 12)
+Successfully deleted book: 이투스 신 수학의 바이블 중등 유형 2-2 (ID: None)
+C:\Users\JANGDONGMIN\django_project\mclass_manager\common\admin.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\common\admin.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\common\admin.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\common\admin.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\common\admin.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\books_inventory\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\books_inventory\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Not Found: /favicon.ico

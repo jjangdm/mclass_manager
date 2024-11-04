@@ -12,9 +12,7 @@ from django.db.models.functions import Coalesce
 from django.contrib import messages
 from .models import BookStock, BookDistribution, BookStockHistory
 from common.models import Subject, PurchaseLocation
-from students.models import Student
 from books.models import Book
-from django.core.exceptions import ValidationError
 
 
 class StockListView(LoginRequiredMixin, ListView):
@@ -56,7 +54,7 @@ class StockListView(LoginRequiredMixin, ListView):
             
         # 정렬
         sort_by = self.request.GET.get('sort', '-received_date')
-        if sort_by in ['book__name', '-book__name', 'current_stock', 
+        if sort_by in ['book__name', '-book__name', 'current_stock',
                       '-current_stock', 'received_date', '-received_date']:
             queryset = queryset.order_by(sort_by)
             
@@ -109,7 +107,7 @@ class StockDetailView(LoginRequiredMixin, DetailView):
 class StockCreateView(LoginRequiredMixin, CreateView):
     model = BookStock
     template_name = 'books_inventory/stock_form.html'
-    fields = ['subject', 'book', 'purchase_location', 'quantity_received', 
+    fields = ['subject', 'book', 'purchase_location', 'quantity_received',
               'received_date', 'list_price', 'unit_price', 'selling_price',
               'reorder_point', 'notes']
     success_url = reverse_lazy('books_inventory:stock_list')
@@ -132,7 +130,7 @@ class StockCreateView(LoginRequiredMixin, CreateView):
 class StockUpdateView(LoginRequiredMixin, UpdateView):
     model = BookStock
     template_name = 'books_inventory/stock_form.html'
-    fields = ['subject', 'book', 'purchase_location', 'quantity_received', 
+    fields = ['subject', 'book', 'purchase_location', 'quantity_received',
               'received_date', 'list_price', 'unit_price', 'selling_price',
               'reorder_point', 'notes']
     success_url = reverse_lazy('books_inventory:stock_list')
@@ -218,7 +216,7 @@ class BookDistributionCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def get_success_url(self):
-        return reverse('books_inventory:stock_detail', 
+        return reverse('books_inventory:stock_detail',
                       kwargs={'pk': self.object.book_stock.pk})
 
 
@@ -245,7 +243,7 @@ class BookDistributionDeleteView(LoginRequiredMixin, DeleteView):
         return response
     
     def get_success_url(self):
-        return reverse('books_inventory:stock_detail', 
+        return reverse('books_inventory:stock_detail',
                       kwargs={'pk': self.object.book_stock.pk})
 
 
@@ -349,7 +347,7 @@ def get_stock_status(request):
             'out_of_stock': summary['out_of_stock'],
             'total_quantity': summary['total_quantity'] or 0,
             'total_distributed': summary['total_distributed'] or 0,
-            'current_stock': (summary['total_quantity'] or 0) - 
+            'current_stock': (summary['total_quantity'] or 0) -
                            (summary['total_distributed'] or 0)
         })
         
@@ -463,7 +461,7 @@ def get_stock_status(request):
     
 #     def get_success_url(self):
 #         messages.success(self.request, '지급 기록이 삭제되었습니다.')
-#         return reverse('books_inventory:stock_detail', 
+#         return reverse('books_inventory:stock_detail',
 #                       kwargs={'pk': self.object.book_stock.pk})
     
 #     def get(self, request, *args, **kwargs):

@@ -23,5 +23,6 @@ class BankAdmin(admin.ModelAdmin):
 
 @admin.register(PurchaseLocation)
 class PurchaseLocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone1', 'email', 'business_number')
-    search_fields = ('name', 'phone1', 'phone2', 'email', 'business_number')
+    list_display = ('name', 'phone1', 'phone2', 'email', 'business_number')
+    search_fields = ('name', )
+
