@@ -50,33 +50,47 @@
                         <tr>
                             <th class="text-center">선생님</th>
                             <th class="text-center">은행</th>
-                            <th>계좌번호</th>
+                            <th class="text-center">계좌번호</th>
                             <th class="text-right">근무일수</th>
                             <th class="text-right">근무시간</th>
                             <th class="text-right">급여</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- 재직 중인 선생님 -->
                         {% for data in salary_data %}
-                        <tr class="hover:bg-gray-50">
-                            <td class="text-center">
-                                <a href="{% url 'teachers:teacher_detail' data.teacher.id %}" 
-                                   class="link-primary">
-                                    {{ data.teacher.name }}
-                                </a>
-                            </td>
-                            <td class="text-center">{{ data.bank_name|default:"-" }}</td>
-                            <td>{{ data.account_number|default:"-" }}</td>
-                            <td class="text-right">{{ data.work_days }}일</td>
-                            <td class="text-right">{{ data.work_hours|floatformat:1 }}시간</td>
-                            <td class="text-right font-medium">{{ data.total_amount|intcomma }}원</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center text-gray-500 py-4">
-                                해당 월의 급여 데이터가 없습니다.
-                            </td>
-                        </tr>
+                            {% if data.teacher.is_active %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="text-center">
+                                        {{ data.teacher.name }}
+                                        <!-- <a href="{% url 'teachers:teacher_detail' data.teacher.id %}"
+                                           class="link-primary">
+                                            {{ data.teacher.name }}
+                                        </a> -->
+                                    </td>
+                                    <td class="text-center">{{ data.bank_name|default:"-" }}</td>
+                                    <td>{{ data.account_number|default:"-" }}</td>
+                                    <td class="text-right">{{ data.work_days }}일</td>
+                                    <td class="text-right">{{ data.work_hours|floatformat:1 }}시간</td>
+                                    <td class="text-right font-medium">{{ data.total_amount|intcomma }}원</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- 퇴직한 선생님 - 색상 변경 -->
+                        {% for data in salary_data %}
+                            {% if not data.teacher.is_active %}
+                                <tr class="hover:bg-gray-50 bg-red-100">
+                                    <td class="text-center text-gray-500" style="color: gray;">
+                                        {{ data.teacher.name }}
+                                    </td>
+                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.bank_name|default:"-" }}</td>
+                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.account_number|default:"-" }}</td>
+                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.work_days }}일</td>
+                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.work_hours|floatformat:1 }}시간</td>
+                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.total_amount|intcomma }}원</td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                     </tbody>
                     <tfoot>
@@ -93,6 +107,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- 도움말 -->
     <div class="bg-blue-50 rounded-lg p-4">

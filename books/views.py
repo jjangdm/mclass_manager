@@ -63,6 +63,39 @@ class BookListView(LoginRequiredMixin, ListView):
         return context
 
 
+# class BookListView(LoginRequiredMixin, ListView):
+#     model = Book
+#     template_name = 'books/books_list.html'
+#     context_object_name = 'books'
+#     ordering = ['name']
+    
+#     def get_queryset(self):
+#         queryset = super().get_queryset()
+        
+#         # 과목 필터
+#         subject = self.request.GET.get('subject')
+#         if subject:
+#             queryset = queryset.filter(subject_id=subject)
+        
+#         # 출판사 필터
+#         publisher = self.request.GET.get('publisher')
+#         if publisher:
+#             queryset = queryset.filter(publisher_id=publisher)
+        
+#         return queryset
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # 필터링을 위한 선택 옵션들 추가
+#         context['subjects'] = Subject.objects.all()
+#         context['publishers'] = Publisher.objects.all()
+#         # 현재 적용된 필터값들 유지
+#         context['current_filters'] = {
+#             'subject': self.request.GET.get('subject', ''),
+#             'publisher': self.request.GET.get('publisher', ''),
+#         }
+#         return context
+
 
 class BookCreateView(LoginRequiredMixin, CreateView):
     model = Book
