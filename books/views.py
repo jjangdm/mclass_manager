@@ -29,14 +29,24 @@ class BookListView(LoginRequiredMixin, ListView):
         queryset = super().get_queryset()
         
         # 과목 필터
-        subject = self.request.GET.get('subject')
-        if subject:
-            queryset = queryset.filter(subject_id=subject)
+        subject_id = self.request.GET.get('subject')
+        if subject_id:
+            # Convert subject_id to an integer if it's not already
+            try:
+                subject_id = int(subject_id)
+            except ValueError:
+                pass  # Leave it as a string if it's not a valid integer
+            queryset = queryset.filter(subject_id=subject_id)
         
         # 출판사 필터
-        publisher = self.request.GET.get('publisher')
-        if publisher:
-            queryset = queryset.filter(publisher_id=publisher)
+        publisher_id = self.request.GET.get('publisher')
+        if publisher_id:
+            # Convert publisher_id to an integer if it's not already
+            try:
+                publisher_id = int(publisher_id)
+            except ValueError:
+                pass  # Leave it as a string if it's not a valid integer
+            queryset = queryset.filter(publisher_id=publisher_id)
         
         return queryset
     
@@ -51,6 +61,7 @@ class BookListView(LoginRequiredMixin, ListView):
             'publisher': self.request.GET.get('publisher', ''),
         }
         return context
+
 
 
 class BookCreateView(LoginRequiredMixin, CreateView):
