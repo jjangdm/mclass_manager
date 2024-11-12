@@ -1,47 +1,8 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학생 목록</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .pagination a {
-            color: black;
-            padding: 8px 16px;
-            text-decoration: none;
-        }
-        .pagination a.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .pagination a:hover:not(.active) {
-            background-color: #ddd;
-        }
-    </style>
-</head>
-<body>
+{% extends 'students/base_students.html' %}
+
+{% block student_content %}
     <h1>학생 목록</h1>
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>이름</th>
@@ -101,5 +62,4 @@
         {% endif %}
     </div>
     {% endif %}
-</body>
-</html>
+{% endblock %}
