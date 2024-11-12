@@ -51,7 +51,7 @@
                                     <td class="font-medium sticky left-0 bg-white z-10 border-r">
                                         {{ row.teacher.name }}
                                         {% if not row.teacher.is_active %}
-                                            <span class="text-xs text-gray-500">(퇴직)</span>
+                                            <span class="text-xs text-gray-500" style="color: red">(퇴직)</span>
                                         {% endif %}
                                     </td>
                                     {% for month in months %}
