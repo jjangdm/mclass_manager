@@ -17,9 +17,16 @@ class StudentListView(LoginRequiredMixin, ListView):
 
 class StudentCreateView(LoginRequiredMixin, CreateView):
     model = Student
-    fields = ['name', 'student_id', 'school', 'grade', 'phone_number', 'email', 
+    fields = ['name', 'school', 'grade', 'phone_number', 'email', 
               'gender', 'parent_phone', 'receipt_number', 'first_class_date', 
-              'quit_date', 'etc']  # Adjust fields as needed
-    template_name = 'students/student_create.html'  # Create this template
-    success_url = reverse_lazy('students:student_list') # Use reverse_lazy
+              'quit_date', 'etc', 'personal_file']  # Adjust fields as needed
+    template_name = 'students/student_form.html'  # Use the new student_form.html
+    success_url = reverse_lazy('students:student_list')
 
+    def form_valid(self, form):
+        # Save the new student
+        student = form.save()
+
+        # Set the student ID on the context for use in the template
+        self.object = student 
+        return super().form_valid(form)

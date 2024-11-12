@@ -1,0 +1,52 @@
+{% extends 'students/base_students.html' %}
+
+{% block title %}{% if form.instance.pk %}학생 정보 수정{% else %}학생 등록{% endif %} - MClass Manager{% endblock %}
+
+{% block student_content %}
+<div class="content-card max-w-3xl mx-auto">
+    <div class="card-header">
+        <h1 class="text-xl font-semibold text-gray-900">
+            {% if form.instance.pk %}학생 정보 수정{% else %}학생 등록{% endif %}
+        </h1>
+    </div>
+    
+    <div class="card-body">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="space-y-1">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                    {% if field.field.required %}
+                        <span class="text-red-500">*</span>
+                    {% endif %}
+                </label>
+                
+                {{ field }}
+                
+                {% if field.help_text %}
+                    <p class="text-sm text-gray-500">{{ field.help_text }}</p>
+                {% endif %}
+                
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <p class="text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="flex justify-end space-x-4 pt-4">
+                <a href="{% url 'students:student_list' %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    취소
+                </a>
+                <button type="submit" class="form-button">
+                    저장
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

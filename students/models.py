@@ -30,7 +30,7 @@ class Student(models.Model):
     interview_info = models.TextField(null=True, blank=True, verbose_name='인터뷰 정보')
     first_class_date = models.DateField(null=True, blank=True, verbose_name='첫수업 날짜')
     quit_date = models.DateField(null=True, blank=True, verbose_name='그만 둔 날짜')
-    student_id = models.CharField(max_length=8, unique=True, verbose_name='학생 고유번호')
+    student_id = models.CharField(max_length=8, unique=True, verbose_name='고유번호')
     personal_file = models.FileField(upload_to='student_files/', null=True, blank=True, verbose_name='개인 파일')
     etc = models.TextField(null=True, blank=True, verbose_name='기타')
     extra1 = models.CharField(max_length=100, null=True, blank=True, verbose_name='예비1')
@@ -52,7 +52,7 @@ class Student(models.Model):
 
     class Meta:
         verbose_name = '학생'
-        verbose_name_plural = '학생들'
+        verbose_name_plural = '학생'
 
     def __str__(self):
         return f"{self.name} ({self.student_id})"
