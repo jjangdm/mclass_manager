@@ -39,10 +39,11 @@
                         {% for teacher in teachers %}
                         <tr>
                             <td>
-                                <a href="{% url 'teachers:teacher_detail' teacher.pk %}" 
+                                {{ teacher.name }}
+                                <!-- <a href="{% url 'teachers:teacher_detail' teacher.pk %}" 
                                    class="link-primary">
                                     {{ teacher.name }}
-                                </a>
+                                </a> -->
                             </td>
                             <td>{{ teacher.phone_number|default:"-" }}</td>
                             <td>{{ teacher.email|default:"-" }}</td>
