@@ -1,49 +1,76 @@
 {% extends 'students/base_students.html' %}
 
 {% block student_content %}
-    <h1>학생 목록</h1>
-    <hr>
-    <hr>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>이름</th>
-                <th>고유번호</th>
-                <th>학교</th>
-                <th>학년</th>
-                <th>학생 전화번호</th>
-                <th>이메일</th>
-                <th>성별</th>
-                <th>부모님 전화번호</th>
-                <th>현금영수증용 번호</th>
-                <th>첫수업 날짜</th>
-                <th>그만 둔 날짜</th>
-                <th>기타</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in students %}
-            <tr>
-                <td>{{ student.name }}</td>
-                <td>{{ student.student_id }}</td>
-                <td>{{ student.school.name|default:"" }}</td>
-                <td>{{ student.grade|default:"" }}</td>
-                <td>{{ student.phone_number|default:"" }}</td>
-                <td>{{ student.email|default:"" }}</td>
-                <td>{{ student.get_gender_display|default:"" }}</td>
-                <td>{{ student.parent_phone|default:"" }}</td>
-                <td>{{ student.receipt_number|default:"" }}</td>
-                <td>{{ student.first_class_date|date:"Y-m-d"|default:"" }}</td>
-                <td>{{ student.quit_date|date:"Y-m-d"|default:"" }}</td>
-                <td>{{ student.etc|truncatewords:10|default:"" }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="12">등록된 학생이 없습니다.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="bg-white shadow rounded-lg p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">학생 목록</h1>
+        <div class="space-x-2">
+            <a href="{% url 'students:student_import' %}" 
+               class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded text-sm">
+                데이터 가져오기
+            </a>
+            <a href="{% url 'students:student_export' %}" 
+               class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">
+                데이터 내보내기
+            </a>
+            <a href="{% url 'students:student_create' %}" 
+               class="bg-indigo-500 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm">
+                학생 등록
+            </a>
+        </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이름</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">고유번호</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학교</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학년</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학생 전화번호</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이메일</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">성별</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">부모님 전화번호</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">현금영수증용 번호</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">첫수업 날짜</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">그만 둔 날짜</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">기타</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for student in students %}
+                <tr class="hover:bg-gray-50 text-sm">
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.name }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.student_id }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.school.name|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.grade|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.phone_number|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.email|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.get_gender_display|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.parent_phone|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.receipt_number|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.first_class_date|date:"Y-m-d"|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.quit_date|date:"Y-m-d"|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-gray-600">{{ student.etc|truncatewords:10|default:"" }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap space-x-2">
+                        <a href="{% url 'students:student_detail' student.pk %}" 
+                           class="text-blue-600 hover:text-blue-900">상세</a>
+                        <a href="{% url 'students:student_update' student.pk %}" 
+                           class="text-indigo-600 hover:text-indigo-900">수정</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="13" class="px-4 py-2 text-center text-sm text-gray-500">
+                        등록된 학생이 없습니다.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     {% if is_paginated %}
     <div class="pagination">

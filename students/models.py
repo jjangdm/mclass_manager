@@ -40,10 +40,10 @@ class Student(models.Model):
     extra5 = models.CharField(max_length=100, null=True, blank=True, verbose_name='예비5')
 
     def save(self, *args, **kwargs):
-        if not self.receipt_number and self.parent_phone:
-            self.receipt_number = self.parent_phone
-        if not self.student_id:
+        if not self.pk and not self.student_id:
             self.student_id = self.generate_student_id()
+        elif not self.receipt_number and self.parent_phone:
+            self.receipt_number = self.parent_phone
         super().save(*args, **kwargs)
 
     def generate_student_id(self):
