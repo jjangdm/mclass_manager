@@ -9,6 +9,7 @@ from .forms import StudentForm, StudentImportForm
 import pandas as pd
 from django.http import HttpResponse
 from datetime import datetime  # Import datetime module
+from .models import Student, StudentFile
 
 
 class StudentListView(LoginRequiredMixin, ListView):
@@ -178,3 +179,39 @@ def student_export(request):
     df.to_excel(response, sheet_name='학생 목록', index=False, engine='xlsxwriter')
 
     return response
+
+def student_files(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    
+    if request.method == 'POST':
+        if 'file' in request.FILES:
+            file = request.FILES['file']
+            description = request.POST.get('description', '')
+            
+            student_file = StudentFile(
+                student=student,
+                file=file,
+                file_name=file.name,
+                description=description
+            )
+            student_file.save()
+            messages.success(request, '파일이 성공적으로 업로드되었습니다.')
+            return redirect('students:student_files', pk=pk)
+        
+    files = student.files.all()
+    context = {
+        'student': student,
+        'files': files,
+    }
+    return render(request, 'students/student_files.html', context)
+
+def delete_student_file(request, file_id):
+    file = get_object_or_404(StudentFile, id=file_id)
+    student_pk = file.student.pk
+    
+    if request.method == 'POST':
+        file.file.delete()  # 실제 파일 삭제
+        file.delete()       # DB 레코드 삭제
+        messages.success(request, '파일이 삭제되었습니다.')
+    
+    return redirect('students:student_files', pk=student_pk)

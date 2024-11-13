@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from common.models import School
@@ -39,6 +41,21 @@ class Student(models.Model):
     extra4 = models.CharField(max_length=100, null=True, blank=True, verbose_name='예비4')
     extra5 = models.CharField(max_length=100, null=True, blank=True, verbose_name='예비5')
 
+    def generate_student_id(self):
+        import random
+        return ''.join([str(random.randint(0, 9)) for _ in range(8)])
+    
+    @property
+    def folder_name(self):
+        return f"{self.name}_{self.school.name}_{self.student_id}" if self.school else f"{self.name}_{self.student_id}"
+
+    def get_student_folder_path(self):
+        base_path = os.path.join(settings.MEDIA_ROOT, 'student_files')
+        student_folder = os.path.join(base_path, self.folder_name)
+        if not os.path.exists(student_folder):
+            os.makedirs(student_folder)
+        return student_folder    
+    
     def save(self, *args, **kwargs):
         if not self.pk and not self.student_id:
             self.student_id = self.generate_student_id()
@@ -46,13 +63,39 @@ class Student(models.Model):
             self.receipt_number = self.parent_phone
         super().save(*args, **kwargs)
 
-    def generate_student_id(self):
-        import random
-        return ''.join([str(random.randint(0, 9)) for _ in range(8)])
-
+        # 저장 후 개인 폴더 생성
+        super().save(*args, **kwargs)
+        self.get_student_folder_path()
+    
     class Meta:
         verbose_name = '학생'
         verbose_name_plural = '학생'
 
     def __str__(self):
         return f"{self.name} ({self.student_id})"
+    
+    
+class StudentFile(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='files')
+    file = models.FileField(upload_to='student_files/', verbose_name='파일')
+    file_name = models.CharField(max_length=255, verbose_name='파일명')
+    description = models.TextField(null=True, blank=True, verbose_name='설명')
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name='업로드 날짜')
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # 새로운 파일인 경우
+            file_path = os.path.join(
+                self.student.folder_name,
+                self.file.name
+            )
+            self.file.name = file_path
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = '학생 파일'
+        verbose_name_plural = '학생 파일'
+        ordering = ['-uploaded_at']
+
+    def __str__(self):
+        return f"{self.student.name}의 파일 - {self.file_name}"
+     
