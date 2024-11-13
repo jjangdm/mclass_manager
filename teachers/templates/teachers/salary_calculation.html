@@ -51,9 +51,9 @@
                             <th class="text-center">선생님</th>
                             <th class="text-center">은행</th>
                             <th class="text-center">계좌번호</th>
-                            <th class="text-right">근무일수</th>
-                            <th class="text-right">근무시간</th>
-                            <th class="text-right">급여</th>
+                            <th style="text-align: right;">근무일수</th>
+                            <th style="text-align: right;">근무시간</th>
+                            <th style="text-align: right;">급여</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,9 +70,9 @@
                                     </td>
                                     <td class="text-center">{{ data.bank_name|default:"-" }}</td>
                                     <td>{{ data.account_number|default:"-" }}</td>
-                                    <td class="text-right">{{ data.work_days }}일</td>
-                                    <td class="text-right">{{ data.work_hours|floatformat:1 }}시간</td>
-                                    <td class="text-right font-medium">{{ data.total_amount|intcomma }}원</td>
+                                    <td style="text-align: right;">{{ data.work_days }}일</td>
+                                    <td style="text-align: right;">{{ data.work_hours|floatformat:1 }}시간</td>
+                                    <td style="text-align: right;">{{ data.total_amount|intcomma }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
@@ -86,9 +86,9 @@
                                     </td>
                                     <td class="text-center text-gray-500" style="color: gray;">{{ data.bank_name|default:"-" }}</td>
                                     <td class="text-center text-gray-500" style="color: gray;">{{ data.account_number|default:"-" }}</td>
-                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.work_days }}일</td>
-                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.work_hours|floatformat:1 }}시간</td>
-                                    <td class="text-center text-gray-500" style="color: gray;">{{ data.total_amount|intcomma }}원</td>
+                                    <td style="text-align: right; color: gray;">{{ data.work_days }}일</td>
+                                    <td style="text-align: right; color: gray;">{{ data.work_hours|floatformat:1 }}시간</td>
+                                    <td style="text-align: right; color: gray;">{{ data.total_amount|intcomma }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
@@ -98,8 +98,8 @@
                             <td colspan="5" class="text-right font-semibold">
                                 총 급여 합계
                             </td>
-                            <td class="text-right font-semibold text-indigo-600">
-                                {{ total_salary|intcomma }}원
+                            <td class="text-right font-semibold text-indigo-600" style="text-align: right;">
+                                {{ total_salary|intcomma }}
                             </td>
                         </tr>
                     </tfoot>
