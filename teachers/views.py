@@ -48,11 +48,14 @@ class TeacherListView(LoginRequiredMixin, ListView):
         show_inactive = self.request.GET.get('show_inactive') == 'on'
         if not show_inactive:
             queryset = queryset.filter(is_active=True)
-        return queryset.order_by('-hire_date')
+        active_teachers = queryset.filter(is_active=True).order_by('-hire_date')
+        inactive_teachers = queryset.filter(is_active=False).order_by('-resignation_date') # 퇴사 날짜 기준으로 역순 정렬
+        return active_teachers, inactive_teachers
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['show_inactive'] = self.request.GET.get('show_inactive') == 'on'
+        context['active_teachers'], context['inactive_teachers'] = self.get_queryset()
         return context
 
 

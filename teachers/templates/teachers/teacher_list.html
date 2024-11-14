@@ -1,3 +1,4 @@
+{# teachers/templates/teachers/teacher_list.html #}
 {% extends 'teachers/base_teachers.html' %}
 
 {% block title %}선생님 목록 - MClass Manager{% endblock %}
@@ -31,28 +32,26 @@
                         <th>이메일</th>
                         <th>입사일</th>
                         <th>상태</th>
+                        <th>퇴사일</th>
                         <th>관리</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% if teachers %}
-                        {% for teacher in teachers %}
+                    {% if active_teachers %}
+                        {% for teacher in active_teachers %}
                         <tr>
                             <td>
                                 {{ teacher.name }}
-                                <!-- <a href="{% url 'teachers:teacher_detail' teacher.pk %}" 
-                                   class="link-primary">
-                                    {{ teacher.name }}
-                                </a> -->
                             </td>
                             <td>{{ teacher.phone_number|default:"-" }}</td>
                             <td>{{ teacher.email|default:"-" }}</td>
                             <td>{{ teacher.hire_date|date:"Y-m-d" }}</td>
                             <td>
-                                <span class="status-badge {% if teacher.is_active %}status-badge-success{% else %}status-badge-error{% endif %}">
-                                    {% if teacher.is_active %}재직 중{% else %}퇴사{% endif %}
+                                <span class="status-badge status-badge-success">
+                                    재직 중
                                 </span>
                             </td>
+                            <td>-</td>
                             <td>
                                 <div class="flex space-x-2">
                                     <a href="{% url 'teachers:teacher_update' teacher.pk %}" 
@@ -63,12 +62,38 @@
                             </td>
                         </tr>
                         {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-gray-500">
-                                등록된 선생님이 없습니다.
+                    {% endif %}
+
+                    {% if show_inactive and inactive_teachers %}
+                        <tr class="border-t border-gray-300">
+                            <td colspan="7" class="text-center py-4 text-gray-500 font-bold">
+                                퇴사자
                             </td>
                         </tr>
+                        {% for teacher in inactive_teachers %}
+                        <tr>
+                            <td>
+                                {{ teacher.name }}
+                            </td>
+                            <td>{{ teacher.phone_number|default:"-" }}</td>
+                            <td>{{ teacher.email|default:"-" }}</td>
+                            <td>{{ teacher.hire_date|date:"Y-m-d" }}</td>
+                            <td>
+                                <span class="status-badge status-badge-error">
+                                    퇴사
+                                </span>
+                            </td>
+                            <td>{{ teacher.resignation_date|date:"Y-m-d" }}</td> 
+                            <td>
+                                <div class="flex space-x-2">
+                                    <a href="{% url 'teachers:teacher_update' teacher.pk %}" 
+                                       class="link-primary">수정</a>
+                                    <a href="{% url 'teachers:teacher_pdf_report' teacher.pk %}"
+                                       class="link-primary" target="_blank">보고서</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     {% endif %}
                 </tbody>
             </table>
