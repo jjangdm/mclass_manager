@@ -17,7 +17,7 @@ from books.models import Book
 
 class StockListView(LoginRequiredMixin, ListView):
     model = BookStock
-    template_name = 'books_inventory/stock_list.html'
+    template_name = 'bookstore/stock_list.html'
     paginate_by = 10
     
     def get_queryset(self):
@@ -79,7 +79,7 @@ class StockListView(LoginRequiredMixin, ListView):
 
 class StockDetailView(LoginRequiredMixin, DetailView):
     model = BookStock
-    template_name = 'books_inventory/stock_detail.html'
+    template_name = 'bookstore/stock_detail.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -106,11 +106,11 @@ class StockDetailView(LoginRequiredMixin, DetailView):
 
 class StockCreateView(LoginRequiredMixin, CreateView):
     model = BookStock
-    template_name = 'books_inventory/stock_form.html'
+    template_name = 'bookstore/stock_form.html'
     fields = ['subject', 'book', 'purchase_location', 'quantity_received',
               'received_date', 'list_price', 'unit_price', 'selling_price',
               'reorder_point', 'notes']
-    success_url = reverse_lazy('books_inventory:stock_list')
+    success_url = reverse_lazy('bookstore:stock_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,7 +129,7 @@ class StockCreateView(LoginRequiredMixin, CreateView):
 
 class StockUpdateView(LoginRequiredMixin, UpdateView):
     model = BookStock
-    template_name = 'books_inventory/stock_form.html'
+    template_name = 'bookstore/stock_form.html'
     fields = ['subject', 'book', 'purchase_location', 'quantity_received',
               'received_date', 'list_price', 'unit_price', 'selling_price',
               'reorder_point', 'notes']
@@ -168,7 +168,7 @@ class StockUpdateView(LoginRequiredMixin, UpdateView):
 
 class BookDistributionCreateView(LoginRequiredMixin, CreateView):
     model = BookDistribution
-    template_name = 'books_inventory/distribute.html'
+    template_name = 'bookstore/distribute.html'
     fields = ['book_stock', 'student', 'distribution_date', 'quantity', 'notes']
     
     def get_form(self, form_class=None):
@@ -216,7 +216,7 @@ class BookDistributionCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def get_success_url(self):
-        return reverse('books_inventory:stock_detail',
+        return reverse('bookstore:stock_detail',
                       kwargs={'pk': self.object.book_stock.pk})
 
 
@@ -243,13 +243,13 @@ class BookDistributionDeleteView(LoginRequiredMixin, DeleteView):
         return response
     
     def get_success_url(self):
-        return reverse('books_inventory:stock_detail',
+        return reverse('bookstore:stock_detail',
                       kwargs={'pk': self.object.book_stock.pk})
 
 
 class StockHistoryListView(LoginRequiredMixin, ListView):
     model = BookStockHistory
-    template_name = 'books_inventory/stock_history.html'
+    template_name = 'bookstore/stock_history.html'
     paginate_by = 20
     context_object_name = 'history_entries'
     

@@ -1,0 +1,55 @@
+{% extends 'bookstore/base_bookstore.html' %}
+
+{% block title %}도서 재고 상세 정보{% endblock %}
+
+{% block bookstore_content %}
+
+<div class="max-w-3xl mx-auto bg-white shadow rounded-lg p-6">
+    <h1 class="text-2xl font-semibold text-gray-900 mb-6">도서 재고 상세 정보</h1>
+
+    <div class="grid grid-cols-1 gap-6">
+        <div>
+            <label for="book_name" class="block text-sm font-medium text-gray-700">
+                도서명
+            </label>
+            <span class="mt-1 block text-sm text-gray-900">{{ stock.book.name }}</span>
+        </div>
+        <div>
+            <label for="quantity" class="block text-sm font-medium text-gray-700">
+                수량
+            </label>
+            <span class="mt-1 block text-sm text-gray-900">{{ stock.quantity }}</span>
+        </div>
+        <div>
+            <label for="list_price" class="block text-sm font-medium text-gray-700">
+                정가
+            </label>
+            <span class="mt-1 block text-sm text-gray-900">{{ stock.list_price }}</span>
+        </div>
+        <div>
+            <label for="unit_price" class="block text-sm font-medium text-gray-700">
+                단가
+            </label>
+            <span class="mt-1 block text-sm text-gray-900">{{ stock.unit_price }}</span>
+        </div>
+        <div>
+            <label for="selling_price" class="block text-sm font-medium text-gray-700">
+                판매가
+            </label>
+            <span class="mt-1 block text-sm text-gray-900">{{ stock.selling_price }}</span>
+        </div>
+        <div>
+            <label for="received_date" class="block text-sm font-medium text-gray-700">
+                입고일
+            </label>
+            <span class="mt-1 block text-sm text-gray-900">{{ stock.received_date|date:"Y-m-d" }}</span>
+        </div>
+        <div>
+            <label for="memo" class="block text-sm font-medium text-gray-700">
+                메모
+            </label>
+            <span class="mt-1 block text-sm text-gray-900">{{ stock.memo }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
