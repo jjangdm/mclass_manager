@@ -17,7 +17,7 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['spare1', 'spare2', 'spare3']
+        exclude = ['barcode', 'qr_code', 'spare1', 'spare2', 'spare3']
         widgets = {
             'memo': forms.Textarea(
                 attrs={
