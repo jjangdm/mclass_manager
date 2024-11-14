@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from common.models import School
+from django.utils import timezone
 
 class Student(models.Model):
     GRADE_CHOICES = [
@@ -40,6 +41,7 @@ class Student(models.Model):
     extra3 = models.CharField(max_length=100, null=True, blank=True, verbose_name='예비3')
     extra4 = models.CharField(max_length=100, null=True, blank=True, verbose_name='예비4')
     extra5 = models.CharField(max_length=100, null=True, blank=True, verbose_name='예비5')
+    is_active = models.BooleanField(default=True, verbose_name='활동 여부')
 
     def generate_student_id(self):
         import random
@@ -61,10 +63,14 @@ class Student(models.Model):
             self.student_id = self.generate_student_id()
         elif not self.receipt_number and self.parent_phone:
             self.receipt_number = self.parent_phone
+        
+        # 그만 둔 날짜가 입력되면 퇴원 처리
+        if self.quit_date:
+            self.is_active = False
+        
         super().save(*args, **kwargs)
 
         # 저장 후 개인 폴더 생성
-        super().save(*args, **kwargs)
         self.get_student_folder_path()
     
     class Meta:

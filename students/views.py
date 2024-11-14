@@ -16,10 +16,19 @@ class StudentListView(LoginRequiredMixin, ListView):
     model = Student
     template_name = 'students/student_list.html'
     context_object_name = 'students'
-    paginate_by = 50
+    paginate_by = 10
 
     def get_queryset(self):
-        return Student.objects.select_related('school').all()
+        queryset = Student.objects.all()
+        show_inactive = self.request.GET.get('show_inactive') == 'on'
+        if not show_inactive:
+            queryset = queryset.filter(is_active=True)
+        return queryset.order_by('-is_active', '-first_class_date')  # is_active 기준으로 정렬
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_inactive'] = self.request.GET.get('show_inactive') == 'on'
+        return context
 
 
 class StudentCreateView(LoginRequiredMixin, CreateView):

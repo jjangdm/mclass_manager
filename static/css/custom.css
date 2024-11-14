@@ -63,11 +63,27 @@ body {
   background-color: #f9fafb;
 }
 
-.content-table td {
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  color: #111827;
-  text-align: left; /* Left align data */
+/* 퇴원자(비활성 학생) 스타일 */
+tr.inactive-student {
+  background-color: #f9fafb !important;  /* 살짝 어두운 배경 */
+}
+
+tr.inactive-student td {
+  color: #9ca3af !important;  /* 회색 텍스트 */
+}
+
+tr.inactive-student:hover {
+  background-color: #f3f4f6 !important;  /* 호버 시 배경색 */
+}
+
+/* 테이블 관련 스타일 덮어쓰기 */
+.min-w-full tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* 높은 우선순위를 위한 구체적인 선택자 */
+.bg-white.shadow .min-w-full tbody tr.inactive-student td {
+  color: #9ca3af !important;
 }
 
 /* Forms */

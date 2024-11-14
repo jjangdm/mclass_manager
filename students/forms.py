@@ -1,70 +1,20 @@
 # forms.py
 from django import forms
-from .models import Student
+from .models import Student, School
 
 
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = [
-            'name', 'school', 'grade', 'phone_number', 'email',
-            'gender', 'parent_phone', 'receipt_number', 'interview_date',
-            'interview_score', 'interview_info', 'first_class_date',
-            'quit_date', 'etc', 'personal_file'
-        ]
-        widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': '이름을 입력하세요'
-            }),
-            'phone_number': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': '학생 전화번호를 입력하세요'
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'form-input',
-                'placeholder': '이메일을 입력하세요'
-            }),
-            'parent_phone': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': '부모님 전화번호를 입력하세요'
-            }),
-            'receipt_number': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': '현금영수증용 번호를 입력하세요'
-            }),
-            'interview_date': forms.DateInput(attrs={
-                'class': 'form-input',
-                'type': 'date'
-            }),
-            'interview_score': forms.NumberInput(attrs={
-                'class': 'form-input',
-                'placeholder': '인터뷰 평가를 입력하세요',
-                'min': 1,
-                'max' : 10
-            }),
-            'interview_info': forms.Textarea(attrs={
-                'class': 'form-textarea',
-                'placeholder': '인터뷰 정보를 입력하세요',
-                'style': 'height: 100px;'
-            }),
-            'first_class_date': forms.DateInput(attrs={
-                'class': 'form-input',
-                'type': 'date'
-            }),
-            'quit_date': forms.DateInput(attrs={
-                'class': 'form-input',
-                'type': 'date'
-            }),
-            'etc': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': '기타 정보를 입력하세요'
-            }),
-            'personal_file': forms.FileInput(attrs={
-                'class': 'form-input'
-            }),
-        }
-
+        fields = '__all__'
+        exclude = (
+            'is_active',  # 퇴원 처리 여부
+            'extra1',     # 예비1
+            'extra2',     # 예비2
+            'extra3',     # 예비3
+            'extra4',     # 예비4
+            'extra5',     # 예비5
+        )
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # 필수가 아닌 필드들 설정
@@ -80,6 +30,58 @@ class StudentForm(forms.ModelForm):
         self.fields['quit_date'].required = False
         self.fields['etc'].required = False
         self.fields['personal_file'].required = False
+
+        # widgets를 유지합니다.
+        self.fields['name'].widget = forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': '이름을 입력하세요'
+        })
+        self.fields['phone_number'].widget = forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': '학생 전화번호를 입력하세요'
+        })
+        self.fields['email'].widget = forms.EmailInput(attrs={
+            'class': 'form-input',
+            'placeholder': '이메일을 입력하세요'
+        })
+        self.fields['parent_phone'].widget = forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': '부모님 전화번호를 입력하세요'
+        })
+        self.fields['receipt_number'].widget = forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': '현금영수증용 번호를 입력하세요'
+        })
+        self.fields['interview_date'].widget = forms.DateInput(attrs={
+            'class': 'form-input',
+            'type': 'date'
+        })
+        self.fields['interview_score'].widget = forms.NumberInput(attrs={
+            'class': 'form-input',
+            'placeholder': '인터뷰 평가를 입력하세요',
+            'min': 1,
+            'max': 10
+        })
+        self.fields['interview_info'].widget = forms.Textarea(attrs={
+            'class': 'form-input',  # form-textarea에서 form-input으로 변경
+            'placeholder': '인터뷰 정보를 입력하세요',
+            'style': 'height: 100px; width: 100%;'  # width 추가
+        })
+        self.fields['first_class_date'].widget = forms.DateInput(attrs={
+            'class': 'form-input',
+            'type': 'date'
+        })
+        self.fields['quit_date'].widget = forms.DateInput(attrs={
+            'class': 'form-input',
+            'type': 'date'
+        })
+        self.fields['etc'].widget = forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': '기타 정보를 입력하세요'
+        })
+        self.fields['personal_file'].widget = forms.FileInput(attrs={
+            'class': 'form-input'
+        })
 
 
 class StudentImportForm(forms.Form):
