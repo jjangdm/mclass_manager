@@ -8,6 +8,7 @@ class StudentForm(forms.ModelForm):
         model = Student
         fields = '__all__'
         exclude = (
+            'student_id',
             'is_active',  # 퇴원 처리 여부
             'extra1',     # 예비1
             'extra2',     # 예비2

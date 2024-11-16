@@ -12,26 +12,26 @@
             <table class="content-table">
                 <thead>
                     <tr>
-                        <th class="text-right">입고일</th>
-                        <th>도서명</th>
-                        <th class="text-right">수량</th>
-                        <th class="text-right">정가</th>
-                        <th class="text-right">단가</th>
-                        <th class="text-right">판매가</th>                        
-                        <th>메모</th>
+                        <th class="text-center">입고일</th>
+                        <th class="text-center">도서명</th>
+                        <th class="text-center">수량</th>
+                        <th class="text-center">정가</th>
+                        <th class="text-center">단가</th>
+                        <th class="text-center">판매가</th>                        
+                        <th class="text-center">메모</th>
                         <th class="text-right">관리</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for stock in stock_list %}
                     <tr>
-                        <td class="text-right">{{ stock.received_date|date:"Y-m-d" }}</td>
-                        <td>{{ stock.book.name }}</td>
+                        <td class="text-center">{{ stock.received_date|date:"Y-m-d" }}</td>
+                        <td class="text-left">{{ stock.book.name }}</td>
                         <td class="text-right">{{ stock.quantity }}</td>
                         <td class="text-right">{{ stock.list_price }}</td>
                         <td class="text-right">{{ stock.unit_price }}</td>
                         <td class="text-right">{{ stock.selling_price }}</td>                        
-                        <td>{{ stock.notes }}</td>
+                        <td class="text-left">{{ stock.notes }}</td>
                         <td class="text-right">
                             <a href="{% url 'bookstore:stock_detail' stock.id %}" class="link-primary">상세보기</a>
                         </td>
