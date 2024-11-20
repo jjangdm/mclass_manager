@@ -9203,3 +9203,659 @@ Watching for file changes with StatReloader
 Not Found: /textbook/issue-book/
 Watching for file changes with StatReloader
 Not Found: /favicon.ico
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\urls.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\urls.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 523, in open_for_read
+    return open_for_read_by_name(name,mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 463, in open_for_read_by_name
+    return open(name,mode)
+           ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\JANGDONGMIN\\django_project\\mclass_manager\\static\\fonts\\Noto_Sans_KR\\NotoSansKR-Regular.otf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 530, in open_for_read
+    return BytesIO((datareader if name[:5].lower()=='data:' else rlUrlRead)(name))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 476, in rlUrlRead
+    return urlopen(name).read()
+           ^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 537, in _open
+    return self._call_chain(self.handle_open, 'unknown',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 1420, in unknown_open
+    raise URLError('unknown url type: %s' % type)
+urllib.error.URLError: <urlopen error unknown url type: c>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 151, in TTFOpenFile
+    f = open_for_read(fn,'rb')
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 532, in open_for_read
+    raise IOError('Cannot open resource "%s"' % name)
+OSError: Cannot open resource "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\Noto_Sans_KR\NotoSansKR-Regular.otf"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 456, in get
+    pdfmetrics.registerFont(TTFont('NotoSansKR', font_path_noto))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1192, in __init__
+    self.face = TTFontFace(filename, validate=validate, subfontIndex=subfontIndex)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1073, in __init__
+    TTFontFile.__init__(self, filename, validate=validate, subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 439, in __init__
+    TTFontParser.__init__(self, file, validate=validate,subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 175, in __init__
+    self.readFile(file)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 251, in readFile
+    self.filename, f = TTFOpenFile(f)
+                       ^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 161, in TTFOpenFile
+    raise TTFError('Can\'t open file "%s"' % fn)
+reportlab.pdfbase.ttfonts.TTFError: Can't open file "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\Noto_Sans_KR\NotoSansKR-Regular.otf"
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 523, in open_for_read
+    return open_for_read_by_name(name,mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 463, in open_for_read_by_name
+    return open(name,mode)
+           ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\JANGDONGMIN\\django_project\\mclass_manager\\static\\fonts\\Noto_Sans_KR\\NotoSansKR-Regular.otf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 530, in open_for_read
+    return BytesIO((datareader if name[:5].lower()=='data:' else rlUrlRead)(name))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 476, in rlUrlRead
+    return urlopen(name).read()
+           ^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 537, in _open
+    return self._call_chain(self.handle_open, 'unknown',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 1420, in unknown_open
+    raise URLError('unknown url type: %s' % type)
+urllib.error.URLError: <urlopen error unknown url type: c>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 151, in TTFOpenFile
+    f = open_for_read(fn,'rb')
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 532, in open_for_read
+    raise IOError('Cannot open resource "%s"' % name)
+OSError: Cannot open resource "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\Noto_Sans_KR\NotoSansKR-Regular.otf"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 456, in get
+    pdfmetrics.registerFont(TTFont('NotoSansKR', font_path_noto))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1192, in __init__
+    self.face = TTFontFace(filename, validate=validate, subfontIndex=subfontIndex)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1073, in __init__
+    TTFontFile.__init__(self, filename, validate=validate, subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 439, in __init__
+    TTFontParser.__init__(self, file, validate=validate,subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 175, in __init__
+    self.readFile(file)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 251, in readFile
+    self.filename, f = TTFOpenFile(f)
+                       ^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 161, in TTFOpenFile
+    raise TTFError('Can\'t open file "%s"' % fn)
+reportlab.pdfbase.ttfonts.TTFError: Can't open file "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\Noto_Sans_KR\NotoSansKR-Regular.otf"
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 523, in open_for_read
+    return open_for_read_by_name(name,mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 463, in open_for_read_by_name
+    return open(name,mode)
+           ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\JANGDONGMIN\\django_project\\mclass_manager\\static\\fonts\\Noto_Sans_KR\\NotoSansKR-Regular.otf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 530, in open_for_read
+    return BytesIO((datareader if name[:5].lower()=='data:' else rlUrlRead)(name))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 476, in rlUrlRead
+    return urlopen(name).read()
+           ^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 537, in _open
+    return self._call_chain(self.handle_open, 'unknown',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 1420, in unknown_open
+    raise URLError('unknown url type: %s' % type)
+urllib.error.URLError: <urlopen error unknown url type: c>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 151, in TTFOpenFile
+    f = open_for_read(fn,'rb')
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 532, in open_for_read
+    raise IOError('Cannot open resource "%s"' % name)
+OSError: Cannot open resource "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\Noto_Sans_KR\NotoSansKR-Regular.otf"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 456, in get
+    pdfmetrics.registerFont(TTFont('NotoSansKR', font_path_noto))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1192, in __init__
+    self.face = TTFontFace(filename, validate=validate, subfontIndex=subfontIndex)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1073, in __init__
+    TTFontFile.__init__(self, filename, validate=validate, subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 439, in __init__
+    TTFontParser.__init__(self, file, validate=validate,subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 175, in __init__
+    self.readFile(file)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 251, in readFile
+    self.filename, f = TTFOpenFile(f)
+                       ^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 161, in TTFOpenFile
+    raise TTFError('Can\'t open file "%s"' % fn)
+reportlab.pdfbase.ttfonts.TTFError: Can't open file "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\Noto_Sans_KR\NotoSansKR-Regular.otf"
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 496, in get
+    styles.add(ParagraphStyle(name='Title', fontName='NotoSansKR', fontSize=16, alignment=1))
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\styles.py", line 254, in add
+    raise KeyError("Style '%s' already defined in stylesheet" % key)
+KeyError: "Style 'Title' already defined in stylesheet"
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 496, in get
+    styles.add(ParagraphStyle(name='Title', fontName='NotoSansKR', fontSize=16, alignment=1))
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\styles.py", line 254, in add
+    raise KeyError("Style '%s' already defined in stylesheet" % key)
+KeyError: "Style 'Title' already defined in stylesheet"
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 523, in open_for_read
+    return open_for_read_by_name(name,mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 463, in open_for_read_by_name
+    return open(name,mode)
+           ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\JANGDONGMIN\\django_project\\mclass_manager\\static\\fonts\\NotoSansKR-Regular.ttf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 530, in open_for_read
+    return BytesIO((datareader if name[:5].lower()=='data:' else rlUrlRead)(name))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 476, in rlUrlRead
+    return urlopen(name).read()
+           ^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 537, in _open
+    return self._call_chain(self.handle_open, 'unknown',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 1420, in unknown_open
+    raise URLError('unknown url type: %s' % type)
+urllib.error.URLError: <urlopen error unknown url type: c>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 151, in TTFOpenFile
+    f = open_for_read(fn,'rb')
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 532, in open_for_read
+    raise IOError('Cannot open resource "%s"' % name)
+OSError: Cannot open resource "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR-Regular.ttf"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 466, in get
+    pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir, 'NotoSansKR-Regular.ttf')))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1192, in __init__
+    self.face = TTFontFace(filename, validate=validate, subfontIndex=subfontIndex)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1073, in __init__
+    TTFontFile.__init__(self, filename, validate=validate, subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 439, in __init__
+    TTFontParser.__init__(self, file, validate=validate,subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 175, in __init__
+    self.readFile(file)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 251, in readFile
+    self.filename, f = TTFOpenFile(f)
+                       ^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 161, in TTFOpenFile
+    raise TTFError('Can\'t open file "%s"' % fn)
+reportlab.pdfbase.ttfonts.TTFError: Can't open file "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR-Regular.ttf"
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 523, in open_for_read
+    return open_for_read_by_name(name,mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 463, in open_for_read_by_name
+    return open(name,mode)
+           ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\JANGDONGMIN\\django_project\\mclass_manager\\static\\fonts\\NotoSansKR-Regular.ttf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 530, in open_for_read
+    return BytesIO((datareader if name[:5].lower()=='data:' else rlUrlRead)(name))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 476, in rlUrlRead
+    return urlopen(name).read()
+           ^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 537, in _open
+    return self._call_chain(self.handle_open, 'unknown',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 1420, in unknown_open
+    raise URLError('unknown url type: %s' % type)
+urllib.error.URLError: <urlopen error unknown url type: c>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 151, in TTFOpenFile
+    f = open_for_read(fn,'rb')
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 532, in open_for_read
+    raise IOError('Cannot open resource "%s"' % name)
+OSError: Cannot open resource "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR-Regular.ttf"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 459, in get
+    pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir, 'NotoSansKR-Regular.ttf')))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1192, in __init__
+    self.face = TTFontFace(filename, validate=validate, subfontIndex=subfontIndex)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1073, in __init__
+    TTFontFile.__init__(self, filename, validate=validate, subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 439, in __init__
+    TTFontParser.__init__(self, file, validate=validate,subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 175, in __init__
+    self.readFile(file)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 251, in readFile
+    self.filename, f = TTFOpenFile(f)
+                       ^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 161, in TTFOpenFile
+    raise TTFError('Can\'t open file "%s"' % fn)
+reportlab.pdfbase.ttfonts.TTFError: Can't open file "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR-Regular.ttf"
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 523, in open_for_read
+    return open_for_read_by_name(name,mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 463, in open_for_read_by_name
+    return open(name,mode)
+           ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\JANGDONGMIN\\django_project\\mclass_manager\\static\\fonts\\NotoSansKR\\NotoSansKR-Regular.ttf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 530, in open_for_read
+    return BytesIO((datareader if name[:5].lower()=='data:' else rlUrlRead)(name))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 476, in rlUrlRead
+    return urlopen(name).read()
+           ^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 537, in _open
+    return self._call_chain(self.handle_open, 'unknown',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 1420, in unknown_open
+    raise URLError('unknown url type: %s' % type)
+urllib.error.URLError: <urlopen error unknown url type: c>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 151, in TTFOpenFile
+    f = open_for_read(fn,'rb')
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 532, in open_for_read
+    raise IOError('Cannot open resource "%s"' % name)
+OSError: Cannot open resource "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR\NotoSansKR-Regular.ttf"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 459, in get
+    pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir, 'NotoSansKR-Regular.ttf')))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1192, in __init__
+    self.face = TTFontFace(filename, validate=validate, subfontIndex=subfontIndex)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1073, in __init__
+    TTFontFile.__init__(self, filename, validate=validate, subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 439, in __init__
+    TTFontParser.__init__(self, file, validate=validate,subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 175, in __init__
+    self.readFile(file)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 251, in readFile
+    self.filename, f = TTFOpenFile(f)
+                       ^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 161, in TTFOpenFile
+    raise TTFError('Can\'t open file "%s"' % fn)
+reportlab.pdfbase.ttfonts.TTFError: Can't open file "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR\NotoSansKR-Regular.ttf"
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 523, in open_for_read
+    return open_for_read_by_name(name,mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 463, in open_for_read_by_name
+    return open(name,mode)
+           ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\JANGDONGMIN\\django_project\\mclass_manager\\static\\fonts\\NotoSansKR\\NotoSansKR-Regular.ttf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 530, in open_for_read
+    return BytesIO((datareader if name[:5].lower()=='data:' else rlUrlRead)(name))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 476, in rlUrlRead
+    return urlopen(name).read()
+           ^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 537, in _open
+    return self._call_chain(self.handle_open, 'unknown',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\urllib\request.py", line 1420, in unknown_open
+    raise URLError('unknown url type: %s' % type)
+urllib.error.URLError: <urlopen error unknown url type: c>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 151, in TTFOpenFile
+    f = open_for_read(fn,'rb')
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 532, in open_for_read
+    raise IOError('Cannot open resource "%s"' % name)
+OSError: Cannot open resource "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR\NotoSansKR-Regular.ttf"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 459, in get
+    pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir, 'NotoSansKR-Regular.ttf')))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1192, in __init__
+    self.face = TTFontFace(filename, validate=validate, subfontIndex=subfontIndex)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 1073, in __init__
+    TTFontFile.__init__(self, filename, validate=validate, subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 439, in __init__
+    TTFontParser.__init__(self, file, validate=validate,subfontIndex=subfontIndex)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 175, in __init__
+    self.readFile(file)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 251, in readFile
+    self.filename, f = TTFOpenFile(f)
+                       ^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\ttfonts.py", line 161, in TTFOpenFile
+    raise TTFError('Can\'t open file "%s"' % fn)
+reportlab.pdfbase.ttfonts.TTFError: Can't open file "C:\Users\JANGDONGMIN\django_project\mclass_manager\static\fonts\NotoSansKR\NotoSansKR-Regular.ttf"
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader

@@ -12,7 +12,8 @@ from .forms import BulkAttendanceForm, TeacherForm
 from django.contrib import messages
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageTemplate, Frame
+from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import os
@@ -439,3 +440,142 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         
         return response
 
+
+class SalaryPDFReportView(LoginRequiredMixin, View):
+    def get(self, request, year, month):
+        # 필요한 모듈 임포트
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.lib import colors
+        import os
+
+        # 폰트 등록
+        font_dir = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
+        pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir, 'NotoSansKR-Regular.ttf')))
+        pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir, 'NotoSansKR-Bold.ttf')))
+
+        # 날짜 범위 계산
+        start_date = datetime(year, month, 1)
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1) - timedelta(days=1)
+        else:
+            end_date = datetime(year, month + 1, 1) - timedelta(days=1)
+
+        buffer = BytesIO()
+
+        # **PDF 문서 생성 및 메타데이터 설정**
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            rightMargin=20*mm,
+            leftMargin=20*mm,
+            topMargin=30*mm,
+            bottomMargin=20*mm,
+            title=f"{year}년 {month}월 급여 내역"  # 메타데이터 제목 설정
+        )
+
+        # **푸터 함수 정의**
+        def add_footer(canvas, doc):
+            canvas.saveState()
+            canvas.setFont('NotoSansKR', 10)
+            # 페이지 너비 계산
+            page_width = A4[0]
+            # 푸터 텍스트 정의
+            footer_text = "엠클래스수학과학전문학원"
+            # 텍스트를 페이지 가로 중앙에 배치
+            canvas.drawCentredString(page_width / 2, 15 * mm, footer_text)
+            canvas.restoreState()
+
+        # 스타일 정의
+        styles = getSampleStyleSheet()
+        styles.add(ParagraphStyle(
+            name='Korean',
+            fontName='NotoSansKR',
+            fontSize=10,
+            leading=14
+        ))
+        styles.add(ParagraphStyle(
+            name='KoreanTitle',
+            fontName='NotoSansKR-Bold',
+            fontSize=16,
+            leading=20,
+            alignment=1
+        ))
+
+        # 표준 테이블 폭 설정
+        TABLE_WIDTH = 170*mm
+
+        elements = []
+
+        # 제목 추가
+        title = f"{year}년 {month}월 급여 내역"
+        elements.append(Paragraph(title, styles['KoreanTitle']))
+        elements.append(Spacer(1, 20))
+
+        # 급여 데이터 계산
+        teachers = Teacher.objects.filter(
+            attendance__date__range=[start_date, end_date]
+        ).distinct()
+
+        data = [['선생님', '급여']]
+        total_amount = 0
+
+        for teacher in teachers:
+            attendances = Attendance.objects.filter(
+                teacher=teacher,
+                date__range=[start_date, end_date],
+                is_present=True,
+                start_time__isnull=False,
+                end_time__isnull=False
+            )
+
+            work_hours = sum(
+                ((a.end_time.hour * 60 + a.end_time.minute) -
+                 (a.start_time.hour * 60 + a.start_time.minute))
+                for a in attendances
+            ) / 60
+
+            salary = int(work_hours * (teacher.base_salary or 15000))
+            total_amount += salary
+            data.append([teacher.name, f"{salary:,}원"])
+
+        data.append(["합계", f"{total_amount:,}원"])
+
+        # 테이블 생성
+        col_widths = [TABLE_WIDTH * 0.5, TABLE_WIDTH * 0.5]
+        table = Table(data, colWidths=col_widths)
+
+        # 테이블 스타일 설정
+        table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, -1), 'NotoSansKR'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),  # 헤더 중앙 정렬
+            ('ALIGN', (0, 1), (0, -1), 'CENTER'),  # 이름 중앙 정렬
+            ('ALIGN', (1, 1), (1, -1), 'RIGHT'),   # 금액 우측 정렬
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),  # 헤더 배경
+            ('BACKGROUND', (0, -1), (-1, -1), colors.lightgrey),  # 합계 행 배경
+        ]))
+
+        elements.append(table)
+
+        # **PDF 생성 (푸터 추가)**
+        doc.build(elements, onFirstPage=add_footer, onLaterPages=add_footer)
+
+        pdf = buffer.getvalue()
+        buffer.close()
+
+        # 파일명 설정
+        filename = f"{year}년_{month}월_급여내역.pdf"
+        encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{encoded_filename}"'
+        response.write(pdf)
+
+        return response

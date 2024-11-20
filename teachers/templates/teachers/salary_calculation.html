@@ -37,6 +37,12 @@
                         조회하기
                     </button>
                 </div>
+                <!-- Add this near the submit button -->
+                <a href="{% url 'teachers:salary_pdf_report' year=year month=month %}" 
+                   class="form-button bg-green-600 hover:bg-green-700" 
+                   target="_blank">
+                    PDF 출력
+                </a>
             </form>
         </div>
     </div>
