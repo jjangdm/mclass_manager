@@ -12,38 +12,13 @@ from django.db.models import Sum
 
 
 def stock_list(request):
-    stocks = BookStock.objects.select_related('book').all()
-    active_stocks = []
-    inactive_stocks = []
-
-    # 책별로 재고 합산 및 분류
-    book_totals = {}
-    for stock in stocks:
-        book_id = stock.book.id
-        if book_id not in book_totals:
-            book_totals[book_id] = {
-                'book': stock.book,
-                'total_quantity': 0,
-                'latest_stock': stock,
-            }
-        book_totals[book_id]['total_quantity'] += stock.quantity
-        # 가장 최근 입고 정보를 유지
-        if stock.received_date > book_totals[book_id]['latest_stock'].received_date:
-            book_totals[book_id]['latest_stock'] = stock
-
-    # 재고 수량을 최신 재고 객체에 설정
-    for total in book_totals.values():
-        total['latest_stock'].quantity = total['total_quantity']
-        if total['total_quantity'] > 0:
-            active_stocks.append(total['latest_stock'])
-        else:
-            inactive_stocks.append(total['latest_stock'])
-
+    stocks_in_stock = BookStock.objects.filter(quantity__gt=0)
+    stocks_zero_quantity = BookStock.objects.filter(quantity=0)
     context = {
-        'active_stocks': active_stocks,
-        'inactive_stocks': inactive_stocks,
+        'stocks_in_stock': stocks_in_stock,
+        'stocks_zero_quantity': stocks_zero_quantity,
     }
-    return render(request, 'bookstore/stock_list.html', context)    
+    return render(request, 'bookstore/stock_list.html', context)
 
 
 def stock_list_with_new_stock(request, new_stock):
@@ -123,11 +98,6 @@ class StockDeleteView(LoginRequiredMixin, DeleteView):
         return reverse('bookstore:stock_list')
 
 
-def stock_list(request):
-    stock_list = BookStock.objects.order_by('-received_date')
-    return render(request, 'bookstore/stock_list.html', {'stock_list': stock_list})  # template 경로 수정
-
-
 def stock_detail(request, pk):
     stock = get_object_or_404(BookStock, pk=pk)
     
@@ -136,13 +106,9 @@ def stock_detail(request, pk):
         total_quantity=Sum('quantity')
     )['total_quantity']
     
-    # 동일한 도서의 모든 재고 목록 가져오기
-    stock_list = BookStock.objects.filter(book=stock.book)
-    
     context = {
         'stock': stock,
         'total_quantity': total_quantity,
-        'stock_list': stock_list,
     }
     return render(request, 'bookstore/stock_detail.html', context)
 
@@ -152,7 +118,7 @@ def stock_create(request):
         form = StockCreateForm(request.POST)
         if form.is_valid():
             new_stock = form.save()
-            messages.success(request, '���서 재고가 성공적으로 등록되었습니다.')
+            messages.success(request, '재고가 성공적으로 등록되었습니다.')
             return redirect('bookstore:stock_list')  # 단순히 목록 페이지로 리다이렉트
     else:
         form = StockCreateForm()
