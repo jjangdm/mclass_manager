@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.utils import timezone
 from bookstore.forms import StockCreateForm, StockUpdateForm
 from .models import BookStock, BookReturn
@@ -30,26 +30,32 @@ def stock_list_with_new_stock(request, new_stock):
     return render(request, 'bookstore/stock_list.html', context)
 
 
-class StockDetailView(LoginRequiredMixin, DetailView):
-    model = BookStock
-    template_name = 'bookstore/stock_detail.html'
-    context_object_name = 'stock'
+# class StockDetailView(DetailView):
+#     model = BookStock
+#     template_name = 'bookstore/stock_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        stock = self.get_object()
-    
-        # 동일한 도서의 전체 재고 수량 계산
-        total_quantity = BookStock.objects.filter(book=stock.book).aggregate(
-            total_quantity=Sum('quantity')
-            )['total_quantity']
-    
-        # 동일한 도서의 모든 재고 목록 가져오기
-        stock_list = BookStock.objects.filter(book=stock.book)
-    
-        context['total_quantity'] = total_quantity
-        context['stock_list'] = stock_list
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         book = self.object.book
+        
+#         # 동일 도서의 모든 재고 정보 조회
+#         stocks = BookStock.objects.filter(book=book).order_by('received_date')
+        
+#         # 총 수량 계산
+#         total_quantity = stocks.aggregate(Sum('quantity'))['quantity__sum'] or 0
+
+#         # 입고일자별, 판매가별 그룹화
+#         grouped_stocks = defaultdict(lambda: defaultdict(list))
+#         for stock in stocks:
+#             grouped_stocks[stock.received_date][stock.selling_price].append(stock)
+
+#         context.update({
+#             'book': book,
+#             'total_quantity': total_quantity,
+#             'grouped_stocks': dict(grouped_stocks),
+#         })
+        
+#         return context
     
 
 class StockCreateView(LoginRequiredMixin, CreateView):
@@ -99,16 +105,25 @@ class StockDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def stock_detail(request, pk):
+    # 현재 선택된 재고 항목
     stock = get_object_or_404(BookStock, pk=pk)
-    stock_list = BookStock.objects.filter(book=stock.book)
-    total_quantity = stock_list.aggregate(Sum('quantity'))['quantity__sum']
-
+    
+    # 같은 책의 모든 재고 항목을 입고일자 순으로 조회
+    stock_list = BookStock.objects.filter(
+        book=stock.book
+    ).order_by('received_date')
+    
+    # 전체 재고 수량 계산
+    total_quantity = stock_list.aggregate(
+        total=Sum('quantity')
+    )['total'] or 0
+    
     context = {
         'book': stock.book,
-        'stock_list': stock_list,
         'total_quantity': total_quantity,
+        'stock_list': stock_list,  # 입고일자 순으로 정렬된 재고 목록
     }
-
+    
     return render(request, 'bookstore/stock_detail.html', context)
 
 

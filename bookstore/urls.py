@@ -5,7 +5,7 @@ app_name = 'bookstore'
 
 urlpatterns = [
     path('', views.stock_list, name='stock_list'),
-    path('stock/<int:pk>/', views.stock_detail, name='stock_detail'),
+    path('stock/<int:pk>/', views.stock_detail, name='stock_detail'),  # 함수 기반 뷰로 변경
     path('create/', views.stock_create, name='stock_create'),
     path('<int:pk>/update/', views.stock_update, name='stock_update'),
     path('<int:pk>/delete/', views.stock_delete, name='stock_delete'),
