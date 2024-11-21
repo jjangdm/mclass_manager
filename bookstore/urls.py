@@ -11,7 +11,7 @@ urlpatterns = [
     path('list/<int:new_stock>/', views.stock_list_with_new_stock, name='stock_list_with_new_stock'),
     path('issues/', views.book_issue_list, name='book_issue_list'),
     path('issues/create/', views.book_issue_create, name='book_issue_create'),
-    path('stock/<int:pk>/', views.StockDetailView.as_view(), name='stock_detail'),
+    path('stock/<int:pk>/', views.stock_detail, name='stock_detail'),  # 수정된 부분
     path('stock/<int:stock_id>/return/', views.stock_return, name='stock_return'),
     path('returns/', views.stock_return_list, name='stock_return_list'),
 ]

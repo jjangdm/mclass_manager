@@ -6,10 +6,12 @@
 <div class="container mx-auto px-4">
     <h1 class="text-2xl font-bold mb-4">도서 재고 현황</h1>
 
+    <!-- 재고가 있는 도서 -->
     <div class="content-card">
         <div class="card-header">도서 재고 현황</div>
         <div class="card-body overflow-x-auto">
             <table class="content-table">
+                <!-- 테이블 헤더 -->
                 <thead>
                     <tr>
                         <th class="text-center">입고일</th>
@@ -22,9 +24,9 @@
                         <th class="text-right">관리</th>
                     </tr>
                 </thead>
+                <!-- 테이블 바디 -->
                 <tbody>
-                    {% for stock in stock_list %}
-                    {% if stock.quantity > 0 %}
+                    {% for stock in active_stocks %}
                     <tr>
                         <td class="text-center">{{ stock.received_date|date:"Y-m-d" }}</td>
                         <td class="text-left">{{ stock.book.name }}</td>
@@ -37,17 +39,18 @@
                             <a href="{% url 'bookstore:stock_detail' stock.id %}" class="link-primary">상세보기</a>
                         </td>
                     </tr>
-                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 
+    <!-- 재고가 없는 도서 -->
     <div class="content-card mt-8">
         <div class="card-header">재고가 없는 도서</div>
         <div class="card-body overflow-x-auto">
             <table class="content-table">
+                <!-- 테이블 헤더 -->
                 <thead>
                     <tr>
                         <th class="text-center">입고일</th>
@@ -59,9 +62,9 @@
                         <th class="text-right">관리</th>
                     </tr>
                 </thead>
+                <!-- 테이블 바디 -->
                 <tbody>
-                    {% for stock in stock_list %}
-                    {% if stock.quantity == 0 %}
+                    {% for stock in inactive_stocks %}
                     <tr>
                         <td class="text-center">{{ stock.received_date|date:"Y-m-d" }}</td>
                         <td class="text-left">{{ stock.book.name }}</td>
@@ -73,7 +76,6 @@
                             <a href="{% url 'bookstore:stock_detail' stock.id %}" class="link-primary">상세보기</a>
                         </td>
                     </tr>
-                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>

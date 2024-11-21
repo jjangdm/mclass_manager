@@ -1,20 +1,49 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.utils import timezone
 from bookstore.forms import StockCreateForm, StockUpdateForm
 from .models import BookStock, BookReturn
 from .models import BookIssue
 from .forms import BookIssueForm
+from django.db.models import Sum
 
 
-class StockListView(ListView):
-    model = BookStock
-    template_name = 'bookstore/stock_list.html'
-    context_object_name = 'stock_list'
+def stock_list(request):
+    stocks = BookStock.objects.select_related('book').all()
+    active_stocks = []
+    inactive_stocks = []
+
+    # 책별로 재고 합산 및 분류
+    book_totals = {}
+    for stock in stocks:
+        book_id = stock.book.id
+        if book_id not in book_totals:
+            book_totals[book_id] = {
+                'book': stock.book,
+                'total_quantity': 0,
+                'latest_stock': stock,
+            }
+        book_totals[book_id]['total_quantity'] += stock.quantity
+        # 가장 최근 입고 정보를 유지
+        if stock.received_date > book_totals[book_id]['latest_stock'].received_date:
+            book_totals[book_id]['latest_stock'] = stock
+
+    # 재고 수량을 최신 재고 객체에 설정
+    for total in book_totals.values():
+        total['latest_stock'].quantity = total['total_quantity']
+        if total['total_quantity'] > 0:
+            active_stocks.append(total['latest_stock'])
+        else:
+            inactive_stocks.append(total['latest_stock'])
+
+    context = {
+        'active_stocks': active_stocks,
+        'inactive_stocks': inactive_stocks,
+    }
+    return render(request, 'bookstore/stock_list.html', context)    
 
 
 def stock_list_with_new_stock(request, new_stock):
@@ -33,29 +62,40 @@ class StockDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # 현재 도서와 동일한 이름을 가진 다른 재고 정보 조회
-        context['related_stocks'] = BookStock.objects.filter(
-            book=self.object.book
-        ).exclude(
-            id=self.object.id
-        ).order_by('-received_date')
+        stock = self.get_object()
+    
+        # 동일한 도서의 전체 재고 수량 계산
+        total_quantity = BookStock.objects.filter(book=stock.book).aggregate(
+            total_quantity=Sum('quantity')
+            )['total_quantity']
+    
+        # 동일한 도서의 모든 재고 목록 가져오기
+        stock_list = BookStock.objects.filter(book=stock.book)
+    
+        context['total_quantity'] = total_quantity
+        context['stock_list'] = stock_list
         return context
-
+    
 
 class StockCreateView(LoginRequiredMixin, CreateView):
     model = BookStock
     template_name = 'bookstore/stock_form.html'
-    fields = [
-        'received_date',
-        'book', 
-        'quantity',  
-        'list_price', 
-        'unit_price', 
-        'selling_price', 
-        'memo',]
-    
-    def get_success_url(self):
-        return reverse('bookstore:stock_list')
+    form_class = StockCreateForm
+
+    def form_valid(self, form):
+        stock = form.save(commit=False)
+        existing_stock = BookStock.objects.filter(
+            book=stock.book,
+            unit_price=stock.unit_price,
+            selling_price=stock.selling_price
+        ).first()
+
+        if existing_stock:
+            existing_stock.quantity += stock.quantity
+            existing_stock.save()
+            return redirect('bookstore:stock_detail', pk=existing_stock.pk)
+            
+        return super().form_valid(form)
 
 
 class StockUpdateView(LoginRequiredMixin, UpdateView):
@@ -90,7 +130,21 @@ def stock_list(request):
 
 def stock_detail(request, pk):
     stock = get_object_or_404(BookStock, pk=pk)
-    return render(request, 'bookstore/stock_detail.html', {'stock': stock})
+    
+    # 동일한 도서의 전체 재고 수량 계산
+    total_quantity = BookStock.objects.filter(book=stock.book).aggregate(
+        total_quantity=Sum('quantity')
+    )['total_quantity']
+    
+    # 동일한 도서의 모든 재고 목록 가져오기
+    stock_list = BookStock.objects.filter(book=stock.book)
+    
+    context = {
+        'stock': stock,
+        'total_quantity': total_quantity,
+        'stock_list': stock_list,
+    }
+    return render(request, 'bookstore/stock_detail.html', context)
 
 
 def stock_create(request):
@@ -145,13 +199,28 @@ def book_issue_create(request):
 
 def stock_return(request, stock_id):
     stock = get_object_or_404(BookStock, id=stock_id)
+    
+    # 동일한 도서의 모든 재고 가져오기
+    stock_list = BookStock.objects.filter(book=stock.book).order_by('received_date')
+    
+    # 합산된 전체 수량 계산
+    total_quantity = stock_list.aggregate(total_quantity=Sum('quantity'))['total_quantity']
+    
     if request.method == 'POST':
         return_quantity = int(request.POST.get('return_quantity', 0))
         return_date = request.POST.get('return_date', timezone.now().date())
         
-        if return_quantity > 0 and return_quantity <= stock.quantity:
-            stock.quantity -= return_quantity
-            stock.save()
+        if return_quantity > 0 and return_quantity <= total_quantity:
+            remaining_quantity = return_quantity
+            for s in stock_list:
+                if s.quantity >= remaining_quantity:
+                    s.quantity -= remaining_quantity
+                    s.save()
+                    break
+                else:
+                    remaining_quantity -= s.quantity
+                    s.quantity = 0
+                    s.save()
             
             BookReturn.objects.create(
                 book_stock=stock,
@@ -161,9 +230,7 @@ def stock_return(request, stock_id):
             
             return redirect(reverse('bookstore:stock_detail', kwargs={'pk': stock.id}))
     else:
-        return render(request, 'bookstore/stock_return_form.html', {'stock': stock, 'today': timezone.now().date()})
-    
-    return HttpResponse(status=400)  # 추가: POST 요청이 실패한 경우 적절한 응답 반환
+        return render(request, 'bookstore/stock_return_form.html', {'stock': stock, 'today': timezone.now().date(), 'total_quantity': total_quantity})
 
 
 def stock_return_list(request):

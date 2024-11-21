@@ -37,6 +37,27 @@ class BookStock(models.Model):
     received_date = models.DateField(
         verbose_name='입고일'
     )
+    
+    @classmethod
+    def get_total_quantity(cls, book):
+        return cls.objects.filter(book=book).aggregate(
+            total_quantity=models.Sum('quantity')
+        )['total_quantity'] or 0
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:  # 새로운 입고인 경우
+            existing_stock = BookStock.objects.filter(
+                book=self.book,
+                unit_price=self.unit_price,
+                selling_price=self.selling_price
+            ).first()
+            
+            if existing_stock:
+                existing_stock.quantity += self.quantity
+                existing_stock.save()
+                return existing_stock
+                
+        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = '도서 재고'

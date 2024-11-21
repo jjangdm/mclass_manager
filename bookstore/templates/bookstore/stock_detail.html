@@ -20,7 +20,7 @@
             <label for="quantity" class="block text-sm font-medium text-gray-700">
                 수량
             </label>
-            <span class="mt-1 block text-sm text-gray-900">{{ stock.quantity }}</span>
+            <span class="mt-1 block text-sm text-gray-900">{{ total_quantity }}</span>
         </div>
         <div>
             <label for="list_price" class="block text-sm font-medium text-gray-700">
@@ -72,47 +72,25 @@
 <!-- 동일 교재 다른 입고 정보 -->
 {% if related_stocks %}
 <div class="max-w-3xl mx-auto bg-white shadow rounded-lg p-6 mt-6">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">동일 교재 다른 입고 정보</h2>
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">개별 재고 정보</h2>
     
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                 <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">입고일</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">수량</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">정가</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">단가</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">판매가</th>
-                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
+                    <th scope="col" class="px-6 py-3">입고일</th>
+                    <th scope="col" class="px-6 py-3">수량</th>
+                    <th scope="col" class="px-6 py-3">단가</th>
+                    <th scope="col" class="px-6 py-3">메모</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                {% for related_stock in related_stocks %}
-                <tr>
-                    <td class="px-4 py-3 whitespace-nowrap">{{ related_stock.received_date|date:"Y-m-d" }}</td>
-                    <td class="px-4 py-3 text-right whitespace-nowrap">{{ related_stock.quantity }}</td>
-                    <td class="px-4 py-3 text-right whitespace-nowrap">{{ related_stock.list_price|floatformat:0|intcomma }}</td>
-                    <td class="px-4 py-3 text-right whitespace-nowrap">{{ related_stock.unit_price|floatformat:0|intcomma }}</td>
-                    <td class="px-4 py-3 text-right whitespace-nowrap">{{ related_stock.selling_price|floatformat:0|intcomma }}</td>
-                    <td class="px-4 py-3 text-center whitespace-nowrap">
-                        <div class="flex justify-center space-x-2">
-                            {% if related_stock.quantity > 0 %}
-                            <a href="{% url 'bookstore:stock_return' stock_id=related_stock.id %}" 
-                               class="text-sm bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded">
-                                반품
-                            </a>
-                            {% endif %}
-                            <a href="{% url 'bookstore:stock_update' pk=related_stock.id %}" 
-                               class="text-sm bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded">
-                                수정
-                            </a>
-                            <a href="{% url 'bookstore:stock_delete' pk=related_stock.id %}" 
-                               class="text-sm bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded"
-                               onclick="return confirm('정말로 이 정보를 삭제하시겠습니까?');">
-                                삭제
-                            </a>
-                        </div>
-                    </td>
+            <tbody>
+                {% for stock in stock_list %}
+                <tr class="bg-white border-b">
+                    <td class="px-6 py-4">{{ stock.received_date|date:"Y-m-d" }}</td>
+                    <td class="px-6 py-4">{{ stock.quantity }}</td>
+                    <td class="px-6 py-4">{{ stock.unit_price|floatformat:0|intcomma }}</td>
+                    <td class="px-6 py-4">{{ stock.notes }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
