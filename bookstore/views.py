@@ -5,11 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.utils import timezone
-
 from bookstore.forms import StockCreateForm, StockUpdateForm
 from .models import BookStock, BookReturn
-from books.models import Book
-from students.models import Student
 from .models import BookIssue
 from .forms import BookIssueForm
 
@@ -32,7 +29,17 @@ def stock_list_with_new_stock(request, new_stock):
 class StockDetailView(LoginRequiredMixin, DetailView):
     model = BookStock
     template_name = 'bookstore/stock_detail.html'
-    context_object_name = 'stock'  # 추가: 템플릿에서 사용할 변수명 지정
+    context_object_name = 'stock'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 현재 도서와 동일한 이름을 가진 다른 재고 정보 조회
+        context['related_stocks'] = BookStock.objects.filter(
+            book=self.object.book
+        ).exclude(
+            id=self.object.id
+        ).order_by('-received_date')
+        return context
 
 
 class StockCreateView(LoginRequiredMixin, CreateView):
@@ -156,7 +163,7 @@ def stock_return(request, stock_id):
     else:
         return render(request, 'bookstore/stock_return_form.html', {'stock': stock, 'today': timezone.now().date()})
     
-    return HttpResponse(status=400)  # 추가: POST 요���이 실패한 경우 적절한 응답 반환
+    return HttpResponse(status=400)  # 추가: POST 요청이 실패한 경우 적절한 응답 반환
 
 
 def stock_return_list(request):

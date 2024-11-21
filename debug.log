@@ -10578,3 +10578,8 @@ Traceback (most recent call last):
 django.urls.exceptions.NoReverseMatch: Reverse for 'stock_return' with arguments '('',)' not found. 1 pattern(s) tried: ['bookstore/stock/(?P<stock_id>[0-9]+)/return/\\Z']
 C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
