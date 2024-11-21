@@ -100,16 +100,15 @@ class StockDeleteView(LoginRequiredMixin, DeleteView):
 
 def stock_detail(request, pk):
     stock = get_object_or_404(BookStock, pk=pk)
-    
-    # 동일한 도서의 전체 재고 수량 계산
-    total_quantity = BookStock.objects.filter(book=stock.book).aggregate(
-        total_quantity=Sum('quantity')
-    )['total_quantity']
-    
+    stock_list = BookStock.objects.filter(book=stock.book)
+    total_quantity = stock_list.aggregate(Sum('quantity'))['quantity__sum']
+
     context = {
-        'stock': stock,
+        'book': stock.book,
+        'stock_list': stock_list,
         'total_quantity': total_quantity,
     }
+
     return render(request, 'bookstore/stock_detail.html', context)
 
 
@@ -119,7 +118,7 @@ def stock_create(request):
         if form.is_valid():
             new_stock = form.save()
             messages.success(request, '재고가 성공적으로 등록되었습니다.')
-            return redirect('bookstore:stock_list')  # 단순히 목록 페이지로 리다이렉트
+            return redirect('bookstore:stock_list')  # 단순히 등록 페이지로 리다이렉트
     else:
         form = StockCreateForm()
     return render(request, 'bookstore/stock_form.html', {'form': form})
