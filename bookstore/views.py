@@ -42,8 +42,8 @@ def stock_list(request):
             books_with_price_variations.add(book.id)
     
     # 디버깅을 위한 출력
-    print("Books with zero total quantity:", len(zero_quantity_books))
-    print("Stocks with zero quantity:", len(stocks_zero_quantity))
+    # print("Books with zero total quantity:", len(zero_quantity_books))
+    # print("Stocks with zero quantity:", len(stocks_zero_quantity))
     
     context = {
         'stocks_in_stock': stocks_in_stock,
@@ -229,9 +229,9 @@ def stock_return_list(request):
     ).order_by('-return_date')
     
     # 디버깅을 위한 출력
-    print("Returns found:", return_list.count())
-    for ret in return_list:
-        print(f"Date: {ret.return_date}, Book: {ret.book_stock.book.name}, Quantity: {ret.quantity}")
+    # print("Returns found:", return_list.count())
+    # for ret in return_list:
+    #     print(f"Date: {ret.return_date}, Book: {ret.book_stock.book.name}, Quantity: {ret.quantity}")
     
     context = {
         'return_list': return_list,

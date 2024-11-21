@@ -10799,3 +10799,5 @@ Traceback (most recent call last):
 ValueError: The view bookstore.views.stock_return didn't return an HttpResponse object. It returned None instead.
 C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
 Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
