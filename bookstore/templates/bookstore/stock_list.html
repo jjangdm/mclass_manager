@@ -1,11 +1,11 @@
 {% extends 'bookstore/base_bookstore.html' %}
 
-{% block bookstore_content %}
-    {% if new_stock %}
-        <p>새로 등록된 재고: {{ new_stock }}</p>
-    {% endif %}
+{% load humanize %}
 
+{% block bookstore_content %}
 <div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold mb-4">도서 재고 현황</h1>
+
     <div class="content-card">
         <div class="card-header">도서 재고 현황</div>
         <div class="card-body overflow-x-auto">
@@ -17,30 +17,67 @@
                         <th class="text-center">수량</th>
                         <th class="text-center">정가</th>
                         <th class="text-center">단가</th>
-                        <th class="text-center">판매가</th>                        
+                        <th class="text-center">판매가</th>
                         <th class="text-center">메모</th>
                         <th class="text-right">관리</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for stock in stock_list %}
+                    {% if stock.quantity > 0 %}
                     <tr>
                         <td class="text-center">{{ stock.received_date|date:"Y-m-d" }}</td>
                         <td class="text-left">{{ stock.book.name }}</td>
                         <td class="text-right">{{ stock.quantity }}</td>
-                        <td class="text-right">{{ stock.list_price }}</td>
-                        <td class="text-right">{{ stock.unit_price }}</td>
-                        <td class="text-right">{{ stock.selling_price }}</td>                        
+                        <td class="text-right">{{ stock.list_price|floatformat:0|intcomma }}</td>
+                        <td class="text-right">{{ stock.unit_price|floatformat:0|intcomma }}</td>
+                        <td class="text-right">{{ stock.selling_price|floatformat:0|intcomma }}</td>
                         <td class="text-left">{{ stock.notes }}</td>
                         <td class="text-right">
                             <a href="{% url 'bookstore:stock_detail' stock.id %}" class="link-primary">상세보기</a>
                         </td>
                     </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="content-card mt-8">
+        <div class="card-header">재고가 없는 도서</div>
+        <div class="card-body overflow-x-auto">
+            <table class="content-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">입고일</th>
+                        <th class="text-center">도서명</th>
+                        <th class="text-center">정가</th>
+                        <th class="text-center">단가</th>
+                        <th class="text-center">판매가</th>
+                        <th class="text-center">메모</th>
+                        <th class="text-right">관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stock_list %}
+                    {% if stock.quantity == 0 %}
+                    <tr>
+                        <td class="text-center">{{ stock.received_date|date:"Y-m-d" }}</td>
+                        <td class="text-left">{{ stock.book.name }}</td>
+                        <td class="text-right">{{ stock.list_price|floatformat:0|intcomma }}</td>
+                        <td class="text-right">{{ stock.unit_price|floatformat:0|intcomma }}</td>
+                        <td class="text-right">{{ stock.selling_price|floatformat:0|intcomma }}</td>
+                        <td class="text-left">{{ stock.notes }}</td>
+                        <td class="text-right">
+                            <a href="{% url 'bookstore:stock_detail' stock.id %}" class="link-primary">상세보기</a>
+                        </td>
+                    </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
 {% endblock %}

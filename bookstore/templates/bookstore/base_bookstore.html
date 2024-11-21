@@ -21,6 +21,14 @@
                    class="nav-link {% if request.resolver_match.url_name == 'stock_create' %}active{% endif %}">
                     입고 정보 입력
                 </a>
+                <a href="{% url 'bookstore:book_issue_list' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'book_issue_list' %}active{% endif %}">
+                    지급 목록
+                </a>
+                <a href="{% url 'bookstore:book_issue_create' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'book_issue_create' %}active{% endif %}">
+                    교재 지급
+                </a>
             </nav>
         </div>
     </div>

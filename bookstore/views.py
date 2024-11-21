@@ -1,19 +1,24 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.utils import timezone
 
 from bookstore.forms import StockCreateForm, StockUpdateForm
-from .models import BookStock
+from .models import BookStock, BookReturn
 from books.models import Book
 from students.models import Student
+from .models import BookIssue
+from .forms import BookIssueForm
 
 
 class StockListView(ListView):
     model = BookStock
     template_name = 'bookstore/stock_list.html'
     context_object_name = 'stock_list'
+
 
 def stock_list_with_new_stock(request, new_stock):
     new_stock_obj = BookStock.objects.get(pk=new_stock)
@@ -27,6 +32,7 @@ def stock_list_with_new_stock(request, new_stock):
 class StockDetailView(LoginRequiredMixin, DetailView):
     model = BookStock
     template_name = 'bookstore/stock_detail.html'
+    context_object_name = 'stock'  # 추가: 템플릿에서 사용할 변수명 지정
 
 
 class StockCreateView(LoginRequiredMixin, CreateView):
@@ -85,7 +91,7 @@ def stock_create(request):
         form = StockCreateForm(request.POST)
         if form.is_valid():
             new_stock = form.save()
-            messages.success(request, '도서 재고가 성공적으로 등록되었습니다.')
+            messages.success(request, '���서 재고가 성공적으로 등록되었습니다.')
             return redirect('bookstore:stock_list')  # 단순히 목록 페이지로 리다이렉트
     else:
         form = StockCreateForm()
@@ -104,6 +110,7 @@ def stock_update(request, pk):
         form = StockUpdateForm(instance=stock)
     return render(request, 'bookstore/stock_form.html', {'form': form})
 
+
 def stock_delete(request, pk):
     stock = get_object_or_404(BookStock, pk=pk)
     if request.method == 'POST':
@@ -111,3 +118,47 @@ def stock_delete(request, pk):
         messages.success(request, '도서 재고가 성공적으로 삭제되었습니다.')
         return redirect('bookstore:stock_list')
     return render(request, 'bookstore/stock_confirm_delete.html', {'stock': stock})
+
+
+def book_issue_list(request):
+    issues = BookIssue.objects.all()
+    return render(request, 'bookstore/book_issue_list.html', {'issues': issues})
+
+
+def book_issue_create(request):
+    if request.method == 'POST':
+        form = BookIssueForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('bookstore:book_issue_list')
+    else:
+        form = BookIssueForm()
+    return render(request, 'bookstore/book_issue_form.html', {'form': form})
+
+
+def stock_return(request, stock_id):
+    stock = get_object_or_404(BookStock, id=stock_id)
+    if request.method == 'POST':
+        return_quantity = int(request.POST.get('return_quantity', 0))
+        return_date = request.POST.get('return_date', timezone.now().date())
+        
+        if return_quantity > 0 and return_quantity <= stock.quantity:
+            stock.quantity -= return_quantity
+            stock.save()
+            
+            BookReturn.objects.create(
+                book_stock=stock,
+                quantity=return_quantity,
+                return_date=return_date
+            )
+            
+            return redirect(reverse('bookstore:stock_detail', kwargs={'pk': stock.id}))
+    else:
+        return render(request, 'bookstore/stock_return_form.html', {'stock': stock, 'today': timezone.now().date()})
+    
+    return HttpResponse(status=400)  # 추가: POST 요���이 실패한 경우 적절한 응답 반환
+
+
+def stock_return_list(request):
+    return_list = BookReturn.objects.all()
+    return render(request, 'bookstore/stock_return_list.html', {'return_list': return_list})

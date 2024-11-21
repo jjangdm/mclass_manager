@@ -97,3 +97,58 @@ class BookDistribution(models.Model):
             # 잔여 재고가 부족한 경우 처리
             # 예: 에러 메시지 출력, 판매 취소 등
             pass  # 여기에 잔여 재고 부족 시 수행할 작업을 추가합니다.
+
+
+class BookIssue(models.Model):
+    book_stock = models.ForeignKey(
+        'BookStock',
+        on_delete=models.CASCADE,
+        verbose_name='재고'
+    )
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        verbose_name='학생'
+    )
+    quantity = models.PositiveIntegerField(
+        verbose_name='수량'
+    )
+    issued_date = models.DateField(
+        default=timezone.now,
+        verbose_name='출고일'
+    )
+    memo = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='비고'
+    )
+
+    def clean(self):
+        super().clean()
+        if self.book_stock.quantity < self.quantity:
+            raise ValidationError('재고가 부족합니다.')
+
+    def save(self, *args, **kwargs):
+        self.book_stock.quantity -= self.quantity
+        self.book_stock.save()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = '도서 출고'
+        verbose_name_plural = '도서 출고 목록'
+
+    def __str__(self):
+        return f"{self.student.name} - {self.book_stock.book.name} ({self.quantity}권)"
+
+
+class BookReturn(models.Model):
+    book_stock = models.ForeignKey(BookStock, on_delete=models.CASCADE, verbose_name='재고')
+    quantity = models.PositiveIntegerField(verbose_name='반품 수량')
+    return_date = models.DateField(verbose_name='반품 날짜')
+
+    class Meta:
+        verbose_name = '도서 반품'
+        verbose_name_plural = '도서 반품 목록'
+
+    def __str__(self):
+        return f"{self.book_stock.book.name} - {self.quantity}권 반품"
