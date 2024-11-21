@@ -5,18 +5,50 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.utils import timezone
 from bookstore.forms import StockCreateForm, StockUpdateForm
-from .models import BookStock, BookReturn
-from .models import BookIssue
+from .models import BookStock, BookReturn, BookIssue, Book
 from .forms import BookIssueForm
-from django.db.models import Sum
+from django.db.models import Sum, Q
+from django.shortcuts import render
 
 
 def stock_list(request):
+    # 각 책별 총 재고 수량을 계산
+    books_with_quantity = Book.objects.annotate(
+        total_quantity=Sum('bookstock__quantity')
+    )
+    
+    # 재고가 있는 도서들의 재고 정보를 가져옵니다
     stocks_in_stock = BookStock.objects.filter(quantity__gt=0)
-    stocks_zero_quantity = BookStock.objects.filter(quantity=0)
+    
+    # 총 재고가 0인 도서들을 찾습니다
+    zero_quantity_books = books_with_quantity.filter(
+        Q(total_quantity=0) | Q(total_quantity__isnull=True)
+    ).values_list('id', flat=True)
+    
+    # 총 재고가 0인 도서들의 가장 최근 재고 정보를 가져옵니다
+    stocks_zero_quantity = []
+    for book_id in zero_quantity_books:
+        latest_stock = BookStock.objects.filter(
+            book_id=book_id
+        ).order_by('-received_date').first()
+        if latest_stock:
+            stocks_zero_quantity.append(latest_stock)
+    
+    # 같은 책이지만 다른 가격을 가진 도서들을 찾습니다
+    books_with_price_variations = set()
+    for book in Book.objects.all():
+        prices = BookStock.objects.filter(book=book).values_list('selling_price', flat=True).distinct()
+        if len(prices) > 1:
+            books_with_price_variations.add(book.id)
+    
+    # 디버깅을 위한 출력
+    print("Books with zero total quantity:", len(zero_quantity_books))
+    print("Stocks with zero quantity:", len(stocks_zero_quantity))
+    
     context = {
         'stocks_in_stock': stocks_in_stock,
         'stocks_zero_quantity': stocks_zero_quantity,
+        'books_with_different_prices': books_with_price_variations
     }
     return render(request, 'bookstore/stock_list.html', context)
 
@@ -28,55 +60,20 @@ def stock_list_with_new_stock(request, new_stock):
         'new_stock': new_stock_obj,
     }
     return render(request, 'bookstore/stock_list.html', context)
-
-
-# class StockDetailView(DetailView):
-#     model = BookStock
-#     template_name = 'bookstore/stock_detail.html'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         book = self.object.book
-        
-#         # 동일 도서의 모든 재고 정보 조회
-#         stocks = BookStock.objects.filter(book=book).order_by('received_date')
-        
-#         # 총 수량 계산
-#         total_quantity = stocks.aggregate(Sum('quantity'))['quantity__sum'] or 0
-
-#         # 입고일자별, 판매가별 그룹화
-#         grouped_stocks = defaultdict(lambda: defaultdict(list))
-#         for stock in stocks:
-#             grouped_stocks[stock.received_date][stock.selling_price].append(stock)
-
-#         context.update({
-#             'book': book,
-#             'total_quantity': total_quantity,
-#             'grouped_stocks': dict(grouped_stocks),
-#         })
-        
-#         return context
-    
+  
 
 class StockCreateView(LoginRequiredMixin, CreateView):
     model = BookStock
     template_name = 'bookstore/stock_form.html'
     form_class = StockCreateForm
 
-    def form_valid(self, form):
-        stock = form.save(commit=False)
-        existing_stock = BookStock.objects.filter(
-            book=stock.book,
-            unit_price=stock.unit_price,
-            selling_price=stock.selling_price
-        ).first()
+    def get_success_url(self):
+        return reverse('bookstore:stock_detail', kwargs={'pk': self.object.pk})
 
-        if existing_stock:
-            existing_stock.quantity += stock.quantity
-            existing_stock.save()
-            return redirect('bookstore:stock_detail', pk=existing_stock.pk)
-            
-        return super().form_valid(form)
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, '새로운 재고가 성공적으로 등록되었습니다.')
+        return response
 
 
 class StockUpdateView(LoginRequiredMixin, UpdateView):
@@ -111,7 +108,7 @@ def stock_detail(request, pk):
     # 같은 책의 모든 재고 항목을 입고일자 순으로 조회
     stock_list = BookStock.objects.filter(
         book=stock.book
-    ).order_by('received_date')
+    ).order_by('-received_date')
     
     # 전체 재고 수량 계산
     total_quantity = stock_list.aggregate(
@@ -121,7 +118,8 @@ def stock_detail(request, pk):
     context = {
         'book': stock.book,
         'total_quantity': total_quantity,
-        'stock_list': stock_list,  # 입고일자 순으로 정렬된 재고 목록
+        'stock_list': stock_list,
+        'selected_stock': stock,  # 현재 선택된 재고 항목 추가
     }
     
     return render(request, 'bookstore/stock_detail.html', context)
@@ -180,6 +178,11 @@ def book_issue_create(request):
 def stock_return(request, stock_id):
     stock = get_object_or_404(BookStock, id=stock_id)
     
+    # 수량이 0인 재고는 반품할 수 없음
+    if stock.quantity == 0:
+        messages.error(request, '수량이 0인 재고는 반품할 수 없습니다.')
+        return redirect('bookstore:stock_detail', pk=stock.id)
+    
     # 동일한 도서의 모든 재고 가져오기
     stock_list = BookStock.objects.filter(book=stock.book).order_by('received_date')
     
@@ -190,29 +193,48 @@ def stock_return(request, stock_id):
         return_quantity = int(request.POST.get('return_quantity', 0))
         return_date = request.POST.get('return_date', timezone.now().date())
         
-        if return_quantity > 0 and return_quantity <= total_quantity:
-            remaining_quantity = return_quantity
-            for s in stock_list:
-                if s.quantity >= remaining_quantity:
-                    s.quantity -= remaining_quantity
-                    s.save()
-                    break
-                else:
-                    remaining_quantity -= s.quantity
-                    s.quantity = 0
-                    s.save()
+        # 반품 수량 유효성 검사 추가
+        if return_quantity <= 0:
+            messages.error(request, '반품 수량은 0보다 커야 합니다.')
+            return render(request, 'bookstore/stock_return_form.html', 
+                        {'stock': stock, 'today': timezone.now().date(), 'total_quantity': total_quantity})
             
-            BookReturn.objects.create(
-                book_stock=stock,
-                quantity=return_quantity,
-                return_date=return_date
-            )
-            
-            return redirect(reverse('bookstore:stock_detail', kwargs={'pk': stock.id}))
-    else:
-        return render(request, 'bookstore/stock_return_form.html', {'stock': stock, 'today': timezone.now().date(), 'total_quantity': total_quantity})
+        if return_quantity > stock.quantity:
+            messages.error(request, f'반품 수량이 현재 재고 수량({stock.quantity}권)보다 많을 수 없습니다.')
+            return render(request, 'bookstore/stock_return_form.html', 
+                        {'stock': stock, 'today': timezone.now().date(), 'total_quantity': total_quantity})
+        
+        # 반품 처리
+        stock.quantity -= return_quantity
+        stock.save()
+        
+        BookReturn.objects.create(
+            book_stock=stock,
+            quantity=return_quantity,
+            return_date=return_date
+        )
+        
+        messages.success(request, f'{return_quantity}권이 성공적으로 반품 처리되었습니다.')
+        return redirect('bookstore:stock_detail', pk=stock.id)
+        
+    return render(request, 'bookstore/stock_return_form.html', 
+                 {'stock': stock, 'today': timezone.now().date(), 'total_quantity': stock.quantity})
 
 
 def stock_return_list(request):
-    return_list = BookReturn.objects.all()
-    return render(request, 'bookstore/stock_return_list.html', {'return_list': return_list})
+    # 반품 목록을 날짜 역순으로 가져옵니다
+    return_list = BookReturn.objects.select_related(
+        'book_stock', 
+        'book_stock__book'
+    ).order_by('-return_date')
+    
+    # 디버깅을 위한 출력
+    print("Returns found:", return_list.count())
+    for ret in return_list:
+        print(f"Date: {ret.return_date}, Book: {ret.book_stock.book.name}, Quantity: {ret.quantity}")
+    
+    context = {
+        'return_list': return_list,
+        'total_returned': sum(ret.quantity for ret in return_list)
+    }
+    return render(request, 'bookstore/stock_return_list.html', context)

@@ -10730,3 +10730,72 @@ C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, r
 Watching for file changes with StatReloader
 C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
 Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /bookstore/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py", line 24, in stock_list
+    price_variations = Book.objects.annotate(
+                       ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\db\models\query.py", line 1590, in annotate
+    return self._annotate(args, kwargs, select=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\db\models\query.py", line 1638, in _annotate
+    clone.query.add_annotation(
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\db\models\sql\query.py", line 1133, in add_annotation
+    annotation = annotation.resolve_expression(self, allow_joins=True, reuse=None)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\db\models\aggregates.py", line 65, in resolve_expression
+    c.filter = c.filter and c.filter.resolve_expression(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\db\models\query.py", line 1922, in resolve_expression
+    raise TypeError("Cannot use multi-field values as a filter value.")
+TypeError: Cannot use multi-field values as a filter value.
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /bookstore/stock/9/return/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 204, in _get_response
+    self.check_response(response, callback)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 332, in check_response
+    raise ValueError(
+ValueError: The view bookstore.views.stock_return didn't return an HttpResponse object. It returned None instead.
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
