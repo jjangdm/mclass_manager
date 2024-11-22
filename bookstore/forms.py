@@ -1,6 +1,7 @@
 from django import forms
 from django.utils import timezone
 from .models import BookStock, BookIssue
+from students.models import Student
 
 class StockCreateForm(forms.ModelForm):
     class Meta:
@@ -22,5 +23,7 @@ class BookIssueForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # 활성 학생만 필터링 (is_active=True)
+        self.fields['student'].queryset = Student.objects.filter(is_active=True)
         self.fields['quantity'].initial = 1
         self.fields['issued_date'].initial = timezone.now().date()
