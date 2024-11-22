@@ -24,14 +24,6 @@
 
     <!-- 컨텐츠 영역 -->
     <div class="container">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="mb-4 rounded-md p-4 {% if message.tags == 'success' %}bg-green-50 text-green-700{% elif message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-blue-50 text-blue-700{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-        
         {% block maintenance_content %}{% endblock %}
     </div>
 </div>

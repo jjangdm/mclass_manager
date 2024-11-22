@@ -11,6 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import UpdateView
 from django.urls import reverse
+from django.contrib import messages
 
 
 class MaintenanceCreateView(LoginRequiredMixin, FormView):
@@ -155,6 +156,5 @@ class MaintenanceUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('maintenance:monthly_report') + f'?year={self.object.date.year}&month={self.object.date.month}'
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        add_message(self.request, SUCCESS, '관리비 정보가 수정되었습니다.')
-        return response
+        messages.add_message(self.request, messages.SUCCESS, '관리비 정보가 수정되었습니다.')
+        return super().form_valid(form)
