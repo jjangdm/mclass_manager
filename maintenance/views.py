@@ -136,6 +136,7 @@ class YearlyReportView(LoginRequiredMixin, TemplateView):
 
         context.update({
             'year': selected_year,
+            'selected_year': selected_year,
             'available_years': available_years,
             'months': range(1, 13),
             'yearly_data': yearly_data,
