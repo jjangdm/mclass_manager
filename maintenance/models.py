@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.utils import timezone
-from django.forms import DateField, ValidationError
+from django.forms import ValidationError
 import datetime
 
 

@@ -3,12 +3,14 @@ from django.views.generic.base import TemplateView
 from django.db.models import Sum
 from django.urls import reverse_lazy
 from django.contrib.messages import add_message, SUCCESS
-from maintenance.forms import MaintenanceForm
+from maintenance.forms import MaintenanceForm, MaintenanceUpdateForm
 from .models import Maintenance, Room
 from django.utils import timezone
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import UpdateView
+from django.urls import reverse
 
 
 class MaintenanceCreateView(LoginRequiredMixin, FormView):
@@ -142,3 +144,17 @@ class YearlyReportView(LoginRequiredMixin, TemplateView):
             'grand_total': total_charge
         })
         return context
+
+
+class MaintenanceUpdateView(LoginRequiredMixin, UpdateView):
+    model = Maintenance
+    form_class = MaintenanceUpdateForm
+    template_name = 'maintenance/maintenance_edit.html'
+
+    def get_success_url(self):
+        return reverse('maintenance:monthly_report') + f'?year={self.object.date.year}&month={self.object.date.month}'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        add_message(self.request, SUCCESS, '관리비 정보가 수정되었습니다.')
+        return response

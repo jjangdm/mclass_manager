@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'import_export',
     'books',
-    # 'books_inventory',
     'common',
     'teachers',
     'students',

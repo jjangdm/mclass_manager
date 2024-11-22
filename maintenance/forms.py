@@ -1,5 +1,5 @@
 from django import forms
-from .models import Maintenance, Room
+from .models import Room, Maintenance
 from datetime import datetime
 
 
@@ -84,3 +84,22 @@ class MaintenanceForm(forms.Form):
                     'style': 'width: 100%;'
                 })
             )
+
+
+class MaintenanceUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Maintenance
+        fields = ['charge', 'date_paid', 'memo']
+        widgets = {
+            'charge': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'min': '0'
+            }),
+            'date_paid': forms.DateInput(attrs={
+                'class': 'form-input',
+                'type': 'date'
+            }),
+            'memo': forms.TextInput(attrs={
+                'class': 'form-input'
+            })
+        }
