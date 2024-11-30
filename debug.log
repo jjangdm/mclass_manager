@@ -10927,3 +10927,4 @@ Traceback (most recent call last):
 django.core.exceptions.FieldError: Cannot resolve keyword 'start_date' into field. Choices are: account_number, additional_salary, attendance, bank, bank_id, base_salary, email, extra_field1, extra_field2, extra_field3, extra_field4, gender, hire_date, id, is_active, name, other_info, phone_number, resignation_date, salary
 C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
