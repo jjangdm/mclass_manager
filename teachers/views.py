@@ -13,7 +13,6 @@ from django.contrib import messages
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageTemplate, Frame
-from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import os
@@ -36,7 +35,6 @@ else:
     print(f"Error: Font file not found at {font_path}")
     # 폰트 파일이 없을 경우 대체 폰트 사용 (예: Helvetica)
     pdfmetrics.registerFont(TTFont('NanumGothic', 'Helvetica'))
-
 
 
 class TeacherListView(LoginRequiredMixin, ListView):
@@ -64,6 +62,7 @@ class TeacherDetailView(LoginRequiredMixin, DetailView):
     model = Teacher
     template_name = 'teachers/teacher_detail.html'
 
+
 class TeacherCreateView(LoginRequiredMixin, CreateView):
     model = Teacher
     form_class = TeacherForm
@@ -75,6 +74,7 @@ class TeacherCreateView(LoginRequiredMixin, CreateView):
         self.object.update_active_status()
         return response
 
+
 class TeacherUpdateView(LoginRequiredMixin, UpdateView):
     model = Teacher
     form_class = TeacherForm
@@ -85,6 +85,7 @@ class TeacherUpdateView(LoginRequiredMixin, UpdateView):
         response = super().form_valid(form)
         self.object.update_active_status()
         return response
+
 
 class AttendanceCreateView(LoginRequiredMixin, View):
     def get(self, request):
