@@ -13,7 +13,7 @@ from django.contrib import messages
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageTemplate, PageBreak, Frame
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import os
@@ -22,32 +22,27 @@ from django.db.models import Min, Max
 from django.conf import settings
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
-from reportlab.platypus.frames import Frame
-from reportlab.platypus.doctemplate import PageTemplate
 import urllib.parse
 from django.db import transaction, models
+from config.fonts import FONT_CONFIGS
 
 
 # 폰트 등록
-font_path = settings.FONT_PATH
-if os.path.exists(font_path):
-    font_dir_Nanum = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'NanumGothic')
-    pdfmetrics.registerFont(TTFont('NanumGothic', os.path.join(font_dir_Nanum, 'NanumGothic.ttf')))
+def register_fonts():
+    for font_config in FONT_CONFIGS.values():
+        if isinstance(font_config.get('variants'), dict):
+            # 여러 변형이 있는 폰트
+            for variant in font_config['variants'].values():
+                if os.path.exists(variant['path']):
+                    pdfmetrics.registerFont(TTFont(variant['name'], variant['path']))
+        else:
+            # 단일 폰트
+            if os.path.exists(font_config['path']):
+                pdfmetrics.registerFont(TTFont(font_config['name'], font_config['path']))
 
-    font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
-    pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Regular.ttf')))
-    pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Bold.ttf')))
 
-    font_dir_Ubuntu = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Ubuntu')
-    pdfmetrics.registerFont(TTFont('Ubuntu-Regular', os.path.join(font_dir_Ubuntu, 'Ubuntu-Regular.ttf')))
-
-    print(font_path)
-
-else:
-    # 폰트 파일이 없을 경우 대체 폰트 사용
-    font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
-    pdfmetrics.registerFont(TTFont('NotoSansKR-Thin', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Thin.ttf')))
-    print(f"Error: Font file not found at {font_path}")
+# 폰트 등록 실행
+register_fonts()
 
 
 class TeacherListView(LoginRequiredMixin, ListView):
@@ -366,11 +361,11 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         buffer = BytesIO()
 
         # 폰트 등록
-        font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
-        pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Regular.ttf')))
-        pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Bold.ttf')))
-        font_dir_Ubuntu = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Ubuntu')
-        pdfmetrics.registerFont(TTFont('Ubuntu-Regular', os.path.join(font_dir_Ubuntu, 'Ubuntu-Regular.ttf')))
+        # font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
+        # pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Regular.ttf')))
+        # pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Bold.ttf')))
+        # font_dir_Ubuntu = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Ubuntu')
+        # pdfmetrics.registerFont(TTFont('Ubuntu-Regular', os.path.join(font_dir_Ubuntu, 'Ubuntu-Regular.ttf')))
 
         class NumberedCanvas(canvas.Canvas):
             def __init__(self, *args, **kwargs):
