@@ -448,7 +448,7 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
                 if attendance.start_time and attendance.end_time:
                     start_datetime = datetime.combine(attendance.date, attendance.start_time)
                     end_datetime = datetime.combine(attendance.date, attendance.end_time)
-                    if end_datetime < start_datetime:  # 자정을 넘긴 경우
+                    if end_datetime < start_datetime:  # 자정을정 경우
                         end_datetime += timedelta(days=1)
                     work_hours = (end_datetime - start_datetime).total_seconds() / 3600
                     monthly_data[year_month]['hours'] += work_hours

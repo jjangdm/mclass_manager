@@ -11456,3 +11456,8 @@ ValueError:
 paragraph text '<para>2024\ub144 10\uc6d4 \uae09\uc5ec \ub0b4\uc5ed</para>' caused exception error with style name=KoreanTitle Can't map determine family/bold/italic for nanumgothic-bold
 C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
