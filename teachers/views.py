@@ -31,12 +31,23 @@ from django.db import transaction, models
 # 폰트 등록
 font_path = settings.FONT_PATH
 if os.path.exists(font_path):
-    pdfmetrics.registerFont(TTFont('NanumGothic', font_path))
-    print(f"Font registered successfully: {font_path}")
+    font_dir_Nanum = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'NanumGothic')
+    pdfmetrics.registerFont(TTFont('NanumGothic', os.path.join(font_dir_Nanum, 'NanumGothic.ttf')))
+
+    font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
+    pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Regular.ttf')))
+    pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Bold.ttf')))
+
+    font_dir_Ubuntu = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Ubuntu')
+    pdfmetrics.registerFont(TTFont('Ubuntu-Regular', os.path.join(font_dir_Ubuntu, 'Ubuntu-Regular.ttf')))
+
+    print(font_path)
+
 else:
+    # 폰트 파일이 없을 경우 대체 폰트 사용
+    font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
+    pdfmetrics.registerFont(TTFont('NotoSansKR-Thin', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Thin.ttf')))
     print(f"Error: Font file not found at {font_path}")
-    # 폰트 파일이 없을 경우 대체 폰트 사용 (예: Helvetica)
-    pdfmetrics.registerFont(TTFont('NanumGothic', 'Helvetica'))
 
 
 class TeacherListView(LoginRequiredMixin, ListView):
@@ -354,6 +365,13 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         teacher = get_object_or_404(Teacher, id=teacher_id)
         buffer = BytesIO()
 
+        # 폰트 등록
+        font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
+        pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Regular.ttf')))
+        pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Bold.ttf')))
+        font_dir_Ubuntu = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Ubuntu')
+        pdfmetrics.registerFont(TTFont('Ubuntu-Regular', os.path.join(font_dir_Ubuntu, 'Ubuntu-Regular.ttf')))
+
         class NumberedCanvas(canvas.Canvas):
             def __init__(self, *args, **kwargs):
                 canvas.Canvas.__init__(self, *args, **kwargs)
@@ -372,11 +390,11 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
                 canvas.Canvas.save(self)
 
             def draw_page_footer(self, page_count):
-                self.setFont('NanumGothic', 10)
+                self.setFont('NotoSansKR-Bold', 10)
                 # 학원명 (중앙)
                 self.drawCentredString(A4[0]/2, 20*mm, "엠클래스수학과학전문학원")
                 # 페이지 번호 (우측)
-                page_num = f"Page {self._pageNumber} of {page_count}"
+                page_num = f"{self._pageNumber} / {page_count}"
                 self.drawRightString(A4[0] - 20*mm, 20*mm, page_num)
 
         doc = SimpleDocTemplate(
@@ -388,15 +406,15 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
             bottomMargin=30*mm
         )
 
-        elements = []
+        elements = []        
 
         styles = getSampleStyleSheet()
-        styles.add(ParagraphStyle(name='Korean', fontName='NanumGothic', fontSize=10, leading=14, encoding='utf-8'))
-        styles.add(ParagraphStyle(name='KoreanTitle', fontName='NanumGothic', fontSize=16, leading=20, alignment=1, encoding='utf-8'))
-        styles.add(ParagraphStyle(name='KoreanSubtitle', fontName='NanumGothic', fontSize=12, leading=16, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='Korean', fontName='NotoSansKR', fontSize=10, leading=14, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='KoreanTitle', fontName='NotoSansKR-Bold', fontSize=16, leading=20, alignment=1, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='KoreanSubtitle', fontName='NotoSansKR-Bold', fontSize=12, leading=16, encoding='utf-8'))
         styles.add(ParagraphStyle(
             name='AttendanceDetail',
-            fontName='NanumGothic',
+            fontName='Ubuntu-Regular',
             fontSize=9,
             leading=12,
             encoding='utf-8'
@@ -416,7 +434,7 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         ]
         t = Table(data, colWidths=[50*mm, 120*mm])
         t.setStyle(TableStyle([
-            ('FONT', (0,0), (-1,-1), 'NanumGothic'),
+            ('FONT', (0,0), (-1,-1), 'NotoSansKR'),
             ('FONTSIZE', (0,0), (-1,-1), 10),
             ('TEXTCOLOR', (0,0), (0,-1), colors.grey),
             ('ALIGN', (0,0), (-1,-1), 'LEFT'),
@@ -449,22 +467,22 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
                     monthly_data[year_month]['hours'] += work_hours
                     monthly_data[year_month]['amount'] += work_hours * teacher.base_salary
 
-            attendance_data = [["년월", "근무 시간", "급여"]]
+            attendance_data = [["년/월", "근무시간", "급여"]]
             total_hours = 0
             total_amount = 0
             for year_month, data in monthly_data.items():
                 year, month = year_month.split('-')
-                hours = round(data['hours'], 2)
+                hours = round(data['hours'], 1)
                 amount = round(data['amount'])
                 attendance_data.append([f"{year}년 {month}월", f"{hours}시간", f"{amount:,}원"])
                 total_hours += hours
                 total_amount += amount
             
-            attendance_data.append(["총계", f"{total_hours:.2f}시간", f"{total_amount:,}원"])
+            attendance_data.append(["총계", f"{total_hours:.1f}시간", f"{total_amount:,}원"])
 
             t = Table(attendance_data, colWidths=[60*mm, 50*mm, 60*mm])
             t.setStyle(TableStyle([
-                ('FONT', (0,0), (-1,-1), 'NanumGothic'),
+                ('FONT', (0,0), (-1,-1), 'NotoSansKR'),
                 ('FONTSIZE', (0,0), (-1,-1), 10),
                 ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
                 ('TEXTCOLOR', (0,0), (-1,0), colors.black),
@@ -491,7 +509,7 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         ).order_by('-date')  # Latest first
 
         # Create attendance details table
-        attendance_data = [["날짜", "시작 시간", "종료 시간", "근무 시간"]]
+        attendance_data = [["날짜", "시작", "종료", "수업 시간"]]
         
         for attendance in attendances:
             if attendance.start_time and attendance.end_time:
@@ -505,18 +523,18 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
                     attendance.date.strftime("%Y-%m-%d"),
                     attendance.start_time.strftime("%H:%M"),
                     attendance.end_time.strftime("%H:%M"),
-                    f"{work_hours:.2f}시간"
+                    f"{work_hours:.1f}시간"
                 ])
 
         # Create table with appropriate styling
         attendance_table = Table(
             attendance_data,
-            colWidths=[40*mm, 35*mm, 35*mm, 35*mm],
+            colWidths=[45*mm, 40*mm, 40*mm, 45*mm],
             repeatRows=1  # Repeat header row on each page
         )
         
         attendance_table.setStyle(TableStyle([
-            ('FONT', (0,0), (-1,-1), 'NanumGothic'),
+            ('FONT', (0,0), (-1,-1), 'NotoSansKR'),
             ('FONTSIZE', (0,0), (-1,-1), 9),
             ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
             ('TEXTCOLOR', (0,0), (-1,0), colors.black),
@@ -536,7 +554,7 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         pdf = buffer.getvalue()
         buffer.close()
         
-        filename = f"{teacher.name}_선생님_근무_내역.pdf"
+        filename = f"{teacher.name} 선생님 보고서.pdf"
         encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
         
         response = HttpResponse(content_type='application/pdf')
