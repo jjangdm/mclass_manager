@@ -7,7 +7,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from .models import Teacher, Attendance
+from .models import Teacher, Attendance, Salary
 from .forms import BulkAttendanceForm, TeacherForm
 from django.contrib import messages
 from reportlab.pdfbase import pdfmetrics
@@ -24,6 +24,7 @@ from reportlab.lib.units import mm
 from reportlab.platypus.frames import Frame
 from reportlab.platypus.doctemplate import PageTemplate
 import urllib.parse
+from django.db import transaction
 
 
 # 폰트 등록
@@ -156,79 +157,83 @@ class AttendanceCreateView(LoginRequiredMixin, View):
 
 
 class SalaryCalculationView(LoginRequiredMixin, View):
-    def get(self, request):
-        current_year = timezone.now().year
-        current_month = timezone.now().month
+    template_name = 'teachers/salary_calculation.html'
 
-        # 출근 기록이 있는 연도 범위 가져오기
-        date_range = Attendance.objects.aggregate(
-            min_date=Min('date'),
-            max_date=Max('date')
+    def calculate_work_hours(self, teacher, year, month):
+        attendances = Attendance.objects.filter(
+            teacher=teacher,
+            date__year=year,
+            date__month=month,
+            is_present=True
         )
+        
+        total_hours = 0
+        for attendance in attendances:
+            if attendance.start_time and attendance.end_time:
+                # Convert time objects to datetime for calculation
+                start = datetime.combine(attendance.date, attendance.start_time)
+                end = datetime.combine(attendance.date, attendance.end_time)
+                hours = (end - start).total_seconds() / 3600
+                total_hours += hours
+                
+        return total_hours, attendances.count()
 
-        if date_range['min_date'] and date_range['max_date']:
-            start_year = date_range['min_date'].year
-            end_year = date_range['max_date'].year
-            years = range(start_year, end_year + 1)
-        else:
-            years = range(current_year, current_year + 1)
-
-        year = int(request.GET.get('year', current_year))
-        month = int(request.GET.get('month', current_month))
-
-        start_date = datetime(year, month, 1)
-        end_date = (start_date + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-
-        # 해당 월에 근무했던 모든 선생님을 가져옵니다.
-        teachers = Teacher.objects.filter(attendance__date__range=[start_date, end_date]).distinct()
-
+    def get(self, request):
+        year = int(request.GET.get('year', timezone.now().year))
+        month = int(request.GET.get('month', timezone.now().month))
+        
         salary_data = []
+        total_salary = 0
 
-        for teacher in teachers:
-            attendances = Attendance.objects.filter(
-                teacher=teacher,
-                date__range=[start_date, end_date]
-            )
+        teachers = Teacher.objects.all()
+        
+        try:
+            with transaction.atomic():
+                for teacher in teachers:
+                    work_hours, work_days = self.calculate_work_hours(teacher, year, month)
+                    
+                    # Calculate salary
+                    base_amount = int(work_hours * teacher.base_salary)
+                    additional_amount = teacher.additional_salary or 0
+                    total_amount = base_amount + additional_amount
 
-            total_work_hours = 0
-            for attendance in attendances:
-                if attendance.start_time and attendance.end_time:
-                    start_datetime = datetime.combine(attendance.date, attendance.start_time)
-                    end_datetime = datetime.combine(attendance.date, attendance.end_time)
-                    if end_datetime < start_datetime:  # 자정을 넘긴 경우
-                        end_datetime += timedelta(days=1)
-                    work_hours = (end_datetime - start_datetime).total_seconds() / 3600
-                    total_work_hours += work_hours
+                    # Create or update salary record
+                    salary, created = Salary.objects.update_or_create(
+                        teacher=teacher,
+                        year=year,
+                        month=month,
+                        defaults={
+                            'work_days': work_days,
+                            'base_amount': base_amount,
+                            'additional_amount': additional_amount,
+                            'total_amount': total_amount
+                        }
+                    )
 
-            total_work_hours = round(total_work_hours, 2)
-            base_amount = int(teacher.base_salary * total_work_hours) if teacher.base_salary else 0
-            additional_amount = int(teacher.additional_salary) if teacher.additional_salary else 0
-            total_amount = base_amount + additional_amount
+                    salary_data.append({
+                        'teacher': teacher,
+                        'work_days': work_days,
+                        'work_hours': work_hours,
+                        'bank_name': teacher.bank.name if teacher.bank else None,
+                        'account_number': teacher.account_number,
+                        'total_amount': total_amount
+                    })
+                    
+                    total_salary += total_amount
 
-            salary_data.append({
-                'teacher': teacher,
-                'work_days': attendances.count(),
-                'work_hours': total_work_hours,
-                'total_amount': total_amount,
-                'bank_name': teacher.bank.name if teacher.bank else '',
-                'account_number': teacher.account_number,
-            })
-
-        total_salary = sum(data['total_amount'] for data in salary_data)
-
-        months = range(1, 13)
+        except Exception as e:
+            messages.error(request, f'급여 계산 중 오류가 발생했습니다: {str(e)}')
 
         context = {
             'year': year,
             'month': month,
+            'years': range(2020, timezone.now().year + 1),
+            'months': range(1, 13),
             'salary_data': salary_data,
-            'years': sorted(list(years), reverse=True),  # 내림차순 정렬
-            'months': months,
-            'current_year': current_year,
-            'current_month': current_month,
-            'total_salary': total_salary,
+            'total_salary': total_salary
         }
-        return render(request, 'teachers/salary_calculation.html', context)
+
+        return render(request, self.template_name, context)
 
 
 class SalaryTableView(LoginRequiredMixin, View):
