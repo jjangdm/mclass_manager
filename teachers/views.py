@@ -11,8 +11,9 @@ from .models import Teacher, Attendance, Salary
 from .forms import BulkAttendanceForm, TeacherForm
 from django.contrib import messages
 from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageTemplate, Frame
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageTemplate, PageBreak, Frame
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import os
@@ -351,21 +352,41 @@ class SalaryTableView(LoginRequiredMixin, View):
 class TeacherPDFReportView(LoginRequiredMixin, View):
     def get(self, request, teacher_id):
         teacher = get_object_or_404(Teacher, id=teacher_id)
-        
         buffer = BytesIO()
-        
-        def footer(canvas, doc):
-            canvas.saveState()
-            footer_text = "엠클래스수학과학전문학원"
-            canvas.setFont('NanumGothic', 10)
-            canvas.drawCentredString(A4[0]/2, 20*mm, footer_text)
-            canvas.restoreState()
-        
-        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=20*mm, leftMargin=20*mm, topMargin=20*mm, bottomMargin=30*mm)
-        
-        frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height - 10*mm, id='normal')
-        template = PageTemplate(id='test', frames=frame, onPage=footer)
-        doc.addPageTemplates([template])
+
+        class NumberedCanvas(canvas.Canvas):
+            def __init__(self, *args, **kwargs):
+                canvas.Canvas.__init__(self, *args, **kwargs)
+                self._saved_page_states = []
+
+            def showPage(self):
+                self._saved_page_states.append(dict(self.__dict__))
+                self._startPage()
+
+            def save(self):
+                num_pages = len(self._saved_page_states)
+                for state in self._saved_page_states:
+                    self.__dict__.update(state)
+                    self.draw_page_footer(num_pages)
+                    canvas.Canvas.showPage(self)
+                canvas.Canvas.save(self)
+
+            def draw_page_footer(self, page_count):
+                self.setFont('NanumGothic', 10)
+                # 학원명 (중앙)
+                self.drawCentredString(A4[0]/2, 20*mm, "엠클래스수학과학전문학원")
+                # 페이지 번호 (우측)
+                page_num = f"Page {self._pageNumber} of {page_count}"
+                self.drawRightString(A4[0] - 20*mm, 20*mm, page_num)
+
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            rightMargin=20*mm,
+            leftMargin=20*mm,
+            topMargin=20*mm,
+            bottomMargin=30*mm
+        )
 
         elements = []
 
@@ -373,8 +394,15 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         styles.add(ParagraphStyle(name='Korean', fontName='NanumGothic', fontSize=10, leading=14, encoding='utf-8'))
         styles.add(ParagraphStyle(name='KoreanTitle', fontName='NanumGothic', fontSize=16, leading=20, alignment=1, encoding='utf-8'))
         styles.add(ParagraphStyle(name='KoreanSubtitle', fontName='NanumGothic', fontSize=12, leading=16, encoding='utf-8'))
+        styles.add(ParagraphStyle(
+            name='AttendanceDetail',
+            fontName='NanumGothic',
+            fontSize=9,
+            leading=12,
+            encoding='utf-8'
+        ))
 
-        # 제목
+        # First page content (existing code remains the same)
         elements.append(Paragraph(f"{teacher.name} 선생님 근무 내역", styles['KoreanTitle']))
         elements.append(Spacer(1, 10*mm))
 
@@ -450,13 +478,65 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         else:
             elements.append(Paragraph("근무 기록이 없습니다.", styles['Korean']))
 
-        doc.build(elements)
+        # Add page break before attendance details
+        elements.append(PageBreak())
+        
+        # Add attendance details title
+        elements.append(Paragraph("상세 근무 기록", styles['KoreanSubtitle']))
+        elements.append(Spacer(1, 5*mm))
 
+        # Get all attendance records sorted by date
+        attendances = Attendance.objects.filter(
+            teacher=teacher
+        ).order_by('-date')  # Latest first
+
+        # Create attendance details table
+        attendance_data = [["날짜", "시작 시간", "종료 시간", "근무 시간"]]
+        
+        for attendance in attendances:
+            if attendance.start_time and attendance.end_time:
+                start_datetime = datetime.combine(attendance.date, attendance.start_time)
+                end_datetime = datetime.combine(attendance.date, attendance.end_time)
+                if end_datetime < start_datetime:  # Handle overnight shifts
+                    end_datetime += timedelta(days=1)
+                work_hours = (end_datetime - start_datetime).total_seconds() / 3600
+                
+                attendance_data.append([
+                    attendance.date.strftime("%Y-%m-%d"),
+                    attendance.start_time.strftime("%H:%M"),
+                    attendance.end_time.strftime("%H:%M"),
+                    f"{work_hours:.2f}시간"
+                ])
+
+        # Create table with appropriate styling
+        attendance_table = Table(
+            attendance_data,
+            colWidths=[40*mm, 35*mm, 35*mm, 35*mm],
+            repeatRows=1  # Repeat header row on each page
+        )
+        
+        attendance_table.setStyle(TableStyle([
+            ('FONT', (0,0), (-1,-1), 'NanumGothic'),
+            ('FONTSIZE', (0,0), (-1,-1), 9),
+            ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.black),
+            ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+            ('TOPPADDING', (0,0), (-1,-1), 3),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 3),
+        ]))
+        
+        elements.append(attendance_table)
+
+        # Build PDF
+        doc.build(elements, canvasmaker=NumberedCanvas)
+        
         pdf = buffer.getvalue()
         buffer.close()
         
-        # PDF 파일 이름 설정
-        filename = f"{teacher.name} 선생님 근무 내역.pdf"
+        filename = f"{teacher.name}_선생님_근무_내역.pdf"
         encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
         
         response = HttpResponse(content_type='application/pdf')
@@ -595,7 +675,7 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         pdf = buffer.getvalue()
         buffer.close()
 
-        # 파일명 설정
+        # 파일명 설��
         filename = f"{year}년_{month}월_급여내역.pdf"
         encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
 
