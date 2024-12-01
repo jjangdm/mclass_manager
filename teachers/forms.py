@@ -5,20 +5,24 @@ from .models import Teacher
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['name', 'phone_number', 'email', 'hire_date', 'resignation_date', 
+        fields = ['name', 'gender', 'phone_number', 'email', 'hire_date', 'resignation_date', 
                  'base_salary', 'additional_salary', 'bank', 'account_number']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-input',
-                'placeholder': '이름을 입력하세요'
+                'placeholder': '이름'
             }),
+            'gender': forms.Select(attrs={
+                'class': 'form-input',
+                'placeholder': '성별',
+            }, choices=[('', )] + Teacher.GENDER_CHOICES),
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-input',
-                'placeholder': '전화번호를 입력하세요'
+                'placeholder': '전화번호'
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'form-input',
-                'placeholder': '이메일을 입력하세요'
+                'placeholder': '이메일'
             }),
             'hire_date': forms.DateInput(attrs={
                 'class': 'form-input',
@@ -30,18 +34,18 @@ class TeacherForm(forms.ModelForm):
             }),
             'base_salary': forms.NumberInput(attrs={
                 'class': 'form-input',
-                'placeholder': '시급을 입력하세요'
+                'placeholder': '시급'
             }),
             'additional_salary': forms.NumberInput(attrs={
                 'class': 'form-input',
-                'placeholder': '추가 급여를 입력하세요'
+                'placeholder': '추가 급여'
             }),
             'bank': forms.Select(attrs={
                 'class': 'form-input'
             }),
             'account_number': forms.TextInput(attrs={
                 'class': 'form-input',
-                'placeholder': '계좌번호를 입력하세요'
+                'placeholder': '계좌번호'
             })
         }
         
