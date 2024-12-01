@@ -19,7 +19,6 @@ from reportlab.lib import colors
 import os
 from django.views import View
 from django.db.models import Min, Max
-from django.conf import settings
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 import urllib.parse
@@ -360,13 +359,6 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         teacher = get_object_or_404(Teacher, id=teacher_id)
         buffer = BytesIO()
 
-        # 폰트 등록
-        # font_dir_Noto_Sans_KR = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
-        # pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Regular.ttf')))
-        # pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir_Noto_Sans_KR, 'NotoSansKR-Bold.ttf')))
-        # font_dir_Ubuntu = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Ubuntu')
-        # pdfmetrics.registerFont(TTFont('Ubuntu-Regular', os.path.join(font_dir_Ubuntu, 'Ubuntu-Regular.ttf')))
-
         class NumberedCanvas(canvas.Canvas):
             def __init__(self, *args, **kwargs):
                 canvas.Canvas.__init__(self, *args, **kwargs)
@@ -561,20 +553,6 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
 
 class SalaryPDFReportView(LoginRequiredMixin, View):
     def get(self, request, year, month):
-        # 필요한 모듈 임포트
-        from reportlab.pdfbase import pdfmetrics
-        from reportlab.pdfbase.ttfonts import TTFont
-        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-        from reportlab.lib.pagesizes import A4
-        from reportlab.lib.units import mm
-        from reportlab.lib import colors
-        import os
-
-        # 폰트 등록
-        font_dir = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Noto_Sans_KR')
-        pdfmetrics.registerFont(TTFont('NotoSansKR', os.path.join(font_dir, 'NotoSansKR-Regular.ttf')))
-        pdfmetrics.registerFont(TTFont('NotoSansKR-Bold', os.path.join(font_dir, 'NotoSansKR-Bold.ttf')))
 
         # 날짜 범위 계산
         start_date = datetime(year, month, 1)
@@ -599,7 +577,7 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         # **푸터 함수 정의**
         def add_footer(canvas, doc):
             canvas.saveState()
-            canvas.setFont('NotoSansKR', 10)
+            canvas.setFont('NotoSansKR-Bold', 10)
             # 페이지 너비 계산
             page_width = A4[0]
             # 푸터 텍스트 정의
@@ -618,7 +596,7 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         ))
         styles.add(ParagraphStyle(
             name='KoreanTitle',
-            fontName='NotoSansKR-Bold',
+            fontName='NanumGothicBold',
             fontSize=16,
             leading=20,
             alignment=1
@@ -639,7 +617,7 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
             attendance__date__range=[start_date, end_date]
         ).distinct()
 
-        data = [['선생님', '급여']]
+        data = [['이름', '급여']]
         total_amount = 0
 
         for teacher in teachers:
@@ -664,12 +642,12 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         data.append(["합계", f"{total_amount:,}원"])
 
         # 테이블 생성
-        col_widths = [TABLE_WIDTH * 0.5, TABLE_WIDTH * 0.5]
+        col_widths = [TABLE_WIDTH * 0.4, TABLE_WIDTH * 0.4]
         table = Table(data, colWidths=col_widths)
 
         # 테이블 스타일 설정
         table.setStyle(TableStyle([
-            ('FONTNAME', (0, 0), (-1, -1), 'NotoSansKR'),
+            ('FONTNAME', (0, 0), (-1, -1), 'NanumGothic'),
             ('FONTSIZE', (0, 0), (-1, -1), 10),
             ('ALIGN', (0, 0), (-1, 0), 'CENTER'),  # 헤더 중앙 정렬
             ('ALIGN', (0, 1), (0, -1), 'CENTER'),  # 이름 중앙 정렬
@@ -688,7 +666,7 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         pdf = buffer.getvalue()
         buffer.close()
 
-        # 파일명 설��
+        # 파일명 설정
         filename = f"{year}년_{month}월_급여내역.pdf"
         encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
 

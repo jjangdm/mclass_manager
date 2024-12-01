@@ -11154,3 +11154,305 @@ Watching for file changes with StatReloader
 C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
 Watching for file changes with StatReloader
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/11/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 697, in getFont
+    return _fonts[fontName]
+           ~~~~~~^^^^^^^^^^
+KeyError: 'NotoSansKR-semibold'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 677, in get
+    doc.build(elements, onFirstPage=add_footer, onLaterPages=add_footer)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 1318, in build
+    BaseDocTemplate.build(self,flowables, canvasmaker=canvasmaker)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 1083, in build
+    self.handle_flowable(flowables)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 932, in handle_flowable
+    if frame.add(f, canv, trySplit=self.allowSplitting):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\frames.py", line 201, in _add
+    flowable.drawOn(canv, self._x + self._leftExtraIndent, y, _sW=aW-w)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\flowables.py", line 112, in drawOn
+    self._drawOn(canvas)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\flowables.py", line 93, in _drawOn
+    self.draw()#this is the bit you overload
+    ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\tables.py", line 2301, in draw
+    self._drawCell(cellval, cellstyle, (colpos, rowpos), (colwidth, rowheight))
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\tables.py", line 2487, in _drawCell
+    self.canv.setFont(cellstyle.fontname, cellstyle.fontsize, cellstyle.leading)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfgen\canvas.py", line 1738, in setFont
+    font = pdfmetrics.getFont(self._fontname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 699, in getFont
+    return findFontAndRegister(fontName)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 681, in findFontAndRegister
+    face = getTypeFace(fontName)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 638, in getTypeFace
+    return _typefaces[faceName]
+           ~~~~~~~~~~^^^^^^^^^^
+KeyError: 'NotoSansKR-semibold'
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 664, in get
+    doc.build(elements, onFirstPage=add_footer, onLaterPages=add_footer)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 1318, in build
+    BaseDocTemplate.build(self,flowables, canvasmaker=canvasmaker)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 1083, in build
+    self.handle_flowable(flowables)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 932, in handle_flowable
+    if frame.add(f, canv, trySplit=self.allowSplitting):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\frames.py", line 201, in _add
+    flowable.drawOn(canv, self._x + self._leftExtraIndent, y, _sW=aW-w)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\flowables.py", line 112, in drawOn
+    self._drawOn(canvas)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\flowables.py", line 93, in _drawOn
+    self.draw()#this is the bit you overload
+    ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\tables.py", line 2301, in draw
+    self._drawCell(cellval, cellstyle, (colpos, rowpos), (colwidth, rowheight))
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\tables.py", line 2487, in _drawCell
+    self.canv.setFont(cellstyle.fontname, cellstyle.fontsize, cellstyle.leading)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfgen\canvas.py", line 1738, in setFont
+    font = pdfmetrics.getFont(self._fontname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 697, in getFont
+    return _fonts[fontName]
+           ~~~~~~^^^^^^^^^^
+TypeError: unhashable type: 'list'
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 697, in getFont
+    return _fonts[fontName]
+           ~~~~~~^^^^^^^^^^
+KeyError: 'NamumGothic'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 664, in get
+    doc.build(elements, onFirstPage=add_footer, onLaterPages=add_footer)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 1318, in build
+    BaseDocTemplate.build(self,flowables, canvasmaker=canvasmaker)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 1083, in build
+    self.handle_flowable(flowables)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\doctemplate.py", line 932, in handle_flowable
+    if frame.add(f, canv, trySplit=self.allowSplitting):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\frames.py", line 201, in _add
+    flowable.drawOn(canv, self._x + self._leftExtraIndent, y, _sW=aW-w)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\flowables.py", line 112, in drawOn
+    self._drawOn(canvas)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\flowables.py", line 93, in _drawOn
+    self.draw()#this is the bit you overload
+    ^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\tables.py", line 2301, in draw
+    self._drawCell(cellval, cellstyle, (colpos, rowpos), (colwidth, rowheight))
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\tables.py", line 2487, in _drawCell
+    self.canv.setFont(cellstyle.fontname, cellstyle.fontsize, cellstyle.leading)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfgen\canvas.py", line 1738, in setFont
+    font = pdfmetrics.getFont(self._fontname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 699, in getFont
+    return findFontAndRegister(fontName)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 681, in findFontAndRegister
+    face = getTypeFace(fontName)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 638, in getTypeFace
+    return _typefaces[faceName]
+           ~~~~~~~~~~^^^^^^^^^^
+KeyError: 'NamumGothic'
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /teachers/salary/pdf/2024/10/
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 2877, in _initial_frag
+    frag.fontName, frag.bold, frag.italic = ps2tt(style.fontName)
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\fonts.py", line 78, in ps2tt
+    raise ValueError("Can't map determine family/bold/italic for %s" % psfn)
+ValueError: Can't map determine family/bold/italic for nanumgothic-bold
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 3215, in parse
+    self.feed(text)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\html\parser.py", line 111, in feed
+    self.goahead(0)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\html\parser.py", line 171, in goahead
+    k = self.parse_starttag(i)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\html\parser.py", line 338, in parse_starttag
+    self.handle_starttag(tag, attrs)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 3238, in handle_starttag
+    start(attrs or {})
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 2904, in start_para
+    frag = self._initial_frag(attr,_paraAttrMap)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 2881, in _initial_frag
+    annotateException('error with style name=%s'%style.name)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 1176, in annotateException
+    rl_reraise(t,t(sep.join((_ for _ in (msg,str(v),postMsg) if _))),b)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 138, in rl_reraise
+    raise v.with_traceback(b)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 2877, in _initial_frag
+    frag.fontName, frag.bold, frag.italic = ps2tt(style.fontName)
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\fonts.py", line 78, in ps2tt
+    raise ValueError("Can't map determine family/bold/italic for %s" % psfn)
+ValueError: error with style name=KoreanTitle Can't map determine family/bold/italic for nanumgothic-bold
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py", line 612, in get
+    elements.append(Paragraph(title, styles['KoreanTitle']))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paragraph.py", line 1809, in __init__
+    self._setup(text, style, bulletText or getattr(style,'bulletText',None), frags, cleanBlockQuotedText)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paragraph.py", line 1830, in _setup
+    style, frags, bulletTextFrags = _parser.parse(text,style)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 3217, in parse
+    annotateException('\nparagraph text %s caused exception' % ascii(text))
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 1176, in annotateException
+    rl_reraise(t,t(sep.join((_ for _ in (msg,str(v),postMsg) if _))),b)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 138, in rl_reraise
+    raise v.with_traceback(b)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 3215, in parse
+    self.feed(text)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\html\parser.py", line 111, in feed
+    self.goahead(0)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\html\parser.py", line 171, in goahead
+    k = self.parse_starttag(i)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\html\parser.py", line 338, in parse_starttag
+    self.handle_starttag(tag, attrs)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 3238, in handle_starttag
+    start(attrs or {})
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 2904, in start_para
+    frag = self._initial_frag(attr,_paraAttrMap)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 2881, in _initial_frag
+    annotateException('error with style name=%s'%style.name)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 1176, in annotateException
+    rl_reraise(t,t(sep.join((_ for _ in (msg,str(v),postMsg) if _))),b)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\utils.py", line 138, in rl_reraise
+    raise v.with_traceback(b)
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\platypus\paraparser.py", line 2877, in _initial_frag
+    frag.fontName, frag.bold, frag.italic = ps2tt(style.fontName)
+                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\JANGDONGMIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\reportlab\lib\fonts.py", line 78, in ps2tt
+    raise ValueError("Can't map determine family/bold/italic for %s" % psfn)
+ValueError: 
+paragraph text '<para>2024\ub144 10\uc6d4 \uae09\uc5ec \ub0b4\uc5ed</para>' caused exception error with style name=KoreanTitle Can't map determine family/bold/italic for nanumgothic-bold
+C:\Users\JANGDONGMIN\django_project\mclass_manager\teachers\views.py changed, reloading.
+Watching for file changes with StatReloader
