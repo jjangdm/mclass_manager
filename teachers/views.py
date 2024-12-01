@@ -24,7 +24,7 @@ from reportlab.lib.units import mm
 from reportlab.platypus.frames import Frame
 from reportlab.platypus.doctemplate import PageTemplate
 import urllib.parse
-from django.db import transaction
+from django.db import transaction, models
 
 
 # 폰트 등록
@@ -178,6 +178,23 @@ class SalaryCalculationView(LoginRequiredMixin, View):
                 
         return total_hours, attendances.count()
 
+    def get_active_teachers_for_month(self, year, month):
+        # 해당 월의 첫날과 마지막날 계산
+        start_date = datetime(year, month, 1).date()
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1).date() - timedelta(days=1)
+        else:
+            end_date = datetime(year, month + 1, 1).date() - timedelta(days=1)
+
+        return Teacher.objects.filter(
+            # 입사일이 해당 월 마지막날보다 이전이거나 같고
+            hire_date__lte=end_date
+        ).filter(
+            # 퇴사일이 없거나, 퇴사일이 해당 월 첫날보다 이후인 경우
+            models.Q(resignation_date__isnull=True) | 
+            models.Q(resignation_date__gte=start_date)
+        )
+
     def get(self, request):
         year = int(request.GET.get('year', timezone.now().year))
         month = int(request.GET.get('month', timezone.now().month))
@@ -185,41 +202,43 @@ class SalaryCalculationView(LoginRequiredMixin, View):
         salary_data = []
         total_salary = 0
 
-        teachers = Teacher.objects.all()
+        # 해당 월에 근무한 선생님들만 필터링
+        teachers = self.get_active_teachers_for_month(year, month)
         
         try:
             with transaction.atomic():
                 for teacher in teachers:
                     work_hours, work_days = self.calculate_work_hours(teacher, year, month)
                     
-                    # Calculate salary
-                    base_amount = int(work_hours * teacher.base_salary)
-                    additional_amount = teacher.additional_salary or 0
-                    total_amount = base_amount + additional_amount
+                    # 근무 시간이 있는 경우만 급여 계산
+                    if work_hours > 0:
+                        base_amount = int(work_hours * teacher.base_salary)
+                        additional_amount = teacher.additional_salary or 0
+                        total_amount = base_amount + additional_amount
 
-                    # Create or update salary record
-                    salary, created = Salary.objects.update_or_create(
-                        teacher=teacher,
-                        year=year,
-                        month=month,
-                        defaults={
+                        # Create or update salary record
+                        salary, created = Salary.objects.update_or_create(
+                            teacher=teacher,
+                            year=year,
+                            month=month,
+                            defaults={
+                                'work_days': work_days,
+                                'base_amount': base_amount,
+                                'additional_amount': additional_amount,
+                                'total_amount': total_amount
+                            }
+                        )
+
+                        salary_data.append({
+                            'teacher': teacher,
                             'work_days': work_days,
-                            'base_amount': base_amount,
-                            'additional_amount': additional_amount,
+                            'work_hours': work_hours,
+                            'bank_name': teacher.bank.name if teacher.bank else None,
+                            'account_number': teacher.account_number,
                             'total_amount': total_amount
-                        }
-                    )
-
-                    salary_data.append({
-                        'teacher': teacher,
-                        'work_days': work_days,
-                        'work_hours': work_hours,
-                        'bank_name': teacher.bank.name if teacher.bank else None,
-                        'account_number': teacher.account_number,
-                        'total_amount': total_amount
-                    })
-                    
-                    total_salary += total_amount
+                        })
+                        
+                        total_salary += total_amount
 
         except Exception as e:
             messages.error(request, f'급여 계산 중 오류가 발생했습니다: {str(e)}')
