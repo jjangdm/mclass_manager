@@ -5,6 +5,7 @@ from .models import School, Publisher, Bank, PurchaseLocation, Subject
 class SchoolAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone', 'address')
     search_fields = ('name', 'phone')
+    list_filter = ('name', 'phone')
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):

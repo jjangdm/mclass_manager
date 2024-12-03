@@ -8,8 +8,8 @@ from .models import Student, School  # Import School model
 from .forms import StudentForm, StudentImportForm
 import pandas as pd
 from django.http import HttpResponse
-from datetime import datetime  # Import datetime module
 from .models import Student, StudentFile
+import datetime
 
 
 class StudentListView(LoginRequiredMixin, ListView):
@@ -88,78 +88,64 @@ def student_import(request):
                 new_count = 0
                 duplicate_count = 0
 
+                # 데이터프레임의 각 행 처리
                 for index, row in df.iterrows():
-                    school_name = row['school']
-                    school = School.objects.get(name=school_name)
+                    school_name = row.get('school', '').strip()
+                    if school_name:
+                        school, created = School.objects.get_or_create(name=school_name)
+                    else:
+                        school = None
 
-                    # 중복 체크
-                    existing_student = Student.objects.filter(
-                        name=row['name'],
-                        school=school,
-                        phone_number=row['phone_number']
-                    ).exists()
-
-                    if existing_student:
-                        duplicate_count += 1
-                        continue  # 중복된 학생은 건너뛰기
-
-                    # 날짜 처리 함수
-                    def process_date(date_value):
-                        if pd.isna(date_value):
+                    # 날짜 필드 처리 함수
+                    def parse_date(value):
+                        if pd.isnull(value):
+                            return None
+                        elif isinstance(value, (pd.Timestamp, datetime.date, datetime.datetime)):
+                            return value.date()
+                        elif isinstance(value, str):
+                            for fmt in ('%Y-%m-%d', '%Y.%m.%d', '%Y/%m/%d'):
+                                try:
+                                    return datetime.datetime.strptime(value, fmt).date()
+                                except ValueError:
+                                    continue
+                            return None  # 지원되지 않는 형식일 경우
+                        else:
                             return None
 
-                        if isinstance(date_value, str):
-                            try:
-                                return datetime.strptime(date_value.split()[0], '%Y-%m-%d').date()
-                            except ValueError:
-                                return None
-                        elif isinstance(date_value, (datetime, pd.Timestamp)):
-                            return date_value.date()
-                        return None
+                    first_class_date = parse_date(row.get('first_class_date'))
+                    quit_date = parse_date(row.get('quit_date'))
 
-                    # 각 날짜 필드 처리
-                    interview_date = process_date(row['interview_date'])
-                    first_class_date = process_date(row['first_class_date'])
-                    quit_date = process_date(row['quit_date'])
+                    student_data = {
+                        'school': school,
+                        'grade': row.get('grade'),
+                        'phone_number': row.get('phone_number'),
+                        'email': row.get('email'),
+                        'gender': row.get('gender'),
+                        'parent_phone': row.get('parent_phone'),
+                        'receipt_number': row.get('receipt_number'),
+                        'first_class_date': first_class_date,
+                        'quit_date': quit_date,
+                        'etc': row.get('etc'),
+                        # 필요한 다른 필드 추가
+                    }
 
-                    student = Student(
+                    student, created = Student.objects.update_or_create(
                         name=row['name'],
-                        school=school,
-                        grade=row['grade'],
-                        phone_number=row['phone_number'],
-                        email=row['email'],
-                        gender=row['gender'],
-                        parent_phone=row['parent_phone'],
-                        receipt_number=row['receipt_number'],
-                        interview_date=interview_date,
-                        interview_score=row['interview_score'],
-                        interview_info=row['interview_info'],
-                        first_class_date=first_class_date,
-                        quit_date=quit_date,
-                        etc=row['etc'],
+                        defaults=student_data
                     )
-                    student.save()
-                    new_count += 1
+                    if created:
+                        new_count += 1
+                    else:
+                        duplicate_count += 1
 
-                # 결과 메시지 생성
-                message_parts = []
-                if new_count > 0:
-                    message_parts.append(f'{new_count}명의 학생이 새로 등록되었습니다.')
-                if duplicate_count > 0:
-                    message_parts.append(f'{duplicate_count}명의 학생은 이미 등록되어 있어 건너뛰었습니다.')
-
-                if message_parts:
-                    messages.success(request, ' '.join(message_parts))
-                else:
-                    messages.warning(request, '등록된 학생이 없습니다.')
-
+                messages.success(request, f"{new_count}명 학생이 새로 추가되었고, {duplicate_count}명 학생은 이미 존재하여 업데이트되었습니다.")
                 return redirect('students:student_list')
-
             except Exception as e:
-                messages.error(request, f'파일 처리 중 오류가 발생했습니다: {str(e)}')
+                messages.error(request, f"파일 처리 중 오류가 발생했습니다: {e}")
+        else:
+            messages.error(request, "폼이 유효하지 않습니다.")
     else:
         form = StudentImportForm()
-
     return render(request, 'students/student_import.html', {'form': form})
 
 
