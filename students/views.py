@@ -21,14 +21,20 @@ class StudentListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Student.objects.all()
+        search_query = self.request.GET.get('search', '')
         show_inactive = self.request.GET.get('show_inactive') == 'on'
+        
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
         if not show_inactive:
             queryset = queryset.filter(is_active=True)
-        return queryset.order_by('-is_active', '-first_class_date')  # is_active 기준으로 정렬
+            
+        return queryset.order_by('-is_active', '-first_class_date')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['show_inactive'] = self.request.GET.get('show_inactive') == 'on'
+        context['search_query'] = self.request.GET.get('search', '')
         return context
 
 
