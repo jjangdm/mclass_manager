@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('first_class_date', models.DateField(verbose_name='첫수업 날짜')),
                 ('last_class_date', models.DateField(blank=True, null=True, verbose_name='그만 둔 날짜')),
                 ('interview_score', models.IntegerField(choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)], verbose_name='상담시 성적')),
-                ('base_class', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='base_students', to='classes.class', verbose_name='기본 학급')),
+                # ('base_class', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='base_students', to='classes.class', verbose_name='기본 학급')),
                 ('school', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='common.school', verbose_name='학교')),
             ],
             options={
