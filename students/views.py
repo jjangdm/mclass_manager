@@ -15,8 +15,9 @@ import datetime
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
     template_name = 'students/student_list.html'
+    success_url = reverse_lazy('students:student_list')
     context_object_name = 'students'
-    paginate_by = 10
+    paginate_by = 20
 
     def get_queryset(self):
         queryset = Student.objects.all()
