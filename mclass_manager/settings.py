@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'mclass_manager.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'mclass_db',
+#         'NAME': 'mclass_manager_db',
 #         'USER': 'root',
 #         'PASSWORD': mclass_settings.db_password,  # MariaDB 설치 시 설정한 비밀번호
 #         'HOST': 'localhost',
