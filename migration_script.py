@@ -24,7 +24,7 @@ def create_mariadb_database():
     cursor = connection.cursor()
     
     try:
-        cursor.execute("CREATE DATABASE IF NOT EXISTS mclass_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci")
+        cursor.execute("CREATE DATABASE IF NOT EXISTS mclass_manager_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci")
         print("MariaDB 데이터베이스가 생성되었습니다.")
     except Exception as e:
         print(f"데이터베이스 생성 중 오류 발생: {e}")
@@ -53,7 +53,7 @@ def migrate_to_mariadb(backup_path):
     try:
         settings.DATABASES['default'] = {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'mclass_db',
+            'NAME': 'mclass_manager_db',
             'USER': 'root',
             'PASSWORD': mclass_settings.db_password,
             'HOST': 'localhost',
