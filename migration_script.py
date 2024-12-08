@@ -1,5 +1,4 @@
 import os
-import sys
 import django
 import mysql.connector
 from django.core.management import call_command
@@ -17,7 +16,7 @@ def create_mariadb_database():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password= mclass_settings.db_password,
+        password=mclass_settings.db_password,
         charset='utf8mb4',
         collation='utf8mb4_general_ci'
     )
@@ -36,12 +35,25 @@ def backup_sqlite_data():
     """SQLite 데이터 백업"""
     backup_path = os.path.join(os.getcwd(), 'backup_data.json')
     try:
-        call_command('dumpdata', 
-                    '--exclude', 'auth.permission', 
-                    '--exclude', 'contenttypes', 
-                    '--exclude', 'sessions.session',
-                    '--indent', '2',
-                    '--output', backup_path)
+        with open(backup_path, 'w', encoding='utf-8') as f:
+            call_command('dumpdata',
+                        'auth.group',
+                        'auth.user',
+                        'common.bank',
+                        'common.publisher',
+                        'common.subject',
+                        'common.purchaselocation',
+                        'common.school',
+                        'teachers.teacher',
+                        'teachers.attendance',
+                        'teachers.salary',
+                        'maintenance.room',
+                        'maintenance.maintenance',
+                        'books.book',
+                        'students.student',
+                        '--exclude', 'auth.permission',
+                        '--indent', '2',
+                        stdout=f)
         print(f"SQLite 데이터가 {backup_path}에 백업되었습니다.")
         return backup_path
     except Exception as e:
@@ -103,11 +115,29 @@ def migrate_to_mariadb(backup_path):
         # 데이터 로드
         if backup_path and os.path.exists(backup_path):
             try:
-                call_command('loaddata', backup_path)
+                print(f"데이터 로드 시작: {backup_path}")
+                # 현재 데이터베이스가 MariaDB인지 확인
+                from django.db import connection
+                print(f"현재 데이터베이스 엔진: {connection.vendor}")
+        
+                # backup 파일의 내용 확인
+                with open(backup_path, 'r', encoding='utf-8') as f:
+                    print("백업 파일 내용 확인:", f.read()[:100])  # 처음 100자만 출력
+        
+                # loaddata 실행
+                call_command('loaddata', backup_path, verbosity=3)
+        
+                # 데이터가 실제로 로드되었는지 확인
+                cursor = connection.cursor()
+                cursor.execute("SELECT COUNT(*) FROM auth_user")
+                user_count = cursor.fetchone()[0]
+                print(f"로드된 사용자 수: {user_count}")
+        
                 print("데이터가 성공적으로 MariaDB로 마이그레이션되었습니다.")
             except Exception as e:
                 print(f"데이터 로드 중 오류 발생: {e}")
-                raise e
+                import traceback
+                traceback.print_exc()  # 상세한 에러 메시지 출력
         
     except Exception as e:
         print(f"마이그레이션 중 오류 발생: {e}")
