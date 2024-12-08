@@ -12422,3 +12422,4 @@ Traceback (most recent call last):
 django.template.exceptions.TemplateSyntaxError: Unclosed tag on line 3: 'block'. Looking for one of: endblock.
 Watching for file changes with StatReloader
 Watching for file changes with StatReloader
+Not Found: /favicon.ico
