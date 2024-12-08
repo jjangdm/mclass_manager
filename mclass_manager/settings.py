@@ -99,20 +99,28 @@ WSGI_APPLICATION = 'mclass_manager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'mclass_db',
+#         'USER': 'root',
+#         'PASSWORD': mclass_settings.db_password,  # MariaDB 설치 시 설정한 비밀번호
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'; SET CHARACTER SET utf8mb4; SET collation_connection = 'utf8mb4_general_ci';",
+#         }
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mclass_db',
-        'USER': 'root',
-        'PASSWORD': mclass_settings.db_password,  # MariaDB 설치 시 설정한 비밀번호
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'; SET CHARACTER SET utf8mb4; SET collation_connection = 'utf8mb4_general_ci';",
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
