@@ -104,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mclass_manager_db',
         'USER': 'root',
-        'PASSWORD': mclass_settings.db_password,  # MariaDB 설치 시 설정한 비밀번호
+        'PASSWORD': mclass_settings.db_password, 
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
@@ -114,12 +114,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 
 
