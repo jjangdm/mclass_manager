@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="M'Class 수학과학전문학원 관리 시스템">
+    <meta name="keywords" content="M'Class, 학원관리, 수학, 과학, 학원, 관리시스템">
     <title>{% block title %}M'Class Manager{% endblock %}</title>
+
+    {% load static %}
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,8 +17,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap" rel="stylesheet">
     <!-- <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-gothic.css" rel="stylesheet"> -->
     
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
     <!-- Custom CSS -->
-    {% load static %}
+    
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     
     <style>
@@ -26,8 +32,8 @@
         }
     </style>
     
-    {% block extra_css %}{% endblock %}
-
+    {% block extra_css %}
+    {% endblock %}
 
 </head>
 <body class="bg-gray-50">
