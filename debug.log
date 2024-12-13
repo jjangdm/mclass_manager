@@ -12505,3 +12505,4 @@ django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 18: 's
 Watching for file changes with StatReloader
 Watching for file changes with StatReloader
 Not Found: /textbook/dashboard/
+Watching for file changes with StatReloader
