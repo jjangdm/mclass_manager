@@ -12503,3 +12503,5 @@ Traceback (most recent call last):
     raise self.error(
 django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 18: 'static'. Did you forget to register or load this tag?
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Not Found: /textbook/dashboard/
