@@ -3,7 +3,8 @@ from django.conf import settings
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from common.models import School
-from django.utils import timezone
+from django.db.models import Sum, F
+
 
 class Student(models.Model):
     GRADE_CHOICES = [
@@ -72,6 +73,18 @@ class Student(models.Model):
 
         # 저장 후 개인 폴더 생성
         self.get_student_folder_path()
+
+    def get_unpaid_amount(self):
+        return self.bookdistribution_set.filter(
+            bookpayment__payment__isnull=True
+        ).aggregate(
+            total=Sum(F('book_stock__selling_price') * F('quantity'))
+        )['total'] or 0
+
+    def get_unpaid_books(self):
+        return self.bookdistribution_set.filter(
+            bookpayment__payment__isnull=True
+        ).select_related('book_stock__book')
     
     class Meta:
         verbose_name = '학생'

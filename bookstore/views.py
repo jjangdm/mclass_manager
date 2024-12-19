@@ -7,44 +7,53 @@ from django.utils import timezone
 from bookstore.forms import StockCreateForm, StockUpdateForm
 from .models import BookStock, BookReturn, BookIssue, Book
 from .forms import BookIssueForm
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, F, OuterRef, Subquery
 from django.shortcuts import render
+from bookstore.models import BookDistribution
+from django.db import transaction
+from django.db.models.functions import Coalesce
 
 
 def stock_list(request):
-    # 각 책별 총 재고 수량을 계산
-    books_with_quantity = Book.objects.annotate(
-        total_quantity=Sum('bookstock__quantity')
-    )
-    
+    # 각 BookStock에 대한 총 배부 수량을 계산하는 서브쿼리
+    distributed_quantities = BookDistribution.objects.filter(
+        book_stock=OuterRef('pk')
+    ).values('book_stock').annotate(
+        total_distributed=Sum('quantity')
+    ).values('total_distributed')
+
     # 재고가 있는 도서들의 재고 정보를 가져옵니다
-    stocks_in_stock = BookStock.objects.filter(quantity__gt=0)
-    
+    stocks_in_stock = BookStock.objects.annotate(
+        distributed_quantity=Coalesce(Subquery(distributed_quantities), 0),
+        actual_quantity=F('quantity') - F('distributed_quantity')
+    ).filter(
+        actual_quantity__gt=0
+    ).select_related('book')
+
     # 총 재고가 0인 도서들을 찾습니다
-    zero_quantity_books = books_with_quantity.filter(
-        Q(total_quantity=0) | Q(total_quantity__isnull=True)
-    ).values_list('id', flat=True)
-    
-    # 총 재고가 0인 도서들의 가장 최근 재고 정보를 가져옵니다
-    stocks_zero_quantity = []
-    for book_id in zero_quantity_books:
-        latest_stock = BookStock.objects.filter(
-            book_id=book_id
-        ).order_by('-received_date').first()
-        if latest_stock:
-            stocks_zero_quantity.append(latest_stock)
-    
+    stocks_zero_quantity = BookStock.objects.annotate(
+        distributed_quantity=Coalesce(Subquery(distributed_quantities), 0),
+        actual_quantity=F('quantity') - F('distributed_quantity')
+    ).filter(
+        actual_quantity__lte=0
+    ).select_related('book')
+
     # 같은 책이지만 다른 가격을 가진 도서들을 찾습니다
     books_with_price_variations = set()
     for book in Book.objects.all():
         prices = BookStock.objects.filter(book=book).values_list('selling_price', flat=True).distinct()
         if len(prices) > 1:
             books_with_price_variations.add(book.id)
-    
+
     # 디버깅을 위한 출력
-    # print("Books with zero total quantity:", len(zero_quantity_books))
-    # print("Stocks with zero quantity:", len(stocks_zero_quantity))
-    
+    print("\n=== 재고 현황 ===")
+    for stock in stocks_in_stock:
+        print(f"도서: {stock.book.name}")
+        print(f"원래 수량: {stock.quantity}")
+        print(f"배부 수량: {stock.distributed_quantity}")
+        print(f"실제 수량: {stock.actual_quantity}")
+        print("---")
+
     context = {
         'stocks_in_stock': stocks_in_stock,
         'stocks_zero_quantity': stocks_zero_quantity,
@@ -173,6 +182,51 @@ def book_issue_create(request):
     else:
         form = BookIssueForm()
     return render(request, 'bookstore/book_issue_form.html', {'form': form})
+
+
+def distribute_book(request):
+    if request.method == 'POST':
+        form = BookIssueForm(request.POST)
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    book_stock = form.cleaned_data['book_stock']
+                    quantity = form.cleaned_data['quantity']
+                    
+                    # 재고 확인
+                    if book_stock.quantity < quantity:
+                        messages.error(request, f'재고가 부족합니다. 현재 재고: {book_stock.quantity}권')
+                        return render(request, 'bookstore/book_issue_form.html', {'form': form})
+                    
+                    # BookDistribution 생성
+                    distribution = BookDistribution.objects.create(
+                        book_stock=book_stock,
+                        student=form.cleaned_data['student'],
+                        quantity=quantity,
+                        sold_date=form.cleaned_data.get('issued_date') or timezone.now().date(),
+                        notes=form.cleaned_data.get('memo', '')
+                    )
+                    
+                    # 재고 감소
+                    book_stock.quantity -= quantity
+                    book_stock.save()
+                    
+                    messages.success(request, '교재가 성공적으로 배부되었습니다.')
+                    return redirect('bookstore:distribution_list')
+                    
+            except Exception as e:
+                messages.error(request, f'오류가 발생했습니다: {str(e)}')
+                return render(request, 'bookstore/book_issue_form.html', {'form': form})
+    else:
+        form = BookIssueForm()
+    return render(request, 'bookstore/book_issue_form.html', {'form': form})
+
+# BookIssue 목록 보기도 BookDistribution으로 변경
+def distribution_list(request):
+    distributions = BookDistribution.objects.all().order_by('-sold_date')
+    return render(request, 'bookstore/distribution_list.html', {
+        'distributions': distributions
+    })
 
 
 def stock_return(request, stock_id):

@@ -28,7 +28,7 @@
                             <span class="text-xs text-red-600 ml-2">*</span>
                             {% endif %}
                         </td>
-                        <td class="text-right">{{ stock.quantity }}</td>
+                        <td class="text-right">{{ stock.actual_quantity }}</td>
                         <td class="text-right">{{ stock.selling_price|intcomma }}원</td>
                         <td class="text-center">
                             <a href="{% url 'bookstore:stock_detail' pk=stock.pk %}" 
