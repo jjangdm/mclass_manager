@@ -7,6 +7,7 @@ from django.utils import timezone
 from bookstore.forms import StockCreateForm, StockUpdateForm
 from .models import BookStock, BookReturn, BookIssue, Book
 from .forms import BookIssueForm
+from payment.models import Payment, BookPayment
 from django.db.models import Sum, Q, F, OuterRef, Subquery
 from django.shortcuts import render
 from bookstore.models import BookDistribution
@@ -187,24 +188,22 @@ def book_issue_create(request):
 def distribute_book(request):
     if request.method == 'POST':
         form = BookIssueForm(request.POST)
+        print("\n=== POST 데이터 ===")
+        print(f"POST 데이터: {request.POST}")
+        
         if form.is_valid():
             try:
                 with transaction.atomic():
                     book_stock = form.cleaned_data['book_stock']
                     quantity = form.cleaned_data['quantity']
+                    student = form.cleaned_data['student']
                     
-                    # 재고 확인
-                    if book_stock.quantity < quantity:
-                        messages.error(request, f'재고가 부족합니다. 현재 재고: {book_stock.quantity}권')
-                        return render(request, 'bookstore/book_issue_form.html', {'form': form})
-                    
-                    # BookDistribution 생성
                     distribution = BookDistribution.objects.create(
                         book_stock=book_stock,
-                        student=form.cleaned_data['student'],
+                        student=student,
                         quantity=quantity,
-                        sold_date=form.cleaned_data.get('issued_date') or timezone.now().date(),
-                        notes=form.cleaned_data.get('memo', '')
+                        sold_date=form.cleaned_data.get('sold_date') or timezone.now().date(),
+                        notes=form.cleaned_data.get('notes', '')
                     )
                     
                     # 재고 감소
@@ -213,12 +212,24 @@ def distribute_book(request):
                     
                     messages.success(request, '교재가 성공적으로 배부되었습니다.')
                     return redirect('bookstore:distribution_list')
-                    
             except Exception as e:
+                print(f"\n=== 예외 발생 ===")
+                print(f"에러: {str(e)}")
                 messages.error(request, f'오류가 발생했습니다: {str(e)}')
-                return render(request, 'bookstore/book_issue_form.html', {'form': form})
+        else:
+            print("\n=== 폼 에러 ===")
+            print(f"폼 에러: {form.errors}")
+            print(f"폼 에러(non_field): {form.non_field_errors()}")
     else:
         form = BookIssueForm()
+    
+    print("\n=== 폼 필드 상태 ===")
+    for field_name, field in form.fields.items():
+        print(f"{field_name}:")
+        print(f"  required: {field.required}")
+        if hasattr(field, 'queryset'):
+            print(f"  queryset count: {field.queryset.count()}")
+    
     return render(request, 'bookstore/book_issue_form.html', {'form': form})
 
 # BookIssue 목록 보기도 BookDistribution으로 변경
