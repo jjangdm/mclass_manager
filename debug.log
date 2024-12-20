@@ -13538,6 +13538,7 @@ C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, r
 Watching for file changes with StatReloader
 C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
 Watching for file changes with StatReloader
+<<<<<<< HEAD
 Watching for file changes with StatReloader
 C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
 Watching for file changes with StatReloader
@@ -13810,3 +13811,5 @@ Traceback (most recent call last):
   File "c:\Users\JANGDONGMIN\django_project\mclass_manager\.conda\Lib\site-packages\django\template\loader.py", line 19, in get_template
     raise TemplateDoesNotExist(template_name, chain=chain)
 django.template.exceptions.TemplateDoesNotExist: payment/student_detail.html
+=======
+>>>>>>> parent of 3d0d063 (어설프지만 원하는 기능이 살짝 되고 있음음)
