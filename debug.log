@@ -13539,6 +13539,7 @@ Watching for file changes with StatReloader
 C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
 Watching for file changes with StatReloader
 <<<<<<< HEAD
+<<<<<<< HEAD
 Watching for file changes with StatReloader
 C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
 Watching for file changes with StatReloader
@@ -13813,3 +13814,8 @@ Traceback (most recent call last):
 django.template.exceptions.TemplateDoesNotExist: payment/student_detail.html
 =======
 >>>>>>> parent of 3d0d063 (어설프지만 원하는 기능이 살짝 되고 있음음)
+=======
+>>>>>>> parent of 3d0d063 (어설프지만 원하는 기능이 살짝 되고 있음음)
+Watching for file changes with StatReloader
+C:\Users\JANGDONGMIN\django_project\mclass_manager\bookstore\views.py changed, reloading.
+Watching for file changes with StatReloader
