@@ -380,7 +380,11 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
             rightMargin=20*mm,
             leftMargin=20*mm,
             topMargin=20*mm,
-            bottomMargin=30*mm
+            bottomMargin=30*mm,
+            title=f"{teacher.name} 선생님 근무 내역 보고서",
+            author="엠클래스수학과학전문학원",
+            subject=f"{teacher.name} 선생님 근무 보고서",
+            creator="MClass Manager"
         )
 
         elements = []        
@@ -531,11 +535,11 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         pdf = buffer.getvalue()
         buffer.close()
         
-        filename = f"{teacher.name} 선생님 보고서.pdf"
+        filename = f"{teacher.name} 선생님 근무내역 보고서.pdf"
         encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
         
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename="{encoded_filename}"'
+        response['Content-Disposition'] = f'inline; filename*=UTF-8\'\'{encoded_filename}'
         response.write(pdf)
         
         return response
@@ -561,7 +565,10 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
             leftMargin=20*mm,
             topMargin=30*mm,
             bottomMargin=20*mm,
-            title=f"{year}년 {month}월 급여 내역"  # 메타데이터 제목 설정
+            title=f"{year}년 {month}월 급여 내역",  # 메타데이터 제목 설정
+            author="엠클래스수학과학전문학원",
+            subject=f"{year}년 {month}월 급여 내역서",
+            creator="MClass Manager"
         )
 
         # **푸터 함수 정의**
@@ -657,11 +664,11 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         buffer.close()
 
         # 파일명 설정
-        filename = f"{year}년_{month}월_급여내역.pdf"
+        filename = f"{year}년 {month}월 급여내역서.pdf"
         encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
 
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{encoded_filename}"'
+        response['Content-Disposition'] = f'attachment; filename*=UTF-8\'\'{encoded_filename}'
         response.write(pdf)
 
         return response
