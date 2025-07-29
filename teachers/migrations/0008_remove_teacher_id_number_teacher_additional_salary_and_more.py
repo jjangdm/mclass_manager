@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='teacher',
             name='phone_number',
-            field=models.CharField(blank=True, max_length=11, null=True, validators=[teachers.models.validate_phone_number], verbose_name='전화번호'),
+            field=models.CharField(blank=True, max_length=13, null=True, validators=[teachers.models.phone_number_validator], verbose_name='전화번호'),
         ),
         migrations.CreateModel(
             name='Attendance',

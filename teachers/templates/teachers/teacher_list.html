@@ -43,7 +43,7 @@
                             <td>
                                 {{ teacher.name }}
                             </td>
-                            <td>{{ teacher.phone_number|default:"-" }}</td>
+                            <td>{{ teacher.get_formatted_phone_number|default:"-" }}</td>
                             <td>{{ teacher.email|default:"-" }}</td>
                             <td>{{ teacher.hire_date|date:"Y-m-d" }}</td>
                             <td>
@@ -75,7 +75,7 @@
                             <td>
                                 {{ teacher.name }}
                             </td>
-                            <td>{{ teacher.phone_number|default:"-" }}</td>
+                            <td>{{ teacher.get_formatted_phone_number|default:"-" }}</td>
                             <td>{{ teacher.email|default:"-" }}</td>
                             <td>{{ teacher.hire_date|date:"Y-m-d" }}</td>
                             <td>

@@ -6,12 +6,11 @@ from django.utils import timezone
 import datetime
 
 
-def validate_phone_number(value):
-    if not value.isdigit() or len(value) != 11:
-        raise ValidationError(
-            _('%(value)s 는 유효한 전화번호가 아닙니다.'),
-            params={'value': value},
-        )
+phone_number_validator = RegexValidator(
+    regex=r'^\d{9,11}$',
+    message="전화번호는 9-11자리 숫자로 입력해주세요. (예: 01012345678, 0212345678)"
+)
+
 
 class Teacher(models.Model):
     GENDER_CHOICES = [
@@ -21,8 +20,8 @@ class Teacher(models.Model):
     
     name = models.CharField(max_length=100, verbose_name='이름')
     phone_number = models.CharField(
-        max_length=11, 
-        validators=[validate_phone_number],
+        max_length=11,  # 일시적으로 11자로 설정
+        validators=[phone_number_validator],
         blank=True,
         null=True,
         verbose_name='전화번호'
@@ -45,19 +44,43 @@ class Teacher(models.Model):
     def __str__(self):
         return self.name
 
+    def get_formatted_phone_number(self):
+        """전화번호를 하이픈이 포함된 형태로 반환"""
+        if not self.phone_number:
+            return ''
+        
+        phone = self.phone_number
+        
+        # 11자리 휴대폰 번호 (010-xxxx-xxxx)
+        if len(phone) == 11 and phone.startswith('010'):
+            return f'{phone[:3]}-{phone[3:7]}-{phone[7:]}'
+        # 10자리 지역번호
+        elif len(phone) == 10:
+            if phone.startswith('02'):
+                # 서울 지역번호 (02-xxxx-xxxx)
+                return f'{phone[:2]}-{phone[2:6]}-{phone[6:]}'
+            else:
+                # 기타 지역번호 (031-xxx-xxxx)
+                return f'{phone[:3]}-{phone[3:6]}-{phone[6:]}'
+        # 9자리 서울 지역번호 (02-xxx-xxxx)
+        elif len(phone) == 9 and phone.startswith('02'):
+            return f'{phone[:2]}-{phone[2:5]}-{phone[5:]}'
+        
+        return phone
+
     class Meta:
         verbose_name = '교사'
         verbose_name_plural = '교사'
 
     def save(self, *args, **kwargs):
+        # 퇴사일이 있고 오늘 날짜보다 이전이면 비활성
         if self.resignation_date and self.resignation_date <= timezone.now().date():
             self.is_active = False
+        # 퇴사일이 없거나 미래 날짜면 활성
+        else:
+            self.is_active = True
         super().save(*args, **kwargs)
 
-    def update_active_status(self):
-        if self.resignation_date and self.resignation_date <= timezone.now().date():
-            self.is_active = False
-            self.save()
 
 class Attendance(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='교사')
@@ -73,6 +96,7 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.teacher.name} - {self.date}"
+
 
 class Salary(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='교사')

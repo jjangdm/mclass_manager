@@ -76,22 +76,12 @@ class TeacherCreateView(LoginRequiredMixin, CreateView):
     template_name = 'teachers/teacher_form.html'
     success_url = reverse_lazy('teachers:teacher_list')
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        self.object.update_active_status()
-        return response
-
 
 class TeacherUpdateView(LoginRequiredMixin, UpdateView):
     model = Teacher
     form_class = TeacherForm
     template_name = 'teachers/teacher_form.html'
     success_url = reverse_lazy('teachers:teacher_list')
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        self.object.update_active_status()
-        return response
 
 
 class AttendanceCreateView(LoginRequiredMixin, View):
@@ -377,7 +367,7 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
                 canvas.Canvas.save(self)
 
             def draw_page_footer(self, page_count):
-                self.setFont('NotoSansKR-Bold', 10)
+                self.setFont('NanumGothicBold', 10)
                 # 학원명 (중앙)
                 self.drawCentredString(A4[0]/2, 20*mm, "엠클래스수학과학전문학원")
                 # 페이지 번호 (우측)
@@ -396,9 +386,9 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         elements = []        
 
         styles = getSampleStyleSheet()
-        styles.add(ParagraphStyle(name='Korean', fontName='NotoSansKR', fontSize=10, leading=14, encoding='utf-8'))
-        styles.add(ParagraphStyle(name='KoreanTitle', fontName='NotoSansKR-Bold', fontSize=16, leading=20, alignment=1, encoding='utf-8'))
-        styles.add(ParagraphStyle(name='KoreanSubtitle', fontName='NotoSansKR-Bold', fontSize=12, leading=16, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='Korean', fontName='NanumGothic', fontSize=10, leading=14, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='KoreanTitle', fontName='NanumGothicBold', fontSize=16, leading=20, alignment=1, encoding='utf-8'))
+        styles.add(ParagraphStyle(name='KoreanSubtitle', fontName='NanumGothicBold', fontSize=12, leading=16, encoding='utf-8'))
         styles.add(ParagraphStyle(
             name='AttendanceDetail',
             fontName='Ubuntu-Regular',
@@ -414,14 +404,14 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         # 기본 정보
         data = [
             ["이름:", teacher.name],
-            ["전화번호:", teacher.phone_number or ""],
+            ["전화번호:", teacher.get_formatted_phone_number() or ""],
             ["이메일:", teacher.email or ""],
             ["입사일:", teacher.hire_date.strftime("%Y-%m-%d") if teacher.hire_date else "정보 없음"],
             ["퇴사일:", teacher.resignation_date.strftime("%Y-%m-%d") if teacher.resignation_date else "재직 중"]
         ]
         t = Table(data, colWidths=[50*mm, 120*mm])
         t.setStyle(TableStyle([
-            ('FONT', (0,0), (-1,-1), 'NotoSansKR'),
+            ('FONT', (0,0), (-1,-1), 'NanumGothic'),
             ('FONTSIZE', (0,0), (-1,-1), 10),
             ('TEXTCOLOR', (0,0), (0,-1), colors.grey),
             ('ALIGN', (0,0), (-1,-1), 'LEFT'),
@@ -469,7 +459,7 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
 
             t = Table(attendance_data, colWidths=[60*mm, 50*mm, 60*mm])
             t.setStyle(TableStyle([
-                ('FONT', (0,0), (-1,-1), 'NotoSansKR'),
+                ('FONT', (0,0), (-1,-1), 'NanumGothic'),
                 ('FONTSIZE', (0,0), (-1,-1), 10),
                 ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
                 ('TEXTCOLOR', (0,0), (-1,0), colors.black),
@@ -521,7 +511,7 @@ class TeacherPDFReportView(LoginRequiredMixin, View):
         )
         
         attendance_table.setStyle(TableStyle([
-            ('FONT', (0,0), (-1,-1), 'NotoSansKR'),
+            ('FONT', (0,0), (-1,-1), 'NanumGothic'),
             ('FONTSIZE', (0,0), (-1,-1), 9),
             ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
             ('TEXTCOLOR', (0,0), (-1,0), colors.black),
@@ -577,7 +567,7 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         # **푸터 함수 정의**
         def add_footer(canvas, doc):
             canvas.saveState()
-            canvas.setFont('NotoSansKR-Bold', 10)
+            canvas.setFont('NanumGothicBold', 10)
             # 페이지 너비 계산
             page_width = A4[0]
             # 푸터 텍스트 정의
@@ -590,7 +580,7 @@ class SalaryPDFReportView(LoginRequiredMixin, View):
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(
             name='Korean',
-            fontName='NotoSansKR',
+            fontName='NanumGothic',
             fontSize=10,
             leading=14
         ))

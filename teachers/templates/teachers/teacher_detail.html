@@ -8,7 +8,7 @@
     <p>
       <strong>성별:</strong> {{ teacher.get_gender_display|default:"미지정" }}
     </p>
-    <p><strong>전화번호:</strong> {{ teacher.phone_number }}</p>
+    <p><strong>전화번호:</strong> {{ teacher.get_formatted_phone_number }}</p>
     <p><strong>이메일:</strong> {{ teacher.email }}</p>
     <p><strong>입사일:</strong> {{ teacher.hire_date|date:"Y-m-d" }}</p>
     <p>

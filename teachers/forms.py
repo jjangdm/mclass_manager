@@ -18,7 +18,8 @@ class TeacherForm(forms.ModelForm):
             }, choices=[('', )] + Teacher.GENDER_CHOICES),
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-input',
-                'placeholder': '전화번호'
+                'placeholder': '01012345678 (숫자만 입력)',
+                'maxlength': '11'
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'form-input',
@@ -57,6 +58,31 @@ class TeacherForm(forms.ModelForm):
         self.fields['email'].required = False
         self.fields['bank'].required = False
         self.fields['account_number'].required = False
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number:
+            # 모든 특수문자 제거 (띄어쓰기, 하이픈 등)
+            phone_number = ''.join(filter(str.isdigit, phone_number))
+            
+            # 길이 검증
+            if len(phone_number) == 11 and phone_number.startswith('010'):
+                # 휴대폰 번호: 01012345678
+                return phone_number
+            elif len(phone_number) == 10:
+                if phone_number.startswith('02'):
+                    # 서울 지역번호: 0212345678
+                    return phone_number
+                else:
+                    # 기타 지역번호: 0311234567
+                    return phone_number
+            elif len(phone_number) == 9 and phone_number.startswith('02'):
+                # 서울 지역번호: 021234567
+                return phone_number
+            else:
+                raise forms.ValidationError('올바른 전화번호 형식이 아닙니다. 9-11자리 숫자로 입력해주세요. (예: 01012345678, 0212345678)')
+            
+        return phone_number
 
 class AttendanceRecordForm(forms.Form):
     is_present = forms.BooleanField(required=False, initial=True, label='출근')

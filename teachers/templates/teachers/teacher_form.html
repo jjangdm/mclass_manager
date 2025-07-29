@@ -60,4 +60,34 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('id_phone_number');
+    
+    if (phoneInput) {
+        // 숫자만 입력 허용 및 길이 제한
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // 숫자만 남기기
+            
+            // 길이 제한 (최대 11자)
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            e.target.value = value;
+        });
+        
+        // 붙여넣기 이벤트도 처리
+        phoneInput.addEventListener('paste', function(e) {
+            setTimeout(() => {
+                phoneInput.dispatchEvent(new Event('input'));
+            }, 0);
+        });
+        
+        // 플레이스홀더 업데이트
+        phoneInput.placeholder = '01012345678 (숫자만 입력)';
+    }
+});
+</script>
 {% endblock %}

@@ -26,35 +26,6 @@ FONT_CONFIGS = {
             },
         },
     },
-    'noto_sans': {
-        'name': 'NotoSansKR',
-        'variants': {
-            'regular': {
-                'name': 'NotoSansKR',
-                'path': os.path.join(FONTS_DIR, 'Noto_Sans_KR', 'NotoSansKR-Regular.ttf'),
-            },
-            'bold': {
-                'name': 'NotoSansKR-Bold',
-                'path': os.path.join(FONTS_DIR, 'Noto_Sans_KR', 'NotoSansKR-Bold.ttf'),
-            },
-            'thin': {
-                'name': 'NotoSansKR-Thin',
-                'path': os.path.join(FONTS_DIR, 'Noto_Sans_KR', 'NotoSansKR-Thin.ttf'),
-            },
-            'light': {
-                'name': 'NotoSansKR-Light',
-                'path': os.path.join(FONTS_DIR, 'Noto_Sans_KR', 'NotoSansKR-Light.ttf'),
-            },
-            'medium': {
-                'name': 'NotoSansKR-Medium',
-                'path': os.path.join(FONTS_DIR, 'Noto_Sans_KR', 'NotoSansKR-Medium.ttf'),
-            },
-            'semi_bold': {
-                'name': 'NotoSansKR-SemiBold',
-                'path': os.path.join(FONTS_DIR, 'Noto_Sans_KR', 'NotoSansKR-SemiBold.ttf'),
-            },
-        }
-    },
     'ubuntu': {
         'name': 'Ubuntu-Regular',
         'variants': {
